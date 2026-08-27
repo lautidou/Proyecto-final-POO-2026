@@ -9,6 +9,7 @@ public class Personaje {
     private String raza;
     private String clase;
     private List<Objeto> inventario;
+    private List<Habilidad> habilidades;
     // Combate
     private int fuerza;
     private int sabiduria;
