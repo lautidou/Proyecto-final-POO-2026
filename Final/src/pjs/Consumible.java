@@ -1,11 +1,11 @@
+package pjs;
+
 public class Consumible extends Objeto {
-    private int idObjeto;
     private int cantidad;
     private int puntosRestauracion;
-    private String efecto;
 
     public Consumible(int idObjeto, String nombre, double peso, int precio, String descripcion, int cantidad, int puntosRestauracion, String efecto) {
-        super(nombre, peso, precio, descripcion);
+        super(idObjeto, nombre, peso, precio, descripcion);
         if (idObjeto <= 0) {
             throw new IllegalArgumentException("El ID del objeto debe ser mayor que cero.");
         }
@@ -15,13 +15,8 @@ public class Consumible extends Objeto {
         if (puntosRestauracion < 0) {
             throw new IllegalArgumentException("Los puntos de restauración no pueden ser negativos.");
         }
-        if (efecto == null || efecto.isEmpty()) {
-            throw new IllegalArgumentException("El efecto no puede ser nulo o vacío.");
-        }
-        this.idObjeto = idObjeto;
         this.cantidad = cantidad;
         this.puntosRestauracion = puntosRestauracion;
-        this.efecto = efecto;
     }
 
     public void eliminarObjeto() {
@@ -35,12 +30,12 @@ public class Consumible extends Objeto {
 
     @Override
     public void usar(Personaje objetivo) {
-        System.out.println("Usando " + super.getNombre() + " en " + objetivo.getNombre());
-        // lógica para aplicar efectos
+        System.out.println("Usando " + super.getNombre() + ", " + objetivo.getNombre() + " recupera " + this.puntosRestauracion + " puntos de vida.");
+            objetivo.curar(this.puntosRestauracion);
+            eliminarObjeto();
     }
 
     public int getCantidad() {
         return cantidad;
     }
-    
 }
