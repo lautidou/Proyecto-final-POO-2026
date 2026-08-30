@@ -6,9 +6,8 @@ public class Heroe extends Personaje {
     private List<Objeto> inventario;
 
     public Heroe(String nombre, int vida, int nivel, Raza raza, String clase, List<Habilidad> habilidades,
-                 int fuerza, int sabiduria, int destreza, int inteligencia, int constitucion, int carisma,
-                 int experiencia, List<Objeto> inventario) {
-        super(nombre, vida, nivel, raza, clase, habilidades, fuerza, sabiduria, destreza, inteligencia, constitucion, carisma);
+                Caracteristicas caracteristicas, int experiencia, List<Objeto> inventario) {
+        super(nombre, vida, nivel, raza, clase, habilidades, caracteristicas);
         this.experiencia = experiencia;
         this.inventario = inventario;
     }

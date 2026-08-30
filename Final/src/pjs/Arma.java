@@ -21,4 +21,6 @@ public class Arma extends Objeto {
             System.out.println("Has desequipado: " + super.getNombre());
         }
     }
+
+    
 }

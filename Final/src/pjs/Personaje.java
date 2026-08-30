@@ -12,19 +12,14 @@ public abstract class Personaje {
     private String clase;
     private List<Habilidad> habilidades;
     // Combate
-    private int fuerza;
-    private int sabiduria;
-    private int destreza;
-    private int inteligencia;
-    private int constitucion;
-    private int carisma;
+    private Caracteristicas caracteristicas;
     // Pj en Escenario
     protected int x;
     protected int y;
     protected int velocidad = 8;
 
     public Personaje(String nombre, int vida, int nivel, Raza raza, String clase, List<Habilidad> habilidades,
-                    int fuerza, int sabiduria, int destreza, int inteligencia, int constitucion, int carisma) {
+                      Caracteristicas caracteristicas) {
         if (nombre == null || nombre.isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede ser nulo o vacío.");
         }
@@ -40,23 +35,8 @@ public abstract class Personaje {
         if (clase == null || clase.isEmpty()) {
             throw new IllegalArgumentException("La clase no puede ser nula o vacía.");
         }
-        if (fuerza < 0 || fuerza > 20) {
-            throw new IllegalArgumentException("La fuerza debe estar entre 0 y 20.");
-        }
-        if (sabiduria < 0 || sabiduria > 20) {
-            throw new IllegalArgumentException("La sabiduría debe estar entre 0 y 20.");
-        }
-        if (destreza < 0 || destreza > 20) {
-            throw new IllegalArgumentException("La destreza debe estar entre 0 y 20.");
-        }
-        if (inteligencia < 0 || inteligencia > 20) {
-            throw new IllegalArgumentException("La inteligencia debe estar entre 0 y 20.");
-        }
-        if (constitucion < 0 || constitucion > 20) {
-            throw new IllegalArgumentException("La constitución debe estar entre 0 y 20.");
-        }
-        if (carisma < 0 || carisma > 20) {
-            throw new IllegalArgumentException("El carisma debe estar entre 0 y 20.");
+        if (caracteristicas == null) {
+            throw new IllegalArgumentException("Las características no pueden ser nulas.");
         }
         this.nombre = nombre;
         this.vida = vida;
@@ -64,16 +44,31 @@ public abstract class Personaje {
         this.raza = raza;
         this.clase = clase;
         this.habilidades = habilidades;
-        this.fuerza = fuerza;
-        this.sabiduria = sabiduria;
-        this.destreza = destreza;
-        this.inteligencia = inteligencia;
-        this.constitucion = constitucion;
-        this.carisma = carisma;
+        this.caracteristicas = caracteristicas;
     }
     //Metodos
     public void curar(int puntosCurados) {
         this.vida += puntosCurados;
+    }
+
+    public void recibirDanio(int puntosDanio) {
+        this.vida -= puntosDanio;
+        if (this.vida < 0) {
+            this.vida = 0;
+            //logica de muerte
+        }
+    }
+    
+    public void aprenderHabilidad(Habilidad habilidad) {
+        if (!habilidades.contains(habilidad)) {
+            habilidades.add(habilidad);
+        } else {
+            System.out.println("El personaje ya conoce esta habilidad.");
+        }
+    }
+
+    public void subirNivel() {
+        this.nivel++;
     }
 
     public String getNombre() {
