@@ -18,9 +18,10 @@ public abstract class Personaje {
     private int inteligencia;
     private int constitucion;
     private int carisma;
-    // Posición en el mapa
-    private int x;
-    private int y;
+    // Pj en Escenario
+    protected int x;
+    protected int y;
+    protected int velocidad = 8;
 
     public Personaje(String nombre, int vida, int nivel, Raza raza, String clase, List<Habilidad> habilidades,
                     int fuerza, int sabiduria, int destreza, int inteligencia, int constitucion, int carisma) {
@@ -82,6 +83,7 @@ public abstract class Personaje {
         this.x = x;
         this.y = y;
     }
+
     // El personaje es responsable de dibujarse a sí mismo
     public void dibujar(Graphics g) {
         g.setColor(Color.RED); // Representaremos al personaje como un cuadrado rojo
@@ -89,5 +91,11 @@ public abstract class Personaje {
         
         // Cuando uses imágenes reales, usarías:
         // g.drawImage(tuImagen, x, y, null);
+    }
+
+    // método para modificar las coordenadas
+    public void mover(int dx, int dy) {
+        this.x += dx * velocidad;
+        this.y += dy * velocidad;
     }
 }

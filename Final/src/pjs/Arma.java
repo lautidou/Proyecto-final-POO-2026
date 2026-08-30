@@ -1,12 +1,12 @@
 package pjs;
 
 public class Arma extends Objeto {
-    private int daño;
+    private Dados dado ;
     private boolean equipada;
 
-    public Arma(int idObjeto, String nombre, double peso, int precio, String descripcion, int daño) {
+    public Arma(int idObjeto, String nombre, double peso, int precio, String descripcion, Dados dado) {
         super(idObjeto, nombre, peso, precio, descripcion);
-        this.daño = daño;
+        this.dado = dado;
         this.equipada = false;
     }
 
