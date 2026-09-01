@@ -8,7 +8,7 @@ public abstract class Personaje {
     private String nombre;
     private int vida;
     private int nivel;
-    private String clase;
+    private Clases clase;
     private List<Habilidad> habilidades;
     // Combate
     private Caracteristicas caracteristicas;
@@ -17,7 +17,7 @@ public abstract class Personaje {
     protected int y;
     protected int velocidad = 8;
 
-    public Personaje(String nombre, int vida, int nivel, Raza raza, String clase, List<Habilidad> habilidades,
+    public Personaje(String nombre, int nivel, Raza raza, Clases clase, List<Habilidad> habilidades,
                       Caracteristicas caracteristicas) {
         if (nombre == null || nombre.isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede ser nulo o vacío.");
@@ -28,14 +28,14 @@ public abstract class Personaje {
         if (nivel <= 0 || nivel > 20) {
             throw new IllegalArgumentException("El nivel debe ser mayor que cero y menor o igual que 20.");
         }
-        if (clase == null || clase.isEmpty()) {
-            throw new IllegalArgumentException("La clase no puede ser nula o vacía.");
+        if (clase == null) {
+            throw new IllegalArgumentException("La clase no puede ser nula.");
         }
         if (caracteristicas == null) {
             throw new IllegalArgumentException("Las características no pueden ser nulas.");
         }
         this.nombre = nombre;
-        this.vida = vida;
+        setVida(clase.getMaxPG() + caracteristicas.getConstitucion());
         this.nivel = nivel;
         this.clase = clase;
         this.habilidades = habilidades;
@@ -72,6 +72,10 @@ public abstract class Personaje {
     public Personaje(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public void setVida(int Valor){
+        this.vida = Valor;
     }
 
     // El personaje es responsable de dibujarse a sí mismo

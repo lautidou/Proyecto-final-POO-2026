@@ -15,6 +15,10 @@ public enum Dados {
     }
 
     public int rolleo(){
-        return (int) (Math.random() * max) + 1;
+        return (int) (Math.random() * this.max) + 1;
+    }
+
+    public int getMax(){
+        return this.max;
     }
 }
