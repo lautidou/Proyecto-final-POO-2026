@@ -33,3 +33,16 @@ El objetivo es desarrollar un videojuego funcional, donde el jugador pueda inter
 - **Interfaz Gráfica (IGU):**
     - Panel de Batalla: Visualización de listado de habilidades, objetos utilizables y opción de escapar.
     - Selección de Equipo: Visualización de los posibles aliados, estadísticas y habilidades de los mismos.
+
+
+## 3. Arquitectura y Diseño 
+
+### Aplicación de Herencia
+- **Entidades:**
+    - Superclase "Personaje": Es una clase abstracta que centraliza los atributos universales de cualquier entidad viva en el juego.
+    - Subclase "Heroe": Hereda de "Personaje" y extiende su funcionalidad agregando mecánicas exclusivas del jugador principal.
+    - Subclase "Enemigo": Hereda de "Personaje", implementando los comportamientos de toda entidad no jugable.
+- **Items:**
+    - Superclase "Objeto": Define la estructura base de cualquier elemento utilizable que pueda guardarse en el inventario.
+    - Subclases de Equipamiento ("Arma" y "Armadura"): Extienden de "Objeto" para representar equipo de combate.
+    - Subclase de "Consumible": Extiende de :"Objeto" representando ítems que se gastan al usarse, como las pociones.
