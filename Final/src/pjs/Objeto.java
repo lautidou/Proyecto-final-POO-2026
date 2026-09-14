@@ -31,6 +31,7 @@ public abstract class Objeto {
     public String getNombre() {
         return nombre;
     }
+    
 
     public abstract void usar(Personaje objetivo); 
 }

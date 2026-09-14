@@ -8,7 +8,6 @@ public abstract class Personaje {
     private String nombre;
     private int vida;
     private int nivel;
-    private Raza raza;
     private String clase;
     private List<Habilidad> habilidades;
     // Combate
@@ -29,9 +28,6 @@ public abstract class Personaje {
         if (nivel <= 0 || nivel > 20) {
             throw new IllegalArgumentException("El nivel debe ser mayor que cero y menor o igual que 20.");
         }
-        if (raza == null) {
-            throw new IllegalArgumentException("La raza no puede ser nula.");
-        }
         if (clase == null || clase.isEmpty()) {
             throw new IllegalArgumentException("La clase no puede ser nula o vacía.");
         }
@@ -41,7 +37,6 @@ public abstract class Personaje {
         this.nombre = nombre;
         this.vida = vida;
         this.nivel = nivel;
-        this.raza = raza;
         this.clase = clase;
         this.habilidades = habilidades;
         this.caracteristicas = caracteristicas;

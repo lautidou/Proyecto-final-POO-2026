@@ -1,7 +1,7 @@
 package pjs;
 
 public class Arma extends Objeto {
-    private Dados dado ;
+    private Dados dado;
     private boolean equipada;
 
     public Arma(int idObjeto, String nombre, double peso, int precio, String descripcion, Dados dado) {
@@ -21,6 +21,8 @@ public class Arma extends Objeto {
             System.out.println("Has desequipado: " + super.getNombre());
         }
     }
-
+    public int tiradaDanio(int car_necesaria){
+        return car_necesaria + dado.rolleo();
+    }
     
 }

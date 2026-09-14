@@ -14,8 +14,7 @@ public enum Dados {
         this.max = max;
     }
 
-    public int rolleo(Dados dado)
-    {
+    public int rolleo(){
         return (int) (Math.random() * max) + 1;
     }
 }
