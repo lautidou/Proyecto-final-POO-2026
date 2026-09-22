@@ -1,4 +1,4 @@
-package pjs;
+package Modelo.pjs;
 
 public enum Dados {
     d4(4),

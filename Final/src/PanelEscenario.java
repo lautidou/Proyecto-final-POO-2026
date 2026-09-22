@@ -1,5 +1,7 @@
 import javax.swing.JPanel;
-import pjs.Heroe;
+
+import Modelo.pjs.Heroe;
+
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.KeyEvent;

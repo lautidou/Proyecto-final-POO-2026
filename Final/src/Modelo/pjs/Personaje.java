@@ -1,4 +1,4 @@
-package pjs;
+package Modelo.pjs;
 import java.util.List;
 import java.awt.Graphics;
 import java.awt.Color;

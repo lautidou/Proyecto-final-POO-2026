@@ -1,4 +1,4 @@
-package pjs;
+package Modelo.pjs;
 public class Habilidad {
     private int idHabilidad;
     private String nombre;

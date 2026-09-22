@@ -1,4 +1,4 @@
-package pjs;
+package Modelo.pjs;
 import java.util.List;
 
 public class Heroe extends Personaje {
@@ -6,9 +6,9 @@ public class Heroe extends Personaje {
     private List<Objeto> inventario;
     private Raza raza;
 
-    public Heroe(String nombre, int vida, int nivel, Raza raza, String clase, List<Habilidad> habilidades,
+    public Heroe(String nombre, int nivel, Raza raza, Clases clase, List<Habilidad> habilidades,
                 Caracteristicas caracteristicas, int experiencia, List<Objeto> inventario) {
-        super(nombre, vida, nivel, raza, clase, habilidades, caracteristicas);
+        super(nombre, nivel, raza, clase, habilidades, caracteristicas);
         if (raza == null) {
             throw new IllegalArgumentException("La raza no puede ser nula.");
         }

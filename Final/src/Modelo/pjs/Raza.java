@@ -1,4 +1,4 @@
-package pjs;
+package Modelo.pjs;
 
 public enum Raza {
     Enano(0, 0, 2, 0, 2, 0),

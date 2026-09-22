@@ -1,4 +1,4 @@
-package pjs;
+package Modelo.pjs;
 public abstract class Objeto {
     private String nombre;
     private int idObjeto;

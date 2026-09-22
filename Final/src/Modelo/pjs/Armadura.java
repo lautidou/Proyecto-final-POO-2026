@@ -1,4 +1,4 @@
-package pjs;
+package Modelo.pjs;
 
 public class Armadura extends Objeto{
     private int defensa;

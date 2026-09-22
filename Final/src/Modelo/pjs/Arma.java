@@ -1,4 +1,4 @@
-package pjs;
+package Modelo.pjs;
 
 public class Arma extends Objeto {
     private Dados dado;

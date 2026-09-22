@@ -1,4 +1,4 @@
-package pjs;
+package Modelo.pjs;
 
 public enum TipoEnemigo {
     Goblin(15, new Caracteristicas(8, 14, 10, 10, 8, 8)),

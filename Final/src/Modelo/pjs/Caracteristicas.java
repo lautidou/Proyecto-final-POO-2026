@@ -1,4 +1,4 @@
-package pjs;
+package Modelo.pjs;
 
 public class Caracteristicas {
     private int fuerza;

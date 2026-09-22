@@ -1,4 +1,4 @@
-package pjs;
+package Modelo.pjs;
 
 public class Consumible extends Objeto {
     private int cantidad;

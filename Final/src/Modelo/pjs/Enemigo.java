@@ -1,4 +1,4 @@
-package pjs;
+package Modelo.pjs;
 import java.util.List;
 
 public class Enemigo extends Personaje {
@@ -6,9 +6,9 @@ public class Enemigo extends Personaje {
     private int experienciaDada;
     private List<Objeto> recompensa;
 
-    public Enemigo(String nombre, int vida, int nivel, Raza raza, String clase, List<Habilidad> habilidades,
+    public Enemigo(String nombre, int nivel, Raza raza, Clases clase, List<Habilidad> habilidades,
         Caracteristicas caracteristicas, String tipoEnemigo, int experienciaDada, List<Objeto> recompensa) {
-        super(nombre, vida, nivel, raza, clase, habilidades, caracteristicas);
+        super(nombre, nivel, raza, clase, habilidades, caracteristicas);
         //this.tipoEnemigo = tipoEnemigo;
         this.experienciaDada = experienciaDada;
         this.recompensa = recompensa;
