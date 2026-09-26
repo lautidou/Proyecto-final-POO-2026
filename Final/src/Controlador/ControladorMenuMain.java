@@ -1,6 +1,8 @@
 package Controlador;
 
 import Modelo.ModeloMenuMain;
+import Vista.Ventana;
+import Vista.VistaCreacionPersonaje;
 import Vista.VistaMenuMain;
 
 public class ControladorMenuMain {
@@ -24,6 +26,8 @@ public class ControladorMenuMain {
     private void ejecutarBotonUno() {
         System.out.println("Se presionó el Botón 1");
         this.modelo.procesarAccionUno();
+        // Navega a la pantalla de creación de personaje
+        Ventana.getInstancia().mostrarPanel(VistaCreacionPersonaje.NOMBRE);
     }
 
     private void ejecutarBotonDos() {

@@ -8,11 +8,11 @@ public class ModeloMenuMain {
 
     // Métodos preparados para la lógica futura de los botones
     public void procesarAccionUno() {
-        // Lógica sin determinar
+        // Lógica para el botón 1
     }
 
     public void procesarAccionDos() {
-        // Lógica sin determinar
+        // Lógica para el botón 2 
     }
 
     public void procesarAccionTres() {

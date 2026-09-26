@@ -1,7 +1,5 @@
 package Modelo.pjs;
 import java.util.List;
-import java.awt.Graphics;
-import java.awt.Color;
 
 public abstract class Personaje {
 //Atributos
@@ -12,18 +10,11 @@ public abstract class Personaje {
     private List<Habilidad> habilidades;
     // Combate
     private Caracteristicas caracteristicas;
-    // Pj en Escenario
-    protected int x;
-    protected int y;
-    protected int velocidad = 8;
 
-    public Personaje(String nombre, int nivel, Raza raza, Clases clase, List<Habilidad> habilidades,
+    public Personaje(String nombre, int nivel, Clases clase, List<Habilidad> habilidades,
                       Caracteristicas caracteristicas) {
         if (nombre == null || nombre.isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede ser nulo o vacío.");
-        }
-        if (vida <= 0) {
-            throw new IllegalArgumentException("La vida debe ser mayor que cero.");
         }
         if (nivel <= 0 || nivel > 20) {
             throw new IllegalArgumentException("El nivel debe ser mayor que cero y menor o igual que 20.");
@@ -69,27 +60,8 @@ public abstract class Personaje {
     public String getNombre() {
         return nombre;
     }
-    public Personaje(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
 
     public void setVida(int Valor){
         this.vida = Valor;
-    }
-
-    // El personaje es responsable de dibujarse a sí mismo
-    public void dibujar(Graphics g) {
-        g.setColor(Color.RED); // Representaremos al personaje como un cuadrado rojo
-        g.fillRect(x, y, 50, 50); 
-        
-        // Cuando uses imágenes reales, usarías:
-        // g.drawImage(tuImagen, x, y, null);
-    }
-
-    // método para modificar las coordenadas
-    public void mover(int dx, int dy) {
-        this.x += dx * velocidad;
-        this.y += dy * velocidad;
     }
 }

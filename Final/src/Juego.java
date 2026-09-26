@@ -1,6 +1,5 @@
-import Controlador.ControladorMenuMain;
-import Modelo.ModeloMenuMain;
-import Vista.VistaMenuMain;
+import Controlador.IniciadorPantallas;
+import Vista.Ventana;
 
 import javax.swing.SwingUtilities;
 
@@ -8,11 +7,8 @@ public class Juego {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            ModeloMenuMain modelo = new ModeloMenuMain();
-            VistaMenuMain vista = new VistaMenuMain();
-            ControladorMenuMain controlador = new ControladorMenuMain(vista, modelo);
-            
-            vista.mostrar();
+            Ventana ventana = Ventana.getInstancia();
+            new IniciadorPantallas(ventana).iniciar();
         });
     }
 }
