@@ -18,14 +18,14 @@ public class VistaMenuMain extends JPanel {
     public VistaMenuMain() {
         super(new BorderLayout());
 
-        PanelFondo panelFondo = new PanelFondo("Final/src/Assets/fondoInicio.png");
+        PanelFondo panelFondo = new PanelFondo("Assets/fondoInicio.png");
         panelFondo.setLayout(new BorderLayout());
         this.add(panelFondo, BorderLayout.CENTER);
 
         JPanel panelContenedorCentral = new JPanel(new GridBagLayout());
         panelContenedorCentral.setOpaque(false);
 
-        PanelFondo panelPergamino = new PanelFondo("Final/src/Assets/panelOpciones.png");
+        PanelFondo panelPergamino = new PanelFondo("Assets/panelOpciones.png");
         panelPergamino.setOpaque(false);
         panelPergamino.setLayout(new GridBagLayout());
         panelPergamino.setPreferredSize(new Dimension(350, 350));

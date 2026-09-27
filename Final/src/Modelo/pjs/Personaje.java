@@ -64,4 +64,8 @@ public abstract class Personaje {
     public void setVida(int Valor){
         this.vida = Valor;
     }
+
+    public int getProficiencia(){
+        return((this.nivel - 1) / 4) + 2;
+    } 
 }
