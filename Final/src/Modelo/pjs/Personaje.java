@@ -1,6 +1,8 @@
 package Modelo.pjs;
 import java.util.List;
 
+import Modelo.mapa.Posicion;
+
 public abstract class Personaje {
 //Atributos
     private String nombre;
@@ -10,6 +12,8 @@ public abstract class Personaje {
     private List<Habilidad> habilidades;
     // Combate
     private Caracteristicas caracteristicas;
+    //posicion de pj
+    private Posicion posicion;
 
     public Personaje(String nombre, int nivel, Clases clase, List<Habilidad> habilidades,
                       Caracteristicas caracteristicas) {
@@ -68,4 +72,12 @@ public abstract class Personaje {
     public int getProficiencia(){
         return((this.nivel - 1) / 4) + 2;
     } 
+
+    public Posicion getPosicion(){
+        return this.posicion;
+    }
+
+    public void setPosicion(Posicion posicion){
+        this.posicion = posicion;
+    }
 }
