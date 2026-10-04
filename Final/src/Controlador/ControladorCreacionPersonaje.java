@@ -1,11 +1,13 @@
 package Controlador;
 
 import Modelo.ModeloCreacionPersonaje;
+import Modelo.ModeloMapa;
 import Modelo.pjs.Clases;
 import Modelo.pjs.Heroe;
 import Modelo.pjs.Raza;
 import Vista.Ventana;
 import Vista.VistaCreacionPersonaje;
+import Vista.VistaMapa;
 import Vista.VistaMenuMain;
 
 import javax.swing.JOptionPane;
@@ -14,13 +16,16 @@ public class ControladorCreacionPersonaje {
 
     private final VistaCreacionPersonaje vista;
     private final ModeloCreacionPersonaje modelo;
+    private final ModeloMapa modeloMapa;
 
-    public ControladorCreacionPersonaje(VistaCreacionPersonaje vista, ModeloCreacionPersonaje modelo) {
-        if (vista == null || modelo == null) {
-            throw new IllegalArgumentException("La vista y el modelo son obligatorios");
+    public ControladorCreacionPersonaje(VistaCreacionPersonaje vista, ModeloCreacionPersonaje modelo,
+                                        ModeloMapa modeloMapa) {
+        if (vista == null || modelo == null || modeloMapa == null) {
+            throw new IllegalArgumentException("La vista y los modelos son obligatorios");
         }
         this.vista = vista;
         this.modelo = modelo;
+        this.modeloMapa = modeloMapa;
 
         this.vista.getBotonCrear().addActionListener(evento -> this.ejecutarCrearPersonaje());
         this.vista.getBotonVolver().addActionListener(evento -> this.ejecutarVolver());
@@ -39,9 +44,9 @@ public class ControladorCreacionPersonaje {
 
             this.vista.limpiarCampos();
 
-            // TODO: cuando exista la pantalla del juego/escenario, navegar ahí
-            // en vez de volver al menú principal.
-            Ventana.getInstancia().mostrarPanel(VistaMenuMain.NOMBRE);
+            // El héroe recién creado entra al mapa y se muestra la pantalla del juego
+            this.modeloMapa.colocarPersonaje(heroe);
+            Ventana.getInstancia().mostrarPanel(VistaMapa.NOMBRE);
 
         } catch (IllegalArgumentException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(),

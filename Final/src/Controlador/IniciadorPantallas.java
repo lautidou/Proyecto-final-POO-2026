@@ -1,9 +1,11 @@
 package Controlador;
 
 import Modelo.ModeloCreacionPersonaje;
+import Modelo.ModeloMapa;
 import Modelo.ModeloMenuMain;
 import Vista.Ventana;
 import Vista.VistaCreacionPersonaje;
+import Vista.VistaMapa;
 import Vista.VistaMenuMain;
 
 public class IniciadorPantallas {
@@ -19,7 +21,8 @@ public class IniciadorPantallas {
 
     public void iniciar() {
         registrarMenuPrincipal();
-        registrarCreacionPersonaje();
+        ModeloMapa modeloMapa = registrarMapa();
+        registrarCreacionPersonaje(modeloMapa);
 
         this.ventana.mostrarPanel(VistaMenuMain.NOMBRE);
         this.ventana.mostrar();
@@ -33,11 +36,20 @@ public class IniciadorPantallas {
         new ControladorMenuMain(vista, modelo);
     }
 
-    private void registrarCreacionPersonaje() {
+    private ModeloMapa registrarMapa() {
+        ModeloMapa modelo = new ModeloMapa();
+        VistaMapa vista = new VistaMapa();
+
+        this.ventana.registrarPanel(VistaMapa.NOMBRE, vista);
+        new ControladorMapa(vista, modelo);
+        return modelo;
+    }
+
+    private void registrarCreacionPersonaje(ModeloMapa modeloMapa) {
         ModeloCreacionPersonaje modelo = new ModeloCreacionPersonaje();
         VistaCreacionPersonaje vista = new VistaCreacionPersonaje();
 
         this.ventana.registrarPanel(VistaCreacionPersonaje.NOMBRE, vista);
-        new ControladorCreacionPersonaje(vista, modelo);
+        new ControladorCreacionPersonaje(vista, modelo, modeloMapa);
     }
 }

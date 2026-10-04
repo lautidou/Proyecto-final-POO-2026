@@ -1,19 +1,20 @@
 package Modelo.mapa;
 
 public class Celda {
-    private boolean pasable;
-    private int tipoterreno;
+    private final Terreno terreno;
 
-    public Celda(boolean pasable, int tipoterreno){
-        this.tipoterreno = tipoterreno;
-        this.pasable = pasable;
+    public Celda(Terreno terreno) {
+        if (terreno == null) {
+            throw new IllegalArgumentException("El terreno no puede ser nulo.");
+        }
+        this.terreno = terreno;
     }
 
-    public boolean esPasable(){
-        return pasable;
+    public boolean esPasable() {
+        return terreno.esPasable();
     }
 
-    public int getTipoterreno(){
-        return tipoterreno;
+    public Terreno getTerreno() {
+        return terreno;
     }
 }
