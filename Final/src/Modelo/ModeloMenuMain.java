@@ -16,6 +16,6 @@ public class ModeloMenuMain {
     }
 
     public void procesarAccionTres() {
-        System.exit(0);
+        // Lógica para el botón 3
     }
 }

@@ -7,6 +7,7 @@ public abstract class Personaje {
 //Atributos
     private String nombre;
     private int vida;
+    private int vidaMaxima;
     private int nivel;
     private Clases clase;
     private List<Habilidad> habilidades;
@@ -30,7 +31,8 @@ public abstract class Personaje {
             throw new IllegalArgumentException("Las características no pueden ser nulas.");
         }
         this.nombre = nombre;
-        setVida(clase.getMaxPG() + caracteristicas.getConstitucion());
+        this.vidaMaxima = clase.getMaxPG() + caracteristicas.getConstitucion();
+        setVida(this.vidaMaxima);
         this.nivel = nivel;
         this.clase = clase;
         this.habilidades = habilidades;
@@ -59,6 +61,14 @@ public abstract class Personaje {
 
     public void subirNivel() {
         this.nivel++;
+    }
+
+    public int getVida() {
+        return vida;
+    }
+
+    public int getVidaMaxima() {
+        return vidaMaxima;
     }
 
     public String getNombre() {

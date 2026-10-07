@@ -15,12 +15,12 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
 
 public class ControladorMapa {
 
     private final VistaMapa vista;
     private final ModeloMapa modelo;
-    private Mapa escenarioMostrado; // para reconstruir la grilla solo cuando cambia el escenario
 
     public ControladorMapa(VistaMapa vista, ModeloMapa modelo) {
         if (vista == null || modelo == null) {
@@ -30,25 +30,38 @@ public class ControladorMapa {
         this.modelo = modelo;
 
         registrarTeclas();
-        this.modelo.agregarObservador(this::actualizarVista); // el modelo avisa, el controlador actualiza
-        actualizarVista();
+        mostrarEscenario(this.modelo.getMapaActual());
+        mostrarPersonaje();
+        this.modelo.addPropertyChangeListener(this::alCambiarModelo);
     }
 
-    /** Copia el estado del modelo a la vista. */
-    private void actualizarVista() {
-        Mapa mapa = this.modelo.getMapaActual();
-        if (mapa != this.escenarioMostrado) {
-            this.vista.setEscenario(mapa.getId(), extraerTerrenos(mapa));
-            this.escenarioMostrado = mapa;
+    /** El modelo avisa qué propiedad cambió; el controlador actualiza solo esa parte de la vista. */
+    private void alCambiarModelo(PropertyChangeEvent evento) {
+        switch (evento.getPropertyName()) {
+            case ModeloMapa.PROP_ESCENARIO:
+                mostrarEscenario((Mapa) evento.getNewValue());
+                break;
+            case ModeloMapa.PROP_PERSONAJE:
+            case ModeloMapa.PROP_POSICION:
+                mostrarPersonaje();
+                break;
+            default:
+                return;
         }
+        this.vista.repaint();
+    }
 
+    private void mostrarEscenario(Mapa mapa) {
+        this.vista.setEscenario(mapa.getId(), extraerTerrenos(mapa));
+    }
+
+    private void mostrarPersonaje() {
         Personaje pj = this.modelo.getPersonaje();
         if (pj != null && pj.getPosicion() != null) {
             this.vista.setPersonaje(pj.getNombre(), pj.getPosicion());
         } else {
             this.vista.quitarPersonaje();
         }
-        this.vista.repaint();
     }
 
     private Terreno[][] extraerTerrenos(Mapa mapa) {
@@ -91,7 +104,7 @@ public class ControladorMapa {
     }
 
     private void ejecutarMovimiento(Direccion direccion) {
-        // La vista se actualiza sola: el modelo notifica si hubo cambio.
+        // La vista se actualiza sola: el modelo avisa si hubo cambio.
         this.modelo.moverPersonaje(direccion);
     }
 

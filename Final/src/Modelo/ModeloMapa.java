@@ -8,19 +8,18 @@ import Modelo.mapa.Portal;
 import Modelo.mapa.Posicion;
 import Modelo.pjs.Personaje;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
-/**
- * Coordina el Mundo con el personaje que lo recorre: decide si un movimiento
- * es posible, lo aplica y cambia de escenario al pisar un portal.
- * Avisa a sus observadores cada vez que su estado cambia, sin conocerlos.
- */
 public class ModeloMapa {
+
+    public static final String PROP_ESCENARIO = "escenario";
+    public static final String PROP_PERSONAJE = "personaje";
+    public static final String PROP_POSICION = "posicion";
 
     private final Mundo mundo;
     private Personaje personaje;
-    private final List<Runnable> observadores = new ArrayList<>();
+    private final PropertyChangeSupport soporte = new PropertyChangeSupport(this);
 
     public ModeloMapa() {
         this(MundoDePrueba.crear());
@@ -36,14 +35,21 @@ public class ModeloMapa {
     }
 
     /** Se llama al crear el héroe: lo ubica en el inicio del mundo. */
-    public void colocarPersonaje(Personaje personaje) {
-        if (personaje == null) {
+    public void colocarPersonaje(Personaje nuevo) {
+        if (nuevo == null) {
             throw new IllegalArgumentException("El personaje no puede ser nulo.");
         }
+        Personaje anterior = this.personaje;
+        Posicion posicionAnterior = (anterior == null) ? null : anterior.getPosicion();
+        Mapa mapaAnterior = this.mundo.getMapaActual();
+
         this.mundo.reiniciar();
-        personaje.setPosicion(this.mundo.getPosicionInicial());
-        this.personaje = personaje;
-        notificarObservadores();
+        nuevo.setPosicion(this.mundo.getPosicionInicial());
+        this.personaje = nuevo;
+
+        this.soporte.firePropertyChange(PROP_ESCENARIO, mapaAnterior, this.mundo.getMapaActual());
+        this.soporte.firePropertyChange(PROP_PERSONAJE, anterior, nuevo);
+        this.soporte.firePropertyChange(PROP_POSICION, posicionAnterior, nuevo.getPosicion());
     }
 
     /** @return true si el personaje se movió, false si el paso estaba bloqueado. */
@@ -51,38 +57,35 @@ public class ModeloMapa {
         if (this.personaje == null || this.personaje.getPosicion() == null) {
             return false;
         }
-        Mapa actual = this.mundo.getMapaActual();
-        Posicion destino = this.personaje.getPosicion().desplazar(direccion);
-        if (!actual.esTransitable(destino)) {
+        Mapa mapaAnterior = this.mundo.getMapaActual();
+        Posicion origen = this.personaje.getPosicion();
+        Posicion destino = origen.desplazar(direccion);
+        if (!mapaAnterior.esTransitable(destino)) {
             return false;
         }
-        this.personaje.setPosicion(destino);
 
-        Portal portal = actual.getPortalEn(destino);
+        // Se calcula el estado final antes de avisar, para no notificar estados intermedios.
+        Posicion posicionFinal = destino;
+        Portal portal = mapaAnterior.getPortalEn(destino);
         if (portal != null) {
-            atravesar(portal);
+            this.mundo.irA(portal.getIdMapaDestino());
+            posicionFinal = portal.getPosicionDestino();
         }
-        notificarObservadores();
+        this.personaje.setPosicion(posicionFinal);
+
+        if (portal != null) {
+            this.soporte.firePropertyChange(PROP_ESCENARIO, mapaAnterior, this.mundo.getMapaActual());
+        }
+        this.soporte.firePropertyChange(PROP_POSICION, origen, posicionFinal);
         return true;
     }
 
-    private void atravesar(Portal portal) {
-        this.mundo.irA(portal.getIdMapaDestino());
-        this.personaje.setPosicion(portal.getPosicionDestino());
+    public void addPropertyChangeListener(PropertyChangeListener oyente) {
+        this.soporte.addPropertyChangeListener(oyente);
     }
 
-    /** Quien se suscribe es avisado cada vez que cambia el escenario o el personaje. */
-    public void agregarObservador(Runnable observador) {
-        if (observador == null) {
-            throw new IllegalArgumentException("El observador no puede ser nulo.");
-        }
-        this.observadores.add(observador);
-    }
-
-    private void notificarObservadores() {
-        for (Runnable observador : this.observadores) {
-            observador.run();
-        }
+    public void removePropertyChangeListener(PropertyChangeListener oyente) {
+        this.soporte.removePropertyChangeListener(oyente);
     }
 
     public Mapa getMapaActual() {

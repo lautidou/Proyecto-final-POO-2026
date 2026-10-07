@@ -38,5 +38,6 @@ public class ControladorMenuMain {
     private void ejecutarBotonTres() {
         System.out.println("Se presionó el Botón 3");
         this.modelo.procesarAccionTres();
+        System.exit(0);
     }
 }
