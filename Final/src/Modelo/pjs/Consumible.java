@@ -4,7 +4,7 @@ public class Consumible extends Objeto {
     private int cantidad;
     private int puntosRestauracion;
 
-    public Consumible(int idObjeto, String nombre, double peso, int precio, String descripcion, int cantidad, int puntosRestauracion, String efecto) {
+    public Consumible(int idObjeto, String nombre, double peso, int precio, String descripcion, int cantidad, int puntosRestauracion) {
         super(idObjeto, nombre, peso, precio, descripcion);
         if (idObjeto <= 0) {
             throw new IllegalArgumentException("El ID del objeto debe ser mayor que cero.");

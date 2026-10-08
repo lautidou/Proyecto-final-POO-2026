@@ -1,6 +1,6 @@
 package Controlador;
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 import Modelo.ModeloCombate;
 import Modelo.ModeloCreacionPersonaje;
@@ -30,6 +30,9 @@ public class ControladorPantallas {
         }
         this.ventana = ventana;
     }
+
+    //probar luego
+    //new ModeloMapa(MundoDePrueba.crear())
 
   /*   public void iniciar() {
     registrarMenuPrincipal();

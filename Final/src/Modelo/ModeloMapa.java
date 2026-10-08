@@ -23,6 +23,7 @@ public class ModeloMapa {
 
     public ModeloMapa() {
         this(MundoDePrueba.crear());
+
     }
 
     public ModeloMapa(Mundo mundo) {
@@ -52,7 +53,7 @@ public class ModeloMapa {
         this.soporte.firePropertyChange(PROP_POSICION, posicionAnterior, nuevo.getPosicion());
     }
 
-    /** @return true si el personaje se movió, false si el paso estaba bloqueado. */
+    /** return true si el personaje se movió, false si el paso estaba bloqueado. */
     public boolean moverPersonaje(Direccion direccion) {
         if (this.personaje == null || this.personaje.getPosicion() == null) {
             return false;

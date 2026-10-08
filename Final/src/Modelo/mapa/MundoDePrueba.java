@@ -1,61 +1,80 @@
 package Modelo.mapa;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public final class MundoDePrueba {
+
+    public static final String ID_VILLA_VERDE = "VillaVerde";
+
+    private static final String CARPETA = "Assets/Mapas/";
+    private static final String CAPA_COLISIONES = CARPETA + "/colisiones_VillaVerde_colisiones.csv";
+    private static final String CAPA_VEGETACION = CARPETA + "/colisiones_VillaVerde_vegetacion.csv";
+    private static final String CAPA_AGUA = CARPETA + "/colisiones_VillaVerde_caminos_y_agua.csv";
+
+    //aca no se por que por poner false funciona xd
+    private static final boolean BLOQUEAR_AGUA = false;
+    private static final Set<Integer> TILES_AGUA =
+            new HashSet<>(Arrays.asList(255, 142, 138, 140, 165, 161, 118, 187));
+
+    private static final boolean BLOQUEAR_TRONCOS = true;
+    private static final Set<Integer> TILES_TRONCO =
+            new HashSet<>(Arrays.asList(96, 97, 98, 99, 156, 157, 158, 159));
+
+    //cambiar despues las coordenadas donde empieza
+    private static final Posicion INICIO = new Posicion(20, 20);
 
     private MundoDePrueba() {
     }
 
     public static Mundo crear() {
-        Mapa pueblo = new Mapa("Pueblo", 15, 25, Terreno.PASTO);
-        for (int x = 5; x < 12; x++) {
-            pueblo.setTerreno(new Posicion(x, 6), Terreno.PARED);
-        }
-        for (int y = 2; y < 6; y++) {
-            pueblo.setTerreno(new Posicion(18, y), Terreno.AGUA);
+        int[][] colisiones = CargarMapa.cargarCapa(CAPA_COLISIONES);
+        int filas = colisiones.length;
+        int columnas = colisiones[0].length;
+
+        Mapa villa = new Mapa(ID_VILLA_VERDE, filas, columnas, Terreno.PASTO);
+
+        
+        for (int y = 0; y < filas; y++) {
+            for (int x = 0; x < columnas; x++) {
+                if (colisiones[y][x] != CargarMapa.VACIO) {
+                    villa.setTerreno(new Posicion(x, y), Terreno.PARED);
+                }
+            }
         }
 
-        Mapa bosque = new Mapa("Bosque", 12, 20, Terreno.PASTO);
-        for (int y = 2; y < 9; y++) {
-            bosque.setTerreno(new Posicion(9, y), Terreno.PARED);
+        if (BLOQUEAR_TRONCOS) {
+            marcarTiles(villa, CAPA_VEGETACION, TILES_TRONCO, Terreno.PARED);
         }
-        for (int x = 4; x < 7; x++) {
-            bosque.setTerreno(new Posicion(x, 9), Terreno.AGUA);
-            bosque.setTerreno(new Posicion(x, 10), Terreno.AGUA);
+        if (BLOQUEAR_AGUA) {
+            marcarTiles(villa, CAPA_AGUA, TILES_AGUA, Terreno.AGUA);
         }
-
-        Mapa cueva = new Mapa("Cueva", 8, 10, Terreno.PIEDRA);
-        rodearConPared(cueva);
-        for (int y = 2; y < 5; y++) {
-            cueva.setTerreno(new Posicion(5, y), Terreno.PARED);
-        }
-
-        // Cada puerta lleva a la celda contigua a la puerta de regreso
-        puerta(pueblo, new Posicion(24, 7), "Bosque", new Posicion(1, 6));
-        puerta(bosque, new Posicion(0, 6), "Pueblo", new Posicion(23, 7));
-        puerta(bosque, new Posicion(19, 6), "Cueva", new Posicion(1, 4));
-        puerta(cueva, new Posicion(0, 4), "Bosque", new Posicion(18, 6));
 
         Mundo mundo = new Mundo();
-        mundo.agregarMapa(pueblo);
-        mundo.agregarMapa(bosque);
-        mundo.agregarMapa(cueva);
-        mundo.definirInicio("Pueblo", new Posicion(1, 1));
+        mundo.agregarMapa(villa);
+        mundo.definirInicio(ID_VILLA_VERDE, INICIO); // lanza error si la celda esta bloqueada
+
+        // Cuando tengas otro mapa, se conectan con portales (siempre de a pares):
+        // villa.agregarPortal(new Posicion(59, 3), new Portal("Pueblo", new Posicion(1, 20)));
+        // pueblo.agregarPortal(new Posicion(0, 20), new Portal("VillaVerde", new Posicion(58, 3)));
+
         return mundo;
     }
 
-    private static void puerta(Mapa origen, Posicion donde, String idDestino, Posicion llegada) {
-        origen.setTerreno(donde, Terreno.PUERTA);
-        origen.agregarPortal(donde, new Portal(idDestino, llegada));
-    }
-
-    private static void rodearConPared(Mapa mapa) {
-        for (int x = 0; x < mapa.getColumnas(); x++) {
-            mapa.setTerreno(new Posicion(x, 0), Terreno.PARED);
-            mapa.setTerreno(new Posicion(x, mapa.getFilas() - 1), Terreno.PARED);
+    private static void marcarTiles(Mapa mapa, String rutaCapa, Set<Integer> ids, Terreno terreno) {
+        int[][] capa = CargarMapa.cargarCapa(rutaCapa);
+        if (capa.length != mapa.getFilas() || capa[0].length != mapa.getColumnas()) {
+            throw new IllegalStateException("La capa '" + rutaCapa + "' no tiene el mismo tamano que el mapa ("
+                    + mapa.getColumnas() + "x" + mapa.getFilas() + ").");
         }
-        for (int y = 0; y < mapa.getFilas(); y++) {
-            mapa.setTerreno(new Posicion(0, y), Terreno.PARED);
-            mapa.setTerreno(new Posicion(mapa.getColumnas() - 1, y), Terreno.PARED);
+        for (int y = 0; y < capa.length; y++) {
+            for (int x = 0; x < capa[y].length; x++) {
+                Posicion p = new Posicion(x, y);
+                if (ids.contains(capa[y][x]) && mapa.getCelda(p).getTerreno() == Terreno.PASTO) {
+                    mapa.setTerreno(p, terreno);
+                }
+            }
         }
     }
 }
