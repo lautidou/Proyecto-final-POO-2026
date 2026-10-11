@@ -25,6 +25,10 @@ public class VistaMapa extends JPanel {
     private static final Map<String, String> RUTAS_FONDO = new HashMap<>();
     static {
         RUTAS_FONDO.put("VillaVerde", "Assets/Mapas/VillaVerde.png");
+        RUTAS_FONDO.put("Pueblo", "Assets/Mapas/Pueblo.png");
+        RUTAS_FONDO.put("Cueva", "Assets/Mapas/Cueva.png");
+        RUTAS_FONDO.put("EntradaCueva", "Assets/Mapas/EntradaCueva.png");
+
         // Cada mapa nuevo: una linea mas aca
     }
 
