@@ -3,7 +3,6 @@
 
 ## 1. Integrantes del Equipo 
 
-- Fuertes, Nicolas
 - Ojeda, Lautaro 
 - Ojeda, Tomas
 - Pereyra, Mariano
@@ -46,3 +45,7 @@ El objetivo es desarrollar un videojuego funcional, donde el jugador pueda inter
     - Superclase "Objeto": Define la estructura base de cualquier elemento utilizable que pueda guardarse en el inventario.
     - Subclases de Equipamiento ("Arma" y "Armadura"): Extienden de "Objeto" para representar equipo de combate.
     - Subclase de "Consumible": Extiende de :"Objeto" representando ítems que se gastan al usarse, como las pociones.
+
+### Patrones de Diseño Adicionales: State
+- **Nombre del Patrón:** **State (Estado)**.
+- **Justificación:** Se utilizara este patron para determinar la visibilidad de los combatientes en batalla. Habra una interfaz llamada 'EstadoVisibilidad' con 4 metodos; 'alEsconderse'/'alAtacar'/'alSerBuscado', que determinan si se cambia de estado o no al realizar dicha accion segun el estado actual, y 'esVisible' que avisa (a traves de un booleano) si el peleador es visible o no. Esto ayuda simplificar codigo ya que en la interacciones no haya que ramificar y sea facil de ver el ciclo que sigue la visibilidad.
