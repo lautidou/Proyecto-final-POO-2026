@@ -15,8 +15,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.util.List;
 
-import Vista.combate.BotonImagen;
+import Vista.combate.PanelBotonera;
 import Vista.combate.PanelHud;
 import Vista.combate.PanelSprite;
 import Vista.combate.PanelTablon;
@@ -25,8 +26,7 @@ public class VistaCombate extends JPanel {
 
     public static final String NOMBRE = "Combate";
 
-    // Imagen opcional del paisaje. Si no existe, se muestra un cielo liso.
-    private static final String RUTA_FONDO_ESCENA = "Assets/fondoCombate.png";
+    private static final String RUTA_FONDO_ESCENA = "Assets/Pelea/fondoPeleaBosque.png";
 
     // Proporciones de la pantalla
     private static final double PESO_ALTO_ESCENA = 0.62;
@@ -44,33 +44,31 @@ public class VistaCombate extends JPanel {
     private final PanelSprite spriteHeroe;
     private final PanelSprite spriteEnemigo;
 
-    private final JButton botonCombate;
-    private final JButton botonBusqueda;
-    private final JButton botonInventario;
-    private final JButton botonEsconderse;
+    private final PanelBotonera botonera;
 
     private final JTextArea areaMensajes;
 
     public VistaCombate() {
-        super(new GridBagLayout());
-        setBackground(COLOR_PANTALLA);
-        setBorder(BorderFactory.createEmptyBorder(MARGEN_PANTALLA, MARGEN_PANTALLA, MARGEN_PANTALLA, MARGEN_PANTALLA));
+        super(new BorderLayout());
+ 
+        PanelFondo panelFondo = new PanelFondo("Assets/Pelea/fondoMenuPelea.png");
+        panelFondo.setBackground(COLOR_PANTALLA);
+        panelFondo.setLayout(new GridBagLayout());
+        panelFondo.setBorder(BorderFactory.createEmptyBorder(MARGEN_PANTALLA, MARGEN_PANTALLA, MARGEN_PANTALLA, MARGEN_PANTALLA));
+        add(panelFondo, BorderLayout.CENTER);
 
         this.hudHeroe = new PanelHud();
         this.hudEnemigo = new PanelHud();
         this.spriteHeroe = new PanelSprite(new Color(60, 120, 200));
         this.spriteEnemigo = new PanelSprite(new Color(190, 50, 50));
 
-        this.botonCombate = new BotonImagen("Assets/Pelea/botones/botonCombate.png", "Combate");
-        this.botonBusqueda = new BotonImagen("Assets/Pelea/botones/botonBuscar.png", "Búsqueda");
-        this.botonInventario = new BotonImagen("Assets/Pelea/botones/botonMochila.png", "Inventario");
-        this.botonEsconderse = new BotonImagen("Assets/Pelea/botones/botonEsconderse.png", "Esconderse");
+        this.botonera = new PanelBotonera();
 
         this.areaMensajes = new JTextArea();
 
-        add(crearTablonEscena(), restricciones(0, 0, 2, 1.0, PESO_ALTO_ESCENA));
-        add(crearTablonBotonera(), restricciones(0, 1, 1, PESO_ANCHO_BOTONERA, PESO_ALTO_INFERIOR));
-        add(crearTablonMensajes(), restricciones(1, 1, 1, PESO_ANCHO_MENSAJES, PESO_ALTO_INFERIOR));
+        panelFondo.add(crearTablonEscena(), restricciones(0, 0, 2, 1.0, PESO_ALTO_ESCENA));
+        panelFondo.add(crearTablonBotonera(), restricciones(0, 1, 1, PESO_ANCHO_BOTONERA, PESO_ALTO_INFERIOR));
+        panelFondo.add(crearTablonMensajes(), restricciones(1, 1, 1, PESO_ANCHO_MENSAJES, PESO_ALTO_INFERIOR));
     }
 
     // ---------- Construcción ----------
@@ -98,15 +96,9 @@ public class VistaCombate extends JPanel {
         return crearTablon(escena);
     }
 
-    /** Tablón mediano: los cuatro botones, en dos filas de dos (las imágenes son anchas). */
+    /** Tablón mediano: la botonera con sus menús. */
     private PanelTablon crearTablonBotonera() {
-        JPanel botonera = new JPanel(new GridLayout(2, 2, 8, 8));
-        botonera.setOpaque(false);
-        botonera.add(this.botonCombate);
-        botonera.add(this.botonBusqueda);
-        botonera.add(this.botonInventario);
-        botonera.add(this.botonEsconderse);
-        return crearTablon(botonera);
+        return crearTablon(this.botonera);
     }
 
     /** Tablón chico: texto de lo que sucede. */
@@ -169,21 +161,57 @@ public class VistaCombate extends JPanel {
         this.areaMensajes.setText("");
     }
 
+    // ---------- Menús de la botonera ----------
+
+    public void mostrarMenuPrincipal() {
+        this.botonera.mostrarMenuPrincipal();
+    }
+
+    public void mostrarMenuCombate() {
+        this.botonera.mostrarMenuCombate();
+    }
+
+    public void mostrarMenuHabilidades() {
+        this.botonera.mostrarMenuHabilidades();
+    }
+
+    public List<JButton> setHabilidades(List<String> nombres, List<String> descripciones) {
+        return this.botonera.setHabilidades(nombres, descripciones);
+    }
+
     // ---------- Botones (el controlador les agrega los listeners) ----------
 
     public JButton getBotonCombate() {
-        return this.botonCombate;
+        return this.botonera.getBotonCombate();
     }
 
     public JButton getBotonBusqueda() {
-        return this.botonBusqueda;
+        return this.botonera.getBotonBusqueda();
     }
 
     public JButton getBotonInventario() {
-        return this.botonInventario;
+        return this.botonera.getBotonInventario();
     }
 
     public JButton getBotonEsconderse() {
-        return this.botonEsconderse;
+        return this.botonera.getBotonEsconderse();
+    }
+
+    public JButton getBotonBasico() {
+        return this.botonera.getBotonBasico();
+    }
+
+    public JButton getBotonHabilidades() {
+        return this.botonera.getBotonHabilidades();
+    }
+
+    /** "Volver" del submenú de combate: regresa al menú principal. */
+    public JButton getBotonVolverCombate() {
+        return this.botonera.getBotonVolverCombate();
+    }
+
+    /** "Volver" del submenú de habilidades: regresa al submenú de combate. */
+    public JButton getBotonVolverHabilidades() {
+        return this.botonera.getBotonVolverHabilidades();
     }
 }

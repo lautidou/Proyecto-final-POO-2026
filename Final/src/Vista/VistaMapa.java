@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
 public class VistaMapa extends JPanel {
 
     public static final String NOMBRE = "Mapa";

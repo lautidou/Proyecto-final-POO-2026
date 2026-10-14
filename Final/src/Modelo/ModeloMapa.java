@@ -35,7 +35,6 @@ public class ModeloMapa {
         this.mundo = mundo;
     }
 
-    /** Se llama al crear el héroe: lo ubica en el inicio del mundo. */
     public void colocarPersonaje(Personaje nuevo) {
         if (nuevo == null) {
             throw new IllegalArgumentException("El personaje no puede ser nulo.");
@@ -53,7 +52,6 @@ public class ModeloMapa {
         this.soporte.firePropertyChange(PROP_POSICION, posicionAnterior, nuevo.getPosicion());
     }
 
-    /** return true si el personaje se movió, false si el paso estaba bloqueado. */
     public boolean moverPersonaje(Direccion direccion) {
         if (this.personaje == null || this.personaje.getPosicion() == null) {
             return false;

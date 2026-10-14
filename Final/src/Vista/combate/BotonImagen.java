@@ -73,7 +73,6 @@ public class BotonImagen extends JButton {
         altoEscalado = alto;
     }
 
-    /** Reduce a la mitad varias veces antes del ajuste final: se ve más nítido que un solo salto grande. */
     private static BufferedImage escalar(BufferedImage origen, int ancho, int alto) {
         BufferedImage actual = origen;
         int w = origen.getWidth();

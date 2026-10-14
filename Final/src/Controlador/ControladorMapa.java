@@ -35,7 +35,6 @@ public class ControladorMapa {
         this.modelo.addPropertyChangeListener(this::alCambiarModelo);
     }
 
-    /** El modelo avisa qué propiedad cambió; el controlador actualiza solo esa parte de la vista. */
     private void alCambiarModelo(PropertyChangeEvent evento) {
         switch (evento.getPropertyName()) {
             case ModeloMapa.PROP_ESCENARIO:
@@ -74,7 +73,6 @@ public class ControladorMapa {
         return terrenos;
     }
 
-    /** Traduce las teclas físicas a acciones del juego. */
     private void registrarTeclas() {
         asignarMovimiento(KeyEvent.VK_W, Direccion.ARRIBA);
         asignarMovimiento(KeyEvent.VK_UP, Direccion.ARRIBA);
@@ -104,7 +102,6 @@ public class ControladorMapa {
     }
 
     private void ejecutarMovimiento(Direccion direccion) {
-        // La vista se actualiza sola: el modelo avisa si hubo cambio.
         this.modelo.moverPersonaje(direccion);
     }
 

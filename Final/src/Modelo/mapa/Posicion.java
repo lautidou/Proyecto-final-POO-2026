@@ -1,6 +1,5 @@
 package Modelo.mapa;
 
-/** Coordenada inmutable dentro del mapa. Desplazarla devuelve una nueva Posicion. */
 public final class Posicion {
     private final int x;
     private final int y;

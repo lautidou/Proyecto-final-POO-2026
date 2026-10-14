@@ -1,19 +1,18 @@
 package Modelo.pjs;
-import java.util.List;
 
+import java.util.ArrayList;
+import java.util.List;
 import Modelo.mapa.Posicion;
 
 public abstract class Personaje {
-//Atributos
+    // Atributos
     private String nombre;
     private int vida;
     private int vidaMaxima;
     private int nivel;
     private Clases clase;
     private List<Habilidad> habilidades;
-    // Combate
     private Caracteristicas caracteristicas;
-    //posicion de pj
     private Posicion posicion;
 
     public Personaje(String nombre, int nivel, Clases clase, List<Habilidad> habilidades,
@@ -35,10 +34,11 @@ public abstract class Personaje {
         setVida(this.vidaMaxima);
         this.nivel = nivel;
         this.clase = clase;
-        this.habilidades = habilidades;
         this.caracteristicas = caracteristicas;
+        this.habilidades = (habilidades != null) ? habilidades : new ArrayList<>();
+        actualizarHabilidadesDesbloqueadas();
     }
-    //Metodos
+
     public void curar(int puntosCurados) {
         this.vida += puntosCurados;
     }
@@ -47,22 +47,38 @@ public abstract class Personaje {
         this.vida -= puntosDanio;
         if (this.vida < 0) {
             this.vida = 0;
-            //logica de muerte
+            // Lógica de muerte
         }
     }
     
     public void aprenderHabilidad(Habilidad habilidad) {
-        if (!habilidades.contains(habilidad)) {
+        if (habilidad == null) return;
+        boolean yaExiste = habilidades.stream()
+                .anyMatch(h -> h.getIdHabilidad() == habilidad.getIdHabilidad());
+        if (!yaExiste) {
             habilidades.add(habilidad);
-        } else {
-            System.out.println("El personaje ya conoce esta habilidad.");
+            System.out.println(nombre + " ha aprendido la habilidad: " + habilidad.getNombre());
         }
     }
 
     public void subirNivel() {
+        if (this.nivel >= 20) {
+            System.out.println(this.nombre + " ya ha alcanzado el nivel máximo.");
+            return;
+        }
         this.nivel++;
+        System.out.println(this.nombre + " ha subido al Nivel " + this.nivel + "!");
+        actualizarHabilidadesDesbloqueadas();
     }
 
+    public void actualizarHabilidadesDesbloqueadas() {
+        List<Habilidad> disponibles = clase.getHabilidadesHastaNivel(this.nivel);
+        for (Habilidad habilidad : disponibles) {
+            aprenderHabilidad(habilidad);
+        }
+    }
+
+    // Getters y Setters
     public int getVida() {
         return vida;
     }
@@ -79,6 +95,14 @@ public abstract class Personaje {
         this.vida = Valor;
     }
 
+    public int getNivel() {
+        return nivel;
+    }
+
+    public Clases getClase() {
+        return clase;
+    }
+
     public int getProficiencia(){
         return((this.nivel - 1) / 4) + 2;
     } 
@@ -89,5 +113,13 @@ public abstract class Personaje {
 
     public void setPosicion(Posicion posicion){
         this.posicion = posicion;
+    }
+
+    public Caracteristicas getCaracteristicas() {
+        return caracteristicas;
+    }
+
+    public List<Habilidad> getHabilidades() {
+        return habilidades;
     }
 }

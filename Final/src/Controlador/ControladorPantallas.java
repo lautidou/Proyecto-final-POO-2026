@@ -1,6 +1,6 @@
 package Controlador;
 
-//import java.util.ArrayList;
+import java.util.ArrayList;
 
 import Modelo.ModeloCombate;
 import Modelo.ModeloCreacionPersonaje;
@@ -13,12 +13,12 @@ import Vista.VistaMapa;
 import Vista.VistaMenuMain;
 
 
-/*import Modelo.pjs.Caracteristicas;
+import Modelo.pjs.Caracteristicas;
 import Modelo.pjs.Clases;
 import Modelo.pjs.Enemigo;
 import Modelo.pjs.Heroe;
 import Modelo.pjs.Raza;
-import Modelo.pjs.TipoEnemigo;*/
+import Modelo.pjs.TipoEnemigo;
 
 public class ControladorPantallas {
 
@@ -34,7 +34,7 @@ public class ControladorPantallas {
     //probar luego
     //new ModeloMapa(MundoDePrueba.crear())
 
-  /*   public void iniciar() {
+  public void iniciar() {
     registrarMenuPrincipal();
     ModeloMapa modeloMapa = registrarMapa();
     registrarCreacionPersonaje(modeloMapa);
@@ -56,16 +56,16 @@ private Enemigo crearEnemigoPrueba() {
     return new Enemigo("Goblin", 1, Clases.Barbaro, new ArrayList<>(),
             new Caracteristicas(8, 14, 10, 10, 8, 8), TipoEnemigo.Goblin, 50, new ArrayList<>());
 }
-*/
 
-    public void iniciar() {
+
+    /*public void iniciar() {
         registrarMenuPrincipal();
         ModeloMapa modeloMapa = registrarMapa();
         registrarCreacionPersonaje(modeloMapa);
  
         this.ventana.mostrarPanel(VistaMenuMain.NOMBRE);
         this.ventana.mostrar();
-    }
+    }*/
 
     private void registrarMenuPrincipal() {
         ModeloMenuMain modelo = new ModeloMenuMain();

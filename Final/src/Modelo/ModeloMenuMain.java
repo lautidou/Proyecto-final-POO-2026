@@ -6,7 +6,7 @@ public class ModeloMenuMain {
         // Inicialización del modelo
     }
 
-    // Métodos preparados para la lógica futura de los botones
+    // Métodos
     public void procesarAccionUno() {
         // Lógica para el botón 1
     }

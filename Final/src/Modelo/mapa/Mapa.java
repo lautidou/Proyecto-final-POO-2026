@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Un escenario: cuadrícula de celdas más los portales que lo conectan con otros. */
 public class Mapa {
     private final String id;
     private final Celda[][] cuadricula;

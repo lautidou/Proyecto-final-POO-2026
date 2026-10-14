@@ -21,13 +21,8 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 
-/**
- * Pantalla de creación de personaje. Se muestra al presionar el botón 1
- * del menú principal (VistaMenuMain).
- */
 public class VistaCreacionPersonaje extends JPanel {
 
-    /** Nombre con el que esta pantalla se registra en la Ventana (CardLayout). */
     public static final String NOMBRE = "CreacionPersonaje";
 
     private final JTextField campoNombre;
@@ -122,11 +117,6 @@ public class VistaCreacionPersonaje extends JPanel {
         this.mostrarImagenClase(this.getClaseSeleccionada());
     }
 
-    /**
-     * Muestra la imagen de la clase indicada.
-     * Busca el archivo Assets/MenuSeleccion/<clase en minúsculas>Seleccion.png
-     * (ej.: BARBARO -> barbaroSeleccion.png).
-     */
     public void mostrarImagenClase(Clases clase) {
         if (clase == null) {
             this.imagenPersonaje.setIcon(null);

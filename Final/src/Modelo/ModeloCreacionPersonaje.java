@@ -11,10 +11,6 @@ import Modelo.pjs.Raza;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Lógica de negocio de la pantalla de creación de personaje.
- * Valida los datos ingresados y arma un Heroe nuevo.
- */
 public class ModeloCreacionPersonaje {
 
     private Heroe heroeCreado;
@@ -42,10 +38,6 @@ public class ModeloCreacionPersonaje {
         return this.heroeCreado;
     }
 
-    /**
-     * Genera características base tirando 3d6 por estadística (estilo clásico
-     * de rol) y sumando los bonos raciales definidos en Raza.
-     */
     private Caracteristicas generarCaracteristicasBase(Raza raza) {
         int fuerza = tirarCaracteristica() + raza.getFuerza();
         int sabiduria = tirarCaracteristica() + raza.getSabiduria();
