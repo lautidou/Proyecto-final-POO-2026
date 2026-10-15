@@ -31,7 +31,13 @@ El objetivo es desarrollar un videojuego funcional, donde el jugador pueda inter
     - Si el jugador es derrotado volverá al último punto de control, perdiendo el progreso adquirido hasta el momento.
 - **Interfaz Gráfica (IGU):**
     - Panel de Batalla: Visualización de listado de habilidades, objetos utilizables y opción de escapar.
+
+    ![Diagrama STATE](./Final/images/panelBatallaSS.PNG)
+
     - Selección de Equipo: Visualización de los posibles aliados, estadísticas y habilidades de los mismos.
+    - Mapa: Visualizacion del escenario en cuestion(hay distintos), con el nombre en la esquina superior izquierda y el personaje que puede moverse libremente.
+
+    ![Diagrama STATE](./Final/images/MapaSS.PNG)
 
 
 ## 3. Arquitectura y Diseño 
