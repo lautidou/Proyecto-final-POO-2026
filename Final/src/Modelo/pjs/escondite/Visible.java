@@ -1,16 +1,16 @@
 package Modelo.pjs.escondite;
 
-import Modelo.pjs.Dados;
-import Modelo.pjs.Personaje;
 import Modelo.combate.ContextoCombate;
 import Modelo.combate.Reglas;
+import Modelo.pjs.Dados;
+import Modelo.pjs.Personaje;
 
 public class Visible implements EstadoVisibilidad {
 
     private static final int BASE_PERCEPCION_PASIVA = 10;
 
     @Override
-    public EstadoVisibilidad alEsconderse(ContextoCombate contexto) {
+    public void esconderse(ContextoCombate contexto) {
         Personaje actor = contexto.getActor();
         Personaje oponente = contexto.getOponente();
 
@@ -19,20 +19,20 @@ public class Visible implements EstadoVisibilidad {
 
         if (sigilo >= percepcion) {
             contexto.mensaje(actor.getNombre() + " se esconde (sigilo " + sigilo + " contra " + percepcion + ").");
-            return new Escondido(sigilo);
+            contexto.cambiarEstado(new Escondido(sigilo));
+        } else {
+            contexto.mensaje(actor.getNombre() + " no logra esconderse (sigilo " + sigilo + " contra " + percepcion + ").");
         }
-        contexto.mensaje(actor.getNombre() + " no logra esconderse (sigilo " + sigilo + " contra " + percepcion + ").");
-        return this;
     }
 
     @Override
-    public EstadoVisibilidad alAtacar(ContextoCombate contexto) {
-        return this; // ya estaba a la vista: nada cambia
+    public void atacar(ContextoCombate contexto) {
+        // ya estaba a la vista: nada cambia
     }
 
     @Override
-    public EstadoVisibilidad alSerBuscado(ContextoCombate contexto, int tiradaBusqueda) {
-        return this; // no hay nada que encontrar
+    public void serBuscado(ContextoCombate contexto, int tiradaBusqueda) {
+        // no hay nada que encontrar
     }
 
     @Override

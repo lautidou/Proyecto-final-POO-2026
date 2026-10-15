@@ -1,7 +1,12 @@
 package Modelo.combate;
 
+import Modelo.pjs.Habilidad;
 import Modelo.pjs.Personaje;
+import Modelo.pjs.escondite.EstadoVisibilidad;
+import Modelo.pjs.escondite.Visible;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public final class ContextoCombate {
@@ -9,7 +14,8 @@ public final class ContextoCombate {
     private final Personaje actor;
     private final Personaje oponente;
     private final Consumer<String> salidaMensajes;
-    private boolean huboAtaque = false;
+    private EstadoVisibilidad estado = new Visible(); // todo combatiente empieza a la vista
+    private final Map<Integer, Integer> usosGastados = new HashMap<>(); // id de habilidad -> veces usada en esta pelea
 
     public ContextoCombate(Personaje actor, Personaje oponente, Consumer<String> salidaMensajes) {
         this.actor = actor;
@@ -25,27 +31,51 @@ public final class ContextoCombate {
         return oponente;
     }
 
-    public void mensaje(String texto) {
-        this.salidaMensajes.accept(texto);
+    // ---- Operaciones que dependen del estado: se delegan en él ----
+    public void esconderse() {
+        this.estado.esconderse(this);
     }
 
-    // El actor daña a su oponente. Todo el daño del combate pasa por aquí.
+    public void serBuscado(int tiradaBusqueda) {
+        this.estado.serBuscado(this, tiradaBusqueda);
+    }
+
+    public boolean esVisible() {
+        return this.estado.esVisible();
+    }
+
+    public void cambiarEstado(EstadoVisibilidad nuevo) {
+        if (nuevo == null) {
+            throw new IllegalArgumentException("El estado no puede ser nulo.");
+        }
+        this.estado = nuevo;
+    }
+
+    // ---- Lo que pueden hacer los efectos de las acciones ----
     public void infligirDanio(int puntos) {
-        this.huboAtaque = true;
         this.oponente.recibirDanio(puntos);
         mensaje(this.oponente.getNombre() + " recibe " + puntos + " de daño.");
+        this.estado.atacar(this); // hacer daño es atacar: delata a quien está escondido
     }
 
-    // Si el actor hizo daño con esta acción (es lo que cuenta como atacar).
-    public boolean huboAtaque() {
-        return this.huboAtaque;
-    }
-
-    // El actor recupera vida, sin pasar de su máximo.
     public void curarse(int puntos) {
         int faltante = this.actor.getVidaMaxima() - this.actor.getVida();
         int curado = Math.max(0, Math.min(puntos, faltante));
         this.actor.curar(curado);
         mensaje(this.actor.getNombre() + " recupera " + curado + " PV.");
+    }
+
+    // ---- Usos de habilidades (por pelea: un contexto nuevo los repone) ----
+    public int usosRestantes(Habilidad habilidad) {
+        Integer gastados = this.usosGastados.get(habilidad.getIdHabilidad());
+        return habilidad.getUsosTotales() - (gastados == null ? 0 : gastados);
+    }
+
+    public void registrarUso(Habilidad habilidad) {
+        this.usosGastados.merge(habilidad.getIdHabilidad(), 1, Integer::sum);
+    }
+
+    public void mensaje(String texto) {
+        this.salidaMensajes.accept(texto);
     }
 }

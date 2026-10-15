@@ -3,8 +3,8 @@ package Modelo.pjs.escondite;
 import Modelo.combate.ContextoCombate;
 
 public interface EstadoVisibilidad {
-    EstadoVisibilidad alEsconderse(ContextoCombate contexto);
-    EstadoVisibilidad alAtacar(ContextoCombate contexto);
-    EstadoVisibilidad alSerBuscado(ContextoCombate contexto, int tiradaBusqueda);
+    void esconderse(ContextoCombate contexto);
+    void atacar(ContextoCombate contexto);
+    void serBuscado(ContextoCombate contexto, int tiradaBusqueda);
     boolean esVisible();
 }

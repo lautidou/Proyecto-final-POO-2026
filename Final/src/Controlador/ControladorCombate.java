@@ -49,8 +49,6 @@ public class ControladorCombate {
     }
 
     // ---------- Menú principal ----------
-
-    /** "Combate" no ataca: abre el submenú. */
     private void ejecutarCombate() {
         this.vista.mostrarMenuCombate();
     }
@@ -80,7 +78,8 @@ public class ControladorCombate {
         List<String> nombres = new ArrayList<>();
         List<String> descripciones = new ArrayList<>();
         for (Habilidad habilidad : habilidades) {
-            nombres.add(habilidad.getNombre());
+            nombres.add(habilidad.getNombre() + " (" + this.modelo.getUsosRestantesDelHeroe(habilidad)
+                    + "/" + habilidad.getUsosTotales() + ")");
             descripciones.add(habilidad.getDescripcion());
         }
 

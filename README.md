@@ -48,4 +48,6 @@ El objetivo es desarrollar un videojuego funcional, donde el jugador pueda inter
 
 ### Patrones de Diseño Adicionales: State
 - **Nombre del Patrón:** **State (Estado)**.
-- **Justificación:** Se utilizara este patron para determinar la visibilidad de los combatientes en batalla. Habra una interfaz llamada 'EstadoVisibilidad' con 4 metodos; 'alEsconderse'/'alAtacar'/'alSerBuscado', que determinan si se cambia de estado o no al realizar dicha accion segun el estado actual, y 'esVisible' que avisa (a traves de un booleano) si el peleador es visible o no. Esto ayuda simplificar codigo ya que en la interacciones no haya que ramificar y sea facil de ver el ciclo que sigue la visibilidad.
+- **Justificación:** Se utilizara este patron para determinar la visibilidad de los combatientes en batalla. Habra una interfaz llamada 'EstadoVisibilidad' con 4 metodos; 'esconderse'/'atacar'/'serBuscado', que reciben "ContextoCombate" y determinan si se cambia de estado o no al realizar dicha accion segun el estado actual, y 'esVisible' que avisa (a traves de un booleano) si el peleador es visible o no. "ContextoCombate" representa a cada combatiente en la contienda almacenando su estado de visibilidad y cambiandolo a traves del metodo que le toque segun su visibilidad actual. Esto ayuda simplificar codigo ya que en las interacciones no habra que ramificar y sera facil de ver el ciclo que sigue la visibilidad.
+
+![Diagrama STATE](./Final/images/UMLstate.drawio.png)
