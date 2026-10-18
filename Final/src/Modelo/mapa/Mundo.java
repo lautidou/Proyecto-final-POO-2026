@@ -65,6 +65,10 @@ public class Mundo {
         this.mapaActual = mapa;
     }
 
+    public Mapa getMapa(String idMapa) {
+        return mapas.get(idMapa);
+    }
+
     public Mapa getMapaActual() { return mapaActual; }
     public Posicion getPosicionInicial() { return posicionInicial; }
 }

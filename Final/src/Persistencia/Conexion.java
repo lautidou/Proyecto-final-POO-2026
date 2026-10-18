@@ -1,0 +1,26 @@
+package Persistencia;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class Conexion {
+
+    private static Conexion instancia;
+    private final Connection conexion;
+
+    private Conexion() throws SQLException {
+        this.conexion = DriverManager.getConnection("jdbc:sqlite:juego.db");
+    }
+
+    public static Conexion getInstancia() throws SQLException {
+        if (instancia == null) {
+            instancia = new Conexion();
+        }
+        return instancia;
+    }
+
+    public Connection get() {
+        return this.conexion;
+    }
+}

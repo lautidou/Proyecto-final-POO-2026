@@ -1,6 +1,7 @@
 package Controlador;
 
 import Modelo.ModeloMapa;
+import Modelo.ModeloPartida;
 import Modelo.mapa.Direccion;
 import Modelo.mapa.Mapa;
 import Modelo.mapa.Posicion;
@@ -21,13 +22,15 @@ public class ControladorMapa {
 
     private final VistaMapa vista;
     private final ModeloMapa modelo;
+    private final ModeloPartida modeloPartida;
 
-    public ControladorMapa(VistaMapa vista, ModeloMapa modelo) {
-        if (vista == null || modelo == null) {
-            throw new IllegalArgumentException("La vista y el modelo son obligatorios");
+    public ControladorMapa(VistaMapa vista, ModeloMapa modelo, ModeloPartida modeloPartida) {
+        if (vista == null || modelo == null || modeloPartida == null) {
+            throw new IllegalArgumentException("La vista y los modelos son obligatorios");
         }
         this.vista = vista;
         this.modelo = modelo;
+        this.modeloPartida = modeloPartida;
 
         registrarTeclas();
         mostrarEscenario(this.modelo.getMapaActual());
@@ -102,10 +105,15 @@ public class ControladorMapa {
     }
 
     private void ejecutarMovimiento(Direccion direccion) {
+        // La vista se actualiza sola: el modelo avisa si hubo cambio.
         this.modelo.moverPersonaje(direccion);
     }
 
+    // Al salir al menú se guarda la partida, para poder retomarla con "Cargar Partida".
     private void ejecutarSalir() {
+        if (this.modelo.getPersonaje() != null && !this.modeloPartida.guardar()) {
+            System.err.println("No se pudo guardar la partida.");
+        }
         Ventana.getInstancia().mostrarPanel(VistaMenuMain.NOMBRE);
     }
 }

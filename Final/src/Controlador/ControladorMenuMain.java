@@ -1,21 +1,27 @@
 package Controlador;
 
 import Modelo.ModeloMenuMain;
+import Modelo.ModeloPartida;
 import Vista.Ventana;
 import Vista.VistaCreacionPersonaje;
+import Vista.VistaMapa;
 import Vista.VistaMenuMain;
+
+import javax.swing.JOptionPane;
 
 public class ControladorMenuMain {
 
     private final VistaMenuMain vista;
     private final ModeloMenuMain modelo;
+    private final ModeloPartida modeloPartida;
 
-    public ControladorMenuMain(VistaMenuMain vista, ModeloMenuMain modelo) {
-        if (vista == null || modelo == null) {
-            throw new IllegalArgumentException("La vista y el modelo son obligatorios");
+    public ControladorMenuMain(VistaMenuMain vista, ModeloMenuMain modelo, ModeloPartida modeloPartida) {
+        if (vista == null || modelo == null || modeloPartida == null) {
+            throw new IllegalArgumentException("La vista y los modelos son obligatorios");
         }
         this.vista = vista;
         this.modelo = modelo;
+        this.modeloPartida = modeloPartida;
 
         // Registro de eventos para los tres botones del panel central
         this.vista.getBotonUno().addActionListener(evento -> this.ejecutarBotonUno());
@@ -32,12 +38,16 @@ public class ControladorMenuMain {
 
     private void ejecutarBotonDos() {
         System.out.println("Se presionó el Botón 2");
-        this.modelo.procesarAccionDos();
+        if (this.modeloPartida.cargar()) {
+            Ventana.getInstancia().mostrarPanel(VistaMapa.NOMBRE);
+        } else {
+            JOptionPane.showMessageDialog(null, "No hay una partida guardada para cargar.",
+                    "Cargar partida", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void ejecutarBotonTres() {
         System.out.println("Se presionó el Botón 3");
-        this.modelo.procesarAccionTres();
         System.exit(0);
     }
 }

@@ -6,7 +6,7 @@ import Modelo.mapa.Mundo;
 import Modelo.mapa.MundoDePrueba;
 import Modelo.mapa.Portal;
 import Modelo.mapa.Posicion;
-import Modelo.pjs.Personaje;
+import Modelo.pjs.Heroe;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -18,12 +18,11 @@ public class ModeloMapa {
     public static final String PROP_POSICION = "posicion";
 
     private final Mundo mundo;
-    private Personaje personaje;
+    private Heroe personaje;
     private final PropertyChangeSupport soporte = new PropertyChangeSupport(this);
 
     public ModeloMapa() {
         this(MundoDePrueba.crear());
-
     }
 
     public ModeloMapa(Mundo mundo) {
@@ -35,16 +34,34 @@ public class ModeloMapa {
         this.mundo = mundo;
     }
 
-    public void colocarPersonaje(Personaje nuevo) {
+    public void colocarPersonaje(Heroe nuevo) {
         if (nuevo == null) {
             throw new IllegalArgumentException("El personaje no puede ser nulo.");
         }
-        Personaje anterior = this.personaje;
-        Posicion posicionAnterior = (anterior == null) ? null : anterior.getPosicion();
         Mapa mapaAnterior = this.mundo.getMapaActual();
-
         this.mundo.reiniciar();
-        nuevo.setPosicion(this.mundo.getPosicionInicial());
+        instalar(nuevo, mapaAnterior, this.mundo.getPosicionInicial());
+    }
+
+    public boolean restaurar(Heroe heroe, String idEscenario, Posicion posicion) {
+        if (heroe == null || idEscenario == null || posicion == null) {
+            return false;
+        }
+        Mapa destino = this.mundo.getMapa(idEscenario);
+        if (destino == null || !destino.esTransitable(posicion)) {
+            return false;
+        }
+        Mapa mapaAnterior = this.mundo.getMapaActual();
+        this.mundo.irA(idEscenario);
+        instalar(heroe, mapaAnterior, posicion);
+        return true;
+    }
+
+    private void instalar(Heroe nuevo, Mapa mapaAnterior, Posicion posicion) {
+        Heroe anterior = this.personaje;
+        Posicion posicionAnterior = (anterior == null) ? null : anterior.getPosicion();
+
+        nuevo.setPosicion(posicion);
         this.personaje = nuevo;
 
         this.soporte.firePropertyChange(PROP_ESCENARIO, mapaAnterior, this.mundo.getMapaActual());
@@ -52,6 +69,7 @@ public class ModeloMapa {
         this.soporte.firePropertyChange(PROP_POSICION, posicionAnterior, nuevo.getPosicion());
     }
 
+    // @return true si el personaje se movió, false si el paso estaba bloqueado
     public boolean moverPersonaje(Direccion direccion) {
         if (this.personaje == null || this.personaje.getPosicion() == null) {
             return false;
@@ -91,7 +109,7 @@ public class ModeloMapa {
         return this.mundo.getMapaActual();
     }
 
-    public Personaje getPersonaje() {
+    public Heroe getPersonaje() {
         return this.personaje;
     }
 }

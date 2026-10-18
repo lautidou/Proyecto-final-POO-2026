@@ -37,7 +37,7 @@ public class VistaMenuMain extends JPanel {
         this.botonUno = new JButton("Crear Personaje");
         estilizarBoton(this.botonUno);
 
-        this.botonDos = new JButton("Acción 2");
+        this.botonDos = new JButton("Cargar Partida");
         estilizarBoton(this.botonDos);
 
         this.botonTres = new JButton("Salir");
