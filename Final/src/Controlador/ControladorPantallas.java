@@ -5,6 +5,7 @@ import Modelo.ModeloCreacionPersonaje;
 import Modelo.ModeloMapa;
 import Modelo.ModeloMenuMain;
 import Modelo.ModeloPartida;
+import Modelo.ModeloPausa;
 import Modelo.partida.PartidaGuardadaDAO;
 import Vista.Ventana;
 import Vista.VistaCombate;
@@ -28,11 +29,12 @@ public class ControladorPantallas {
     public void iniciar() {
         ModeloMapa modeloMapa = new ModeloMapa();
         ModeloPartida modeloPartida = new ModeloPartida(this.partidas, modeloMapa);
+        ModeloPausa modeloPausa =  new ModeloPausa();
 
         ControladorCombate combate = registrarCombate();
 
         registrarMenuPrincipal(modeloPartida);
-        registrarMapa(modeloMapa, modeloPartida, combate);
+        registrarMapa(modeloMapa, modeloPartida, combate, modeloPausa);
         registrarCreacionPersonaje(modeloMapa);
 
         this.ventana.mostrarPanel(VistaMenuMain.NOMBRE);
@@ -47,11 +49,11 @@ public class ControladorPantallas {
         new ControladorMenuMain(vista, modelo, modeloPartida);
     }
 
-    private void registrarMapa(ModeloMapa modelo, ModeloPartida modeloPartida, ControladorCombate combate) {
+    private void registrarMapa(ModeloMapa modelo, ModeloPartida modeloPartida, ControladorCombate combate, ModeloPausa modeloPausa) {
         VistaMapa vista = new VistaMapa();
 
         this.ventana.registrarPanel(VistaMapa.NOMBRE, vista);
-        new ControladorMapa(vista, modelo, modeloPartida, combate::iniciarCombate);
+        new ControladorMapa(vista, modelo, modeloPartida, combate::iniciarCombate, modeloPausa);
     }
 
     private void registrarCreacionPersonaje(ModeloMapa modeloMapa) {

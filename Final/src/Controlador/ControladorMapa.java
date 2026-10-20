@@ -9,6 +9,7 @@ import Modelo.mapa.Terreno;
 import Modelo.pjs.Enemigo;
 import Modelo.pjs.Heroe;
 import Modelo.pjs.Personaje;
+import Modelo.ModeloPausa;
 import Vista.Ventana;
 import Vista.VistaMapa;
 import Vista.VistaMenuMain;
@@ -29,16 +30,22 @@ public class ControladorMapa {
     private final ModeloMapa modelo;
     private final ModeloPartida modeloPartida;
     private final BiConsumer<Heroe, Enemigo> iniciarCombate; // lo que pasa cuando el héroe choca con un enemigo
+    private final ControladorPantallaPausa controladorPausa;
+    private final ModeloPausa modeloPausa;
 
     public ControladorMapa(VistaMapa vista, ModeloMapa modelo, ModeloPartida modeloPartida,
-                           BiConsumer<Heroe, Enemigo> iniciarCombate) {
+                           BiConsumer<Heroe, Enemigo> iniciarCombate,ModeloPausa modeloPausa) {
         if (vista == null || modelo == null || modeloPartida == null || iniciarCombate == null) {
             throw new IllegalArgumentException("La vista y los modelos son obligatorios");
         }
         this.vista = vista;
         this.modelo = modelo;
         this.modeloPartida = modeloPartida;
+        this.modeloPausa = modeloPausa;
         this.iniciarCombate = iniciarCombate;
+
+        this.controladorPausa = new ControladorPantallaPausa(Ventana.getInstancia(), this.modeloPausa, this.vista, this);
+        this.controladorPausa.configurarTeclas();
 
         registrarTeclas();
         mostrarEscenario(this.modelo.getMapaActual());
@@ -107,7 +114,7 @@ public class ControladorMapa {
         asignarMovimiento(KeyEvent.VK_D, Direccion.DERECHA);
         asignarMovimiento(KeyEvent.VK_RIGHT, Direccion.DERECHA);
 
-        asignarAccion(KeyEvent.VK_ESCAPE, "salir", this::ejecutarSalir);
+        //asignarAccion(KeyEvent.VK_ESCAPE, "salir", this::ejecutarSalir);
     }
 
     private void asignarMovimiento(int tecla, Direccion direccion) {
@@ -124,12 +131,15 @@ public class ControladorMapa {
             }
         });
     }
-
+    //pongo un if para que no se mueva si esta en pausa el juego
     private void ejecutarMovimiento(Direccion direccion) {
+        if (this.modeloPausa.isJuegoPausado()) {
+            return;
+        }
         this.modelo.moverPersonaje(direccion);
     }
 
-    private void ejecutarSalir() {
+    public void ejecutarSalir() {
         if (this.modelo.getPersonaje() != null && !this.modeloPartida.guardar()) {
             System.err.println("No se pudo guardar la partida.");
         }
