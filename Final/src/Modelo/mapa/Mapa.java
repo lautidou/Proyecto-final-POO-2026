@@ -1,7 +1,11 @@
 package Modelo.mapa;
 
+import Modelo.pjs.Enemigo;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Mapa {
@@ -10,6 +14,7 @@ public class Mapa {
     private final int filas;
     private final int columnas;
     private final Map<Posicion, Portal> portales = new HashMap<>();
+    private final List<Enemigo> enemigos = new ArrayList<>();
 
     public Mapa(String id, int filas, int columnas, Terreno base) {
         if (id == null || id.isEmpty()) {
@@ -65,6 +70,31 @@ public class Mapa {
 
     public Map<Posicion, Portal> getPortales() {
         return Collections.unmodifiableMap(portales);
+    }
+
+    public void agregarEnemigo(Enemigo enemigo, Posicion posicion) {
+        if (enemigo == null) {
+            throw new IllegalArgumentException("El enemigo no puede ser nulo.");
+        }
+        validarDentro(posicion);
+        if (!esTransitable(posicion) || portales.containsKey(posicion) || getEnemigoEn(posicion) != null) {
+            throw new IllegalArgumentException("No se puede colocar un enemigo en " + posicion + " del mapa '" + id + "'.");
+        }
+        enemigo.setPosicion(posicion);
+        enemigos.add(enemigo);
+    }
+
+    public Enemigo getEnemigoEn(Posicion p) {
+        for (Enemigo enemigo : enemigos) {
+            if (p.equals(enemigo.getPosicion())) {
+                return enemigo;
+            }
+        }
+        return null;
+    }
+
+    public List<Enemigo> getEnemigos() {
+        return Collections.unmodifiableList(enemigos);
     }
 
     private void validarDentro(Posicion p) {

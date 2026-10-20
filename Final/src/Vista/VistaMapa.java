@@ -21,7 +21,6 @@ public class VistaMapa extends JPanel {
 
     public static final String NOMBRE = "Mapa";
 
-    // true = muestra la grilla y las celdas bloqueadas (en rojo) para ajustar colisiones
     private static final boolean MODO_DEPURACION = false;
     private static final Map<String, String> RUTAS_FONDO = new HashMap<>();
     static {
@@ -29,8 +28,6 @@ public class VistaMapa extends JPanel {
         RUTAS_FONDO.put("Pueblo", "Assets/Mapas/Pueblo.png");
         RUTAS_FONDO.put("Cueva", "Assets/Mapas/Cueva.png");
         RUTAS_FONDO.put("EntradaCueva", "Assets/Mapas/EntradaCueva.png");
-
-        // Cada mapa nuevo: una linea mas aca
     }
 
     private final Map<String, Image> imagenes = new HashMap<>();
@@ -39,6 +36,7 @@ public class VistaMapa extends JPanel {
     private Terreno[][] terrenos;        // [fila][columna]
     private String nombrePersonaje;
     private Posicion posicionPersonaje;
+    private Map<Posicion, String> enemigos = new HashMap<>(); // posicion -> nombre
 
     public VistaMapa() {
         super();
@@ -53,6 +51,10 @@ public class VistaMapa extends JPanel {
     public void setPersonaje(String nombre, Posicion posicion) {
         this.nombrePersonaje = nombre;
         this.posicionPersonaje = posicion;
+    }
+
+    public void setEnemigos(Map<Posicion, String> enemigos) {
+        this.enemigos = new HashMap<>(enemigos);
     }
 
     public void quitarPersonaje() {
@@ -126,22 +128,13 @@ public class VistaMapa extends JPanel {
             }
         }
 
+        for (Map.Entry<Posicion, String> enemigo : enemigos.entrySet()) {
+            dibujarFicha(g2, mapaX, mapaY, celdaAncho, celdaAlto, enemigo.getKey(), enemigo.getValue(),
+                    new Color(130, 60, 170));
+        }
         if (posicionPersonaje != null && nombrePersonaje != null) {
-            int px = mapaX + (int) Math.round(posicionPersonaje.getX() * celdaAncho);
-            int py = mapaY + (int) Math.round(posicionPersonaje.getY() * celdaAlto);
-            int w = (int) Math.round(celdaAncho);
-            int h = (int) Math.round(celdaAlto);
-            int tam = Math.min(w, h);
-            int margen = tam / 8;
-            g2.setColor(new Color(200, 40, 40));
-            g2.fillOval(px + margen, py + margen, w - 2 * margen, h - 2 * margen);
-            g2.setColor(Color.WHITE);
-            g2.setFont(new Font("SansSerif", Font.BOLD, Math.max(10, tam / 2)));
-            FontMetrics fm = g2.getFontMetrics();
-            String inicial = nombrePersonaje.substring(0, 1).toUpperCase();
-            g2.drawString(inicial,
-                    px + (w - fm.stringWidth(inicial)) / 2,
-                    py + (h + fm.getAscent() - fm.getDescent()) / 2);
+            dibujarFicha(g2, mapaX, mapaY, celdaAncho, celdaAlto, posicionPersonaje, nombrePersonaje,
+                    new Color(200, 40, 40));
         }
 
         //muestra el nombre del escenario
@@ -156,5 +149,25 @@ public class VistaMapa extends JPanel {
         }
 
         g2.dispose();
+    }
+
+    /** Circulo con la inicial del nombre, dentro de la celda indicada. */
+    private void dibujarFicha(Graphics2D g2, int mapaX, int mapaY, double celdaAncho, double celdaAlto,
+                              Posicion posicion, String nombre, Color color) {
+        int px = mapaX + (int) Math.round(posicion.getX() * celdaAncho);
+        int py = mapaY + (int) Math.round(posicion.getY() * celdaAlto);
+        int w = (int) Math.round(celdaAncho);
+        int h = (int) Math.round(celdaAlto);
+        int tam = Math.min(w, h);
+        int margen = tam / 8;
+        g2.setColor(color);
+        g2.fillOval(px + margen, py + margen, w - 2 * margen, h - 2 * margen);
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("SansSerif", Font.BOLD, Math.max(10, tam / 2)));
+        FontMetrics fm = g2.getFontMetrics();
+        String inicial = nombre.substring(0, 1).toUpperCase();
+        g2.drawString(inicial,
+                px + (w - fm.stringWidth(inicial)) / 2,
+                py + (h + fm.getAscent() - fm.getDescent()) / 2);
     }
 }

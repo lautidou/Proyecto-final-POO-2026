@@ -6,6 +6,7 @@ import Modelo.mapa.Mundo;
 import Modelo.mapa.MundoDePrueba;
 import Modelo.mapa.Portal;
 import Modelo.mapa.Posicion;
+import Modelo.pjs.Enemigo;
 import Modelo.pjs.Heroe;
 
 import java.beans.PropertyChangeListener;
@@ -16,6 +17,7 @@ public class ModeloMapa {
     public static final String PROP_ESCENARIO = "escenario";
     public static final String PROP_PERSONAJE = "personaje";
     public static final String PROP_POSICION = "posicion";
+    public static final String PROP_ENCUENTRO = "encuentro";
 
     private final Mundo mundo;
     private Heroe personaje;
@@ -69,7 +71,6 @@ public class ModeloMapa {
         this.soporte.firePropertyChange(PROP_POSICION, posicionAnterior, nuevo.getPosicion());
     }
 
-    // @return true si el personaje se movió, false si el paso estaba bloqueado
     public boolean moverPersonaje(Direccion direccion) {
         if (this.personaje == null || this.personaje.getPosicion() == null) {
             return false;
@@ -77,6 +78,13 @@ public class ModeloMapa {
         Mapa mapaAnterior = this.mundo.getMapaActual();
         Posicion origen = this.personaje.getPosicion();
         Posicion destino = origen.desplazar(direccion);
+
+        // Chocar con un enemigo es interactuar con él: el héroe no se mueve y se avisa del encuentro.
+        Enemigo enemigo = mapaAnterior.getEnemigoEn(destino);
+        if (enemigo != null) {
+            this.soporte.firePropertyChange(PROP_ENCUENTRO, null, enemigo);
+            return false;
+        }
         if (!mapaAnterior.esTransitable(destino)) {
             return false;
         }
