@@ -6,6 +6,8 @@ import Modelo.mapa.Direccion;
 import Modelo.mapa.Mapa;
 import Modelo.mapa.Posicion;
 import Modelo.mapa.Terreno;
+import Modelo.pjs.Enemigo;
+import Modelo.pjs.Heroe;
 import Modelo.pjs.Personaje;
 import Vista.Ventana;
 import Vista.VistaMapa;
@@ -17,23 +19,30 @@ import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 public class ControladorMapa {
 
     private final VistaMapa vista;
     private final ModeloMapa modelo;
     private final ModeloPartida modeloPartida;
+    private final BiConsumer<Heroe, Enemigo> iniciarCombate; // lo que pasa cuando el héroe choca con un enemigo
 
-    public ControladorMapa(VistaMapa vista, ModeloMapa modelo, ModeloPartida modeloPartida) {
-        if (vista == null || modelo == null || modeloPartida == null) {
+    public ControladorMapa(VistaMapa vista, ModeloMapa modelo, ModeloPartida modeloPartida,
+                           BiConsumer<Heroe, Enemigo> iniciarCombate) {
+        if (vista == null || modelo == null || modeloPartida == null || iniciarCombate == null) {
             throw new IllegalArgumentException("La vista y los modelos son obligatorios");
         }
         this.vista = vista;
         this.modelo = modelo;
         this.modeloPartida = modeloPartida;
+        this.iniciarCombate = iniciarCombate;
 
         registrarTeclas();
         mostrarEscenario(this.modelo.getMapaActual());
+        mostrarEnemigos(this.modelo.getMapaActual());
         mostrarPersonaje();
         this.modelo.addPropertyChangeListener(this::alCambiarModelo);
     }
@@ -42,11 +51,15 @@ public class ControladorMapa {
         switch (evento.getPropertyName()) {
             case ModeloMapa.PROP_ESCENARIO:
                 mostrarEscenario((Mapa) evento.getNewValue());
+                mostrarEnemigos((Mapa) evento.getNewValue());
                 break;
             case ModeloMapa.PROP_PERSONAJE:
             case ModeloMapa.PROP_POSICION:
                 mostrarPersonaje();
                 break;
+            case ModeloMapa.PROP_ENCUENTRO:
+                this.iniciarCombate.accept(this.modelo.getPersonaje(), (Enemigo) evento.getNewValue());
+                return;
             default:
                 return;
         }
@@ -55,6 +68,14 @@ public class ControladorMapa {
 
     private void mostrarEscenario(Mapa mapa) {
         this.vista.setEscenario(mapa.getId(), extraerTerrenos(mapa));
+    }
+
+    private void mostrarEnemigos(Mapa mapa) {
+        Map<Posicion, String> enemigos = new LinkedHashMap<>();
+        for (Enemigo enemigo : mapa.getEnemigos()) {
+            enemigos.put(enemigo.getPosicion(), enemigo.getNombre());
+        }
+        this.vista.setEnemigos(enemigos);
     }
 
     private void mostrarPersonaje() {
@@ -105,11 +126,9 @@ public class ControladorMapa {
     }
 
     private void ejecutarMovimiento(Direccion direccion) {
-        // La vista se actualiza sola: el modelo avisa si hubo cambio.
         this.modelo.moverPersonaje(direccion);
     }
 
-    // Al salir al menú se guarda la partida, para poder retomarla con "Cargar Partida".
     private void ejecutarSalir() {
         if (this.modelo.getPersonaje() != null && !this.modeloPartida.guardar()) {
             System.err.println("No se pudo guardar la partida.");

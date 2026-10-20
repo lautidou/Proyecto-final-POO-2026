@@ -29,10 +29,11 @@ public class ControladorPantallas {
         ModeloMapa modeloMapa = new ModeloMapa();
         ModeloPartida modeloPartida = new ModeloPartida(this.partidas, modeloMapa);
 
+        ControladorCombate combate = registrarCombate();
+
         registrarMenuPrincipal(modeloPartida);
-        registrarMapa(modeloMapa, modeloPartida);
+        registrarMapa(modeloMapa, modeloPartida, combate);
         registrarCreacionPersonaje(modeloMapa);
-        registrarCombate();
 
         this.ventana.mostrarPanel(VistaMenuMain.NOMBRE);
         this.ventana.mostrar();
@@ -46,11 +47,11 @@ public class ControladorPantallas {
         new ControladorMenuMain(vista, modelo, modeloPartida);
     }
 
-    private void registrarMapa(ModeloMapa modelo, ModeloPartida modeloPartida) {
+    private void registrarMapa(ModeloMapa modelo, ModeloPartida modeloPartida, ControladorCombate combate) {
         VistaMapa vista = new VistaMapa();
 
         this.ventana.registrarPanel(VistaMapa.NOMBRE, vista);
-        new ControladorMapa(vista, modelo, modeloPartida);
+        new ControladorMapa(vista, modelo, modeloPartida, combate::iniciarCombate);
     }
 
     private void registrarCreacionPersonaje(ModeloMapa modeloMapa) {

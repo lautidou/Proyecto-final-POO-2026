@@ -1,12 +1,18 @@
 package Modelo.mapa;
 
+import Modelo.pjs.Caracteristicas;
+import Modelo.pjs.Clases;
+import Modelo.pjs.Enemigo;
+import Modelo.pjs.TipoEnemigo;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-
- /*Arma el Mundo del juego a partir de las capas CSV exportadas desde Tiled.*/
 public final class MundoDePrueba {
+
+    private static final Posicion POSICION_GOBLIN = new Posicion(4, 30);
 
     public static final String ID_PUEBLO = "Pueblo";
     public static final String ID_VILLA_VERDE = "VillaVerde";
@@ -67,6 +73,9 @@ public final class MundoDePrueba {
         abrirSalida(entrada, 13, 9, 16, 9, ID_CUEVA, new Posicion(20, 27));
         abrirSalida(cueva, 9, 29, 30, 29, ID_ENTRADA_CUEVA, new Posicion(14, 10));
 
+        // ---- Enemigos (despues de los portales, para no taparlos) ----
+        villa.agregarEnemigo(crearGoblin(), POSICION_GOBLIN);
+
         Mundo mundo = new Mundo();
         mundo.agregarMapa(pueblo);
         mundo.agregarMapa(villa);
@@ -110,6 +119,14 @@ public final class MundoDePrueba {
         Mapa mapa = mapaDesdeColisiones(ID_CUEVA, CUEVA_COLISIONES);
         marcarCapaCompleta(mapa, CUEVA_PAREDES_FOSOS, Terreno.PARED);
         return mapa;
+    }
+
+    // ------------------------------------------------------------------ utilidades
+
+    //Crea un Goblin
+    private static Enemigo crearGoblin() {
+        return new Enemigo("Goblin", 1, Clases.Barbaro, new ArrayList<>(),
+        new Caracteristicas(8, 14, 10, 10, 8, 8), TipoEnemigo.Goblin, 50, new ArrayList<>());
     }
 
     /** Crea el mapa con el tamano de la capa de colisiones y pone pared en cada celda no vacia. */
