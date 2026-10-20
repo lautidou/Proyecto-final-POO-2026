@@ -4,12 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Arma el Mundo del juego a partir de las capas CSV exportadas desde Tiled.
- *
- * Recorrido: Pueblo (inicio) -> VillaVerde -> EntradaCueva -> Cueva, con portales de ida y vuelta.
- * Es solo modelo: no dibuja ni mueve nada (eso lo hacen VistaMapa y ModeloMapa).
- */
+
+ /*Arma el Mundo del juego a partir de las capas CSV exportadas desde Tiled.*/
 public final class MundoDePrueba {
 
     public static final String ID_PUEBLO = "Pueblo";
@@ -19,18 +15,17 @@ public final class MundoDePrueba {
 
     private static final String CARPETA = "Assets/Mapas/";
 
-    // ---------------- PUEBLO (40x30) ----------------
+    //
     private static final String PUEBLO_COLISIONES = CARPETA + "Pueblo_colisiones.csv";
     private static final String PUEBLO_PAREDES = CARPETA + "Pueblo_Paredes.csv";
     private static final String PUEBLO_TECHOS = CARPETA + "Pueblo_techos.csv";
     private static final String PUEBLO_TECHOS_2 = CARPETA + "Pueblo_techos2.csv";
-    // La capa de colisiones no cubre la parte alta de los techos: con esto las casas quedan solidas
+    private static final String PUEBLO_ESTRUCTURAS = CARPETA + "Pueblo_estructuras.csv";
     private static final boolean BLOQUEAR_CASAS = true;
 
     // Inicio: frente a la puerta de la casa del pueblo (columna, fila), no en pixeles
     private static final Posicion INICIO = new Posicion(18, 8);
 
-    // ---------------- VILLAVERDE (60x34) ----------------
     private static final String VV_COLISIONES = CARPETA + "colisiones_VillaVerde_colisiones.csv";
     private static final String VV_VEGETACION = CARPETA + "colisiones_VillaVerde_vegetacion.csv";
     private static final String VV_AGUA = CARPETA + "colisiones_VillaVerde_agua.csv";
@@ -47,10 +42,8 @@ public final class MundoDePrueba {
 
     private static final boolean BLOQUEAR_ELEVACIONES = true;
 
-    // ---------------- ENTRADA DE LA CUEVA (30x20) ----------------
     private static final String ENTRADA_COLISIONES = CARPETA + "EntradaCueva_colisiones.csv";
 
-    // ---------------- CUEVA (40x30) ----------------
     private static final String CUEVA_COLISIONES = CARPETA + "Cueva_colisiones.csv";
     private static final String CUEVA_PAREDES_FOSOS = CARPETA + "Cueva_paredes_fosos.csv";
 
@@ -63,16 +56,14 @@ public final class MundoDePrueba {
         Mapa entrada = crearEntradaCueva();
         Mapa cueva = crearCueva();
 
-        // ---- Portales (siempre de a pares: ida y vuelta) ----
-        // Pueblo (camino del este) <-> VillaVerde (camino del oeste)
+        //Portales (siempre de a pares: ida y vuelta)
+
         abrirSalida(pueblo, 39, 26, 39, 28, ID_VILLA_VERDE, new Posicion(1, 31));
         abrirSalida(villa, 0, 30, 0, 32, ID_PUEBLO, new Posicion(38, 27));
 
-        // VillaVerde (camino del noreste) <-> EntradaCueva (camino del sur)
         abrirSalida(villa, 59, 1, 59, 3, ID_ENTRADA_CUEVA, new Posicion(14, 18));
         abrirSalida(entrada, 13, 19, 16, 19, ID_VILLA_VERDE, new Posicion(58, 2));
 
-        // EntradaCueva (boca de la cueva) <-> Cueva (salida sur)
         abrirSalida(entrada, 13, 9, 16, 9, ID_CUEVA, new Posicion(20, 27));
         abrirSalida(cueva, 9, 29, 30, 29, ID_ENTRADA_CUEVA, new Posicion(14, 10));
 
@@ -85,14 +76,13 @@ public final class MundoDePrueba {
         return mundo;
     }
 
-    // ------------------------------------------------------------------ mapas
-
     private static Mapa crearPueblo() {
         Mapa mapa = mapaDesdeColisiones(ID_PUEBLO, PUEBLO_COLISIONES);
         if (BLOQUEAR_CASAS) {
             marcarCapaCompleta(mapa, PUEBLO_PAREDES, Terreno.PARED);
             marcarCapaCompleta(mapa, PUEBLO_TECHOS, Terreno.PARED);
             marcarCapaCompleta(mapa, PUEBLO_TECHOS_2, Terreno.PARED);
+            marcarCapaCompleta(mapa, PUEBLO_ESTRUCTURAS, Terreno.PARED);
         }
         return mapa;
     }
@@ -121,8 +111,6 @@ public final class MundoDePrueba {
         marcarCapaCompleta(mapa, CUEVA_PAREDES_FOSOS, Terreno.PARED);
         return mapa;
     }
-
-    // ------------------------------------------------------------------ utilidades
 
     /** Crea el mapa con el tamano de la capa de colisiones y pone pared en cada celda no vacia. */
     private static Mapa mapaDesdeColisiones(String id, String rutaColisiones) {
@@ -154,7 +142,6 @@ public final class MundoDePrueba {
         }
     }
 
-    /** Pone 'terreno' en las celdas de la capa cuyo tile este en 'ids' (y que todavia sean pasto). */
     private static void marcarTiles(Mapa mapa, String rutaCapa, Set<Integer> ids, Terreno terreno) {
         int[][] capa = leerCapa(mapa, rutaCapa);
         for (int y = 0; y < capa.length; y++) {
@@ -167,7 +154,6 @@ public final class MundoDePrueba {
         }
     }
 
-    /** Toda celda no vacia de la capa pasa a ser 'terreno', sin importar el id del tile. */
     private static void marcarCapaCompleta(Mapa mapa, String rutaCapa, Terreno terreno) {
         int[][] capa = leerCapa(mapa, rutaCapa);
         for (int y = 0; y < capa.length; y++) {
