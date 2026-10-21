@@ -8,6 +8,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+
+import Vista.BotonImagen;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;

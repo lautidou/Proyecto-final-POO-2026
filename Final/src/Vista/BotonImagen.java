@@ -1,9 +1,7 @@
-package Vista.combate;
+package Vista;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-
-import Vista.CargadorImagen;
 
 import java.awt.AlphaComposite;
 import java.awt.Cursor;

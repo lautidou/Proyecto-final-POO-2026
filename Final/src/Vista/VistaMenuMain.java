@@ -34,14 +34,9 @@ public class VistaMenuMain extends JPanel {
         panelBotones.setOpaque(false);
         panelBotones.setPreferredSize(new Dimension(200, 150));
 
-        this.botonUno = new JButton("Crear Personaje");
-        estilizarBoton(this.botonUno);
-
-        this.botonDos = new JButton("Cargar Partida");
-        estilizarBoton(this.botonDos);
-
-        this.botonTres = new JButton("Salir");
-        estilizarBoton(this.botonTres);
+        this.botonUno = new BotonImagen("Assets/MenuMain/botonCrearPartida.png", "Crear partida");
+        this.botonDos = new BotonImagen("Assets/MenuMain/botonCargarPartida.png", "Cargar partida");
+        this.botonTres = new BotonImagen("Assets/MenuMain/botonSalir.png", "Salir");
 
         panelBotones.add(this.botonUno);
         panelBotones.add(this.botonDos);
@@ -51,13 +46,6 @@ public class VistaMenuMain extends JPanel {
         panelContenedorCentral.add(panelPergamino);
 
         panelFondo.add(panelContenedorCentral, BorderLayout.CENTER);
-    }
-
-    private void estilizarBoton(JButton boton) {
-        boton.setOpaque(false);
-        boton.setContentAreaFilled(false);
-        boton.setBorderPainted(false);
-        boton.setFocusPainted(false);
     }
 
     public JButton getBotonUno() {
