@@ -56,6 +56,17 @@ public class ControladorPantallaPausa {
             modeloPausa.setJuegoPausado(false);
             controladorMapa.ejecutarSalir();
         });
+    //para un poco mas de comodidad aplicamos el doble esc para salir de menu de pausa
+        menuPausa.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).
+        put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),"reanudar");
+
+        menuPausa.getRootPane().getActionMap().put("reanudar", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Simula un clic izquierdo en el botón "Continuar"
+                menuPausa.getContinuar().doClick();
+            }
+        });
 
         menuPausa.setVisible(true);
     }
