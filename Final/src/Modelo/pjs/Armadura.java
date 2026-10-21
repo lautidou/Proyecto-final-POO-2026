@@ -1,8 +1,7 @@
 package Modelo.pjs;
 
-public class Armadura extends Objeto{
+public class Armadura extends Objeto implements Equipable {
     private int defensa;
-    private boolean equipada;
 
     //constructor
      public Armadura(int idObjeto, String nombre, double peso, int precio, String descripcion, int defensa){
@@ -12,31 +11,32 @@ public class Armadura extends Objeto{
         }
 
         this.defensa = defensa;
-        this.equipada = false;
     }
 
     @Override
-    //metodo abstracto
     public void usar(Personaje objetivo) {
-        if (!equipada) {
-            equipada = true;
-            System.out.println("Has equipado el escudo: " + super.getNombre());
-        } else {
-            equipada = false;
-            System.out.println("Has desequipado el escudo: " + super.getNombre());
+        equiparEn(objetivo);
+    }
+
+    @Override
+    public void equiparEn(Personaje personaje) {
+        personaje.equipar(this);
+    }
+
+    @Override
+    public void desequiparDe(Personaje personaje) {
+        if (personaje.getArmaduraEquipada() == this) {
+            personaje.desequiparArmadura();
         }
+    }
+
+    @Override
+    public String getResumen() {
+        return "Defensa +" + defensa;
     }
 
     public int getDefensa(){
         return defensa;
     }
 
-    public boolean isEquipada(){
-        return equipada;
-    }
-
-    @Override
-    public String getDetalle() {
-        return super.getDetalle() + "\nDefensa: " + defensa + "\nEstado: " + (equipada ? "Equipada" : "En la mochila");
-    }
 }

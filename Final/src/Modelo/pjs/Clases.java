@@ -1,14 +1,18 @@
 package Modelo.pjs;
 
 import Modelo.combate.CatalogoHabilidades;
+import Modelo.combate.CatalogoObjetos;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 public enum Clases {
+
     Barbaro(Dados.d12,
+            CatalogoObjetos::hachaDeGuerra, CatalogoObjetos::armaduraDePieles,
             new Desbloqueo(1, CatalogoHabilidades.golpePoderoso()),
             new Desbloqueo(3, CatalogoHabilidades.tajoBrutal()),
             new Desbloqueo(5, CatalogoHabilidades.furiaDesatada())),
@@ -20,10 +24,12 @@ public enum Clases {
     //Guerrero(Dados.d10),
     //Hechicero(Dados.d6),
     Mago(Dados.d6,
+            CatalogoObjetos::bastonArcano, CatalogoObjetos::tunicaDeMago,
             new Desbloqueo(1, CatalogoHabilidades.proyectilMagico()),
             new Desbloqueo(3, CatalogoHabilidades.bolaDeFuego()),
             new Desbloqueo(5, CatalogoHabilidades.rayoArcano())),
     Monje(Dados.d8,
+            CatalogoObjetos::vendajesDeCombate, CatalogoObjetos::ropasDeMonje,
             new Desbloqueo(1, CatalogoHabilidades.punoDePalma()),
             new Desbloqueo(3, CatalogoHabilidades.curacionMenor()),
             new Desbloqueo(5, CatalogoHabilidades.rafagaDeGolpes()));
@@ -31,15 +37,32 @@ public enum Clases {
     //Picaro(Dados.d8);
 
     private final Dados puntosGolpe;
+    private final Supplier<Arma> armaInicial;
+    private final Supplier<Armadura> armaduraInicial;
     private final List<Desbloqueo> desbloqueos;
 
-    Clases(Dados puntosGolpe, Desbloqueo... desbloqueos){
+    Clases(Dados puntosGolpe, Supplier<Arma> armaInicial, Supplier<Armadura> armaduraInicial,
+           Desbloqueo... desbloqueos){
         this.puntosGolpe = puntosGolpe;
+        this.armaInicial = armaInicial;
+        this.armaduraInicial = armaduraInicial;
         this.desbloqueos = Collections.unmodifiableList(Arrays.asList(desbloqueos));
     }
 
     public int getMaxPG(){
         return puntosGolpe.getMax();
+    }
+
+    public List<Objeto> crearEquipoInicial(Personaje personaje){
+        Arma arma = armaInicial.get();
+        Armadura armadura = armaduraInicial.get();
+        arma.usar(personaje);
+        armadura.usar(personaje);
+
+        List<Objeto> equipo = new ArrayList<>();
+        equipo.add(arma);
+        equipo.add(armadura);
+        return equipo;
     }
 
     public List<Habilidad> getHabilidadesPosibles(){
