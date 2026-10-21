@@ -32,7 +32,7 @@ public class VistaMenuMain extends JPanel {
 
         JPanel panelBotones = new JPanel(new GridLayout(3, 1, 0, 20));
         panelBotones.setOpaque(false);
-        panelBotones.setPreferredSize(new Dimension(200, 150));
+        panelBotones.setPreferredSize(new Dimension(200, 150));//ver despues tamaño de las letras
 
         this.botonUno = new BotonImagen("Assets/MenuMain/botonCrearPartida.png", "Crear partida");
         this.botonDos = new BotonImagen("Assets/MenuMain/botonCargarPartida.png", "Cargar partida");
