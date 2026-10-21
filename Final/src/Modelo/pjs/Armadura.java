@@ -34,4 +34,9 @@ public class Armadura extends Objeto{
     public boolean isEquipada(){
         return equipada;
     }
+
+    @Override
+    public String getDetalle() {
+        return super.getDetalle() + "\nDefensa: " + defensa + "\nEstado: " + (equipada ? "Equipada" : "En la mochila");
+    }
 }

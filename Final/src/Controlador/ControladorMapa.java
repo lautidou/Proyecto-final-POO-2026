@@ -1,5 +1,6 @@
 package Controlador;
 
+import Modelo.ModeloInventario;
 import Modelo.ModeloMapa;
 import Modelo.ModeloPartida;
 import Modelo.mapa.Direccion;
@@ -46,6 +47,9 @@ public class ControladorMapa {
 
         this.controladorPausa = new ControladorPantallaPausa(Ventana.getInstancia(), this.modeloPausa, this.vista, this);
         this.controladorPausa.configurarTeclas();
+
+        new ControladorInventario(Ventana.getInstancia(), new ModeloInventario(this.modelo), this.modeloPausa, this.vista)
+                .configurarTeclas();
 
         registrarTeclas();
         mostrarEscenario(this.modelo.getMapaActual());

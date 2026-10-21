@@ -31,8 +31,16 @@ public abstract class Objeto {
     public String getNombre() {
         return nombre;
     }
-    
 
-    public abstract void usar(Personaje objetivo); 
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    // Texto que muestra el inventario; cada tipo de objeto lo completa con sus datos propios
+    public String getDetalle() {
+        return descripcion;
+    }
+
+    public abstract void usar(Personaje objetivo);
 }
 

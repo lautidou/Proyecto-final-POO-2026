@@ -9,6 +9,20 @@
             "name": "Juego",
             "request": "launch",
             "mainClass": "Juego",
+            "projectName": "src_6f2800e8"
+        },
+        {
+            "type": "java",
+            "name": "Juego",
+            "request": "launch",
+            "mainClass": "Juego",
+            "projectName": "src_6362d09d"
+        },
+        {
+            "type": "java",
+            "name": "Juego",
+            "request": "launch",
+            "mainClass": "Juego",
             "projectName": "src_94b3771d"
         },
         {

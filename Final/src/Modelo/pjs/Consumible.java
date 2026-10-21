@@ -38,4 +38,9 @@ public class Consumible extends Objeto {
     public int getCantidad() {
         return cantidad;
     }
+
+    @Override
+    public String getDetalle() {
+        return super.getDetalle() + "\nCantidad: " + this.cantidad + "\nRestaura: " + this.puntosRestauracion + " PV";
+    }
 }

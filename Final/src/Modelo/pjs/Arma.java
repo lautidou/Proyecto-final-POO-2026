@@ -24,5 +24,14 @@ public class Arma extends Objeto {
     public int tiradaDanio(int car_necesaria){
         return car_necesaria + dado.rolleo();
     }
+
+    public boolean isEquipada() {
+        return equipada;
+    }
+
+    @Override
+    public String getDetalle() {
+        return super.getDetalle() + "\nDaño: " + dado + "\nEstado: " + (equipada ? "Equipada" : "En la mochila");
+    }
     
 }
