@@ -1,5 +1,6 @@
 package Controlador;
 
+import Audio.ReproductorAudio;
 import Modelo.ModeloInventario;
 import Modelo.ModeloMapa;
 import Modelo.ModeloPartida;
@@ -19,6 +20,8 @@ import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.LinkedHashMap;
@@ -51,6 +54,14 @@ public class ControladorMapa {
         new ControladorInventario(Ventana.getInstancia(), new ModeloInventario(this.modelo), this.modeloPausa, this.vista)
                 .configurarTeclas();
 
+        // Al volver del menu principal (o de cargar partida) tiene que retomar la musica del mapa
+        this.vista.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                ReproductorAudio.musicaDeMapa(modelo.getMapaActual().getId());
+            }
+        });
+
         registrarTeclas();
         mostrarEscenario(this.modelo.getMapaActual());
         mostrarEnemigos(this.modelo.getMapaActual());
@@ -79,6 +90,7 @@ public class ControladorMapa {
 
     private void mostrarEscenario(Mapa mapa) {
         this.vista.setEscenario(mapa.getId(), extraerTerrenos(mapa));
+        ReproductorAudio.musicaDeMapa(mapa.getId());
     }
 
     private void mostrarEnemigos(Mapa mapa) {

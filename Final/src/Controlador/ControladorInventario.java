@@ -1,7 +1,10 @@
 package Controlador;
 
+import Audio.ReproductorAudio;
 import Modelo.ModeloInventario;
 import Modelo.ModeloPausa;
+import Modelo.pjs.Consumible;
+import Modelo.pjs.Objeto;
 import Vista.PanelInventario;
 import Vista.Ventana;
 
@@ -49,7 +52,13 @@ public class ControladorInventario {
         PropertyChangeListener oyente = evento -> panel.setObjetos(modeloInventario.getObjetos());
         modeloInventario.addPropertyChangeListener(oyente);
 
-        panel.getUsar().addActionListener(e -> modeloInventario.usarObjeto(panel.getObjetoSeleccionado()));
+        panel.getUsar().addActionListener(e -> {
+            Objeto objeto = panel.getObjetoSeleccionado();
+            // si es consumible reproduce sfx
+            if (modeloInventario.usarObjeto(objeto) && objeto instanceof Consumible) {
+                ReproductorAudio.efectoDeConsumible(objeto.getNombre());
+            }
+        });
         panel.getCerrar().addActionListener(e -> {
             modeloInventario.removePropertyChangeListener(oyente);
             panel.dispose();

@@ -1,5 +1,6 @@
 package Controlador;
 
+import Audio.ReproductorAudio;
 import Modelo.ModeloMenuMain;
 import Modelo.ModeloPartida;
 import Vista.Ventana;
@@ -8,6 +9,8 @@ import Vista.VistaMapa;
 import Vista.VistaMenuMain;
 
 import javax.swing.JOptionPane;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class ControladorMenuMain {
 
@@ -23,6 +26,15 @@ public class ControladorMenuMain {
         this.modelo = modelo;
         this.modeloPartida = modeloPartida;
 
+        // La musica del menu suena apenas arranca y cada vez que se muestre el panel
+        ReproductorAudio.musicaDeMenu();
+        this.vista.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                ReproductorAudio.musicaDeMenu();
+            }
+        });
+
         // Registro de eventos para los tres botones del panel central
         this.vista.getBotonUno().addActionListener(evento -> this.ejecutarBotonUno());
         this.vista.getBotonDos().addActionListener(evento -> this.ejecutarBotonDos());
@@ -30,6 +42,7 @@ public class ControladorMenuMain {
     }
 
     private void ejecutarBotonUno() {
+        ReproductorAudio.efectoBotonMenu();
         System.out.println("Se presionó el Botón 1");
         this.modelo.procesarAccionUno();
         // Navega a la pantalla de creación de personaje
@@ -37,6 +50,7 @@ public class ControladorMenuMain {
     }
 
     private void ejecutarBotonDos() {
+        ReproductorAudio.efectoBotonMenu();
         System.out.println("Se presionó el Botón 2");
         if (this.modeloPartida.cargar()) {
             Ventana.getInstancia().mostrarPanel(VistaMapa.NOMBRE);
@@ -47,6 +61,7 @@ public class ControladorMenuMain {
     }
 
     private void ejecutarBotonTres() {
+        ReproductorAudio.efectoBotonMenu();
         System.out.println("Se presionó el Botón 3");
         System.exit(0);
     }
