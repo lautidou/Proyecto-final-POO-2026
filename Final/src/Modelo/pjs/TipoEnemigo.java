@@ -17,4 +17,8 @@ public enum TipoEnemigo {
     public int getArmadura(){
         return this.armadura;
     }
+
+    public Caracteristicas getCaracteristicas(){
+        return this.caracteristicas;
+    }
 }

@@ -1,6 +1,7 @@
 package Modelo;
 
 import Modelo.pjs.Consumible;
+import Modelo.pjs.Equipable;
 import Modelo.pjs.Heroe;
 import Modelo.pjs.Objeto;
 
@@ -32,13 +33,22 @@ public class ModeloInventario {
         return new ArrayList<>(heroe.getInventario());
     }
 
+    public boolean esEquipable(Objeto objeto) {
+        return objeto instanceof Equipable;
+    }
+
+    public boolean estaEquipado(Objeto objeto) {
+        Heroe heroe = this.modeloMapa.getPersonaje();
+        return heroe != null && objeto instanceof Equipable
+                && ((Equipable) objeto).estaEquipadoPor(heroe);
+    }
+
     public boolean usarObjeto(Objeto objeto) {
         Heroe heroe = this.modeloMapa.getPersonaje();
         if (heroe == null || objeto == null || !heroe.getInventario().contains(objeto)) {
             return false;
         }
         objeto.usar(heroe);
-        // Un consumible agotado deja de ocupar lugar en la mochila
         if (objeto instanceof Consumible && ((Consumible) objeto).getCantidad() == 0) {
             heroe.getInventario().remove(objeto);
         }

@@ -62,6 +62,7 @@ public enum Clases {
         List<Objeto> equipo = new ArrayList<>();
         equipo.add(arma);
         equipo.add(armadura);
+        equipo.add(CatalogoObjetos.pocionCurativa(5));
         return equipo;
     }
 

@@ -5,7 +5,8 @@ import Modelo.ModeloInventario;
 import Modelo.ModeloPausa;
 import Modelo.pjs.Consumible;
 import Modelo.pjs.Objeto;
-import Vista.PanelInventario;
+import Vista.Inventario.FilaInventario;
+import Vista.Inventario.PanelInventario;
 import Vista.Ventana;
 
 import javax.swing.AbstractAction;
@@ -15,6 +16,9 @@ import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ControladorInventario {
 
@@ -22,6 +26,8 @@ public class ControladorInventario {
     private final ModeloInventario modeloInventario;
     private final ModeloPausa modeloPausa;
     private final JPanel panelDeJuego;
+
+    private List<Objeto> objetosMostrados = new ArrayList<>();
 
     public ControladorInventario(Ventana ventana, ModeloInventario modeloInventario, ModeloPausa modeloPausa,
                                  JPanel panelDeJuego) {
@@ -47,14 +53,17 @@ public class ControladorInventario {
         modeloPausa.setJuegoPausado(true); // mientras está abierto el héroe no se mueve
 
         PanelInventario panel = new PanelInventario(ventana);
-        panel.setObjetos(modeloInventario.getObjetos());
+        refrescar(panel);
 
-        PropertyChangeListener oyente = evento -> panel.setObjetos(modeloInventario.getObjetos());
+        PropertyChangeListener oyente = evento -> refrescar(panel);
         modeloInventario.addPropertyChangeListener(oyente);
 
         panel.getUsar().addActionListener(e -> {
-            Objeto objeto = panel.getObjetoSeleccionado();
-            // si es consumible reproduce sfx
+            int indice = panel.getIndiceSeleccionado();
+            if (indice < 0 || indice >= objetosMostrados.size()) {
+                return;
+            }
+            Objeto objeto = objetosMostrados.get(indice);
             if (modeloInventario.usarObjeto(objeto) && objeto instanceof Consumible) {
                 ReproductorAudio.efectoDeConsumible(objeto.getNombre());
             }
@@ -66,7 +75,6 @@ public class ControladorInventario {
             panelDeJuego.requestFocusInWindow();
         });
 
-        // La misma tecla (o Esc) cierra el inventario
         panel.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_I, 0), "cerrar");
         panel.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cerrar");
         panel.getRootPane().getActionMap().put("cerrar", new AbstractAction() {
@@ -77,5 +85,17 @@ public class ControladorInventario {
         });
 
         panel.setVisible(true);
+    }
+
+    private void refrescar(PanelInventario panel) {
+        objetosMostrados = modeloInventario.getObjetos();
+        List<FilaInventario> filas = objetosMostrados.stream()
+                .map(o -> new FilaInventario(
+                        o.getNombre(),
+                        o.getDetalle(),
+                        modeloInventario.esEquipable(o),
+                        modeloInventario.estaEquipado(o)))
+                .collect(Collectors.toList());
+        panel.setFilas(filas);
     }
 }
