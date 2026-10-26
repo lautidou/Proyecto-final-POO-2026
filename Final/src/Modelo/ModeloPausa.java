@@ -29,7 +29,7 @@ public class ModeloPausa {
         notificarCambio(); 
         }
     }
-    
+    //revisar
      private void notificarCambio() {
         this.soporte.firePropertyChange(PROP_ESTADO_PAUSA, null, this);
     }
