@@ -2,7 +2,6 @@ package Modelo;
 
 import Modelo.pjs.Caracteristicas;
 import Modelo.pjs.Clases;
-import Modelo.pjs.Consumible;
 import Modelo.pjs.Dados;
 import Modelo.pjs.Habilidad;
 import Modelo.pjs.Heroe;
@@ -33,10 +32,10 @@ public class ModeloCreacionPersonaje {
         Caracteristicas caracteristicasBase = generarCaracteristicasBase(raza);
         List<Habilidad> habilidades = new ArrayList<>();
         List<Objeto> inventario = new ArrayList<>();
-        inventario.add(new Consumible(1, "Poción de curación", 0.5, 50, "Un frasco rojo que cierra heridas.", 2, 8));
 
         this.heroeCreado = new Heroe(nombre.trim(), 1, raza, clase, habilidades,
                 caracteristicasBase, 0, inventario);
+        inventario.addAll(clase.crearEquipoInicial(heroeCreado));
         return this.heroeCreado;
     }
 

@@ -1,5 +1,6 @@
 package Controlador;
 
+import Audio.ReproductorAudio;
 import Modelo.ModeloCombate;
 import Modelo.pjs.Enemigo;
 import Modelo.pjs.Habilidad;
@@ -45,6 +46,7 @@ public class ControladorCombate {
         this.vista.limpiarMensajes();                // el historial de la pelea anterior no se arrastra
         this.vista.mostrarMenuPrincipal();           // ni un submenú que haya quedado abierto
         this.modelo.iniciarCombate(heroe, enemigo);  // el modelo avisa -> alCambiarModelo()
+        ReproductorAudio.musicaDeCombate();          // corta la musica del mapa y arranca la del combate
         Ventana.getInstancia().mostrarPanel(VistaCombate.NOMBRE);
     }
 
@@ -67,6 +69,7 @@ public class ControladorCombate {
 
     // ---------- Submenú de combate ----------
     private void ejecutarBasico() {
+        ReproductorAudio.efectoAtaqueBasico();
         this.modelo.procesarAtaqueBasico();
         this.vista.mostrarMenuPrincipal(); // la acción gasta el turno: se vuelve al menú de inicio
     }
@@ -92,6 +95,9 @@ public class ControladorCombate {
     }
 
     private void ejecutarHabilidad(Habilidad habilidad) {
+        if (this.modelo.getUsosRestantesDelHeroe(habilidad) > 0) {
+            ReproductorAudio.efectoDeHabilidad(habilidad.getNombre());
+        }
         this.modelo.procesarHabilidad(habilidad);
         this.vista.mostrarMenuPrincipal();
     }

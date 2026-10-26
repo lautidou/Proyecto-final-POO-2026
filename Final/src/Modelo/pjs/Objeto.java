@@ -22,6 +22,7 @@ public abstract class Objeto {
         if (descripcion == null || descripcion.isEmpty()) {
             throw new IllegalArgumentException("El objeto debe tener descripcion.");
         }
+        this.idObjeto = idObjeto;
         this.nombre = nombre;
         this.peso = peso;
         this.precio = precio;
@@ -36,11 +37,9 @@ public abstract class Objeto {
         return descripcion;
     }
 
-    // Texto que muestra el inventario; cada tipo de objeto lo completa con sus datos propios
     public String getDetalle() {
         return descripcion;
     }
 
     public abstract void usar(Personaje objetivo);
 }
-

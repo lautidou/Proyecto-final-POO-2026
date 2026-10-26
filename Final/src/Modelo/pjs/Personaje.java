@@ -14,6 +14,8 @@ public abstract class Personaje {
     private List<Habilidad> habilidades;
     private Caracteristicas caracteristicas;
     private Posicion posicion;
+    private Arma armaEquipada;
+    private Armadura armaduraEquipada;
 
     public Personaje(String nombre, int nivel, Clases clase, List<Habilidad> habilidades,
                       Caracteristicas caracteristicas) {
@@ -40,7 +42,7 @@ public abstract class Personaje {
     }
 
     public void curar(int puntosCurados) {
-        this.vida = Math.min(this.vidaMaxima, this.vida + puntosCurados);
+        this.vida += puntosCurados;
     }
 
     public void recibirDanio(int puntosDanio) {
@@ -76,6 +78,55 @@ public abstract class Personaje {
         for (Habilidad habilidad : disponibles) {
             aprenderHabilidad(habilidad);
         }
+    }
+
+    // Equipo
+    public Arma equipar(Arma arma) {
+        if (arma == null) {
+            throw new IllegalArgumentException("El arma no puede ser nula.");
+        }
+        if (arma == this.armaEquipada) {
+            return null;
+        }
+        Arma anterior = this.armaEquipada;
+        this.armaEquipada = arma;
+        return anterior;
+    }
+
+    public Armadura equipar(Armadura armadura) {
+        if (armadura == null) {
+            throw new IllegalArgumentException("La armadura no puede ser nula.");
+        }
+        if (armadura == this.armaduraEquipada) {
+            return null;
+        }
+        Armadura anterior = this.armaduraEquipada;
+        this.armaduraEquipada = armadura;
+        return anterior;
+    }
+
+    public Arma desequiparArma() {
+        Arma arma = this.armaEquipada;
+        this.armaEquipada = null;
+        return arma;
+    }
+
+    public Armadura desequiparArmadura() {
+        Armadura armadura = this.armaduraEquipada;
+        this.armaduraEquipada = null;
+        return armadura;
+    }
+
+    public Arma getArmaEquipada() {
+        return armaEquipada;
+    }
+
+    public Armadura getArmaduraEquipada() {
+        return armaduraEquipada;
+    }
+
+    public int getDefensa() {
+        return (armaduraEquipada == null) ? 0 : armaduraEquipada.getDefensa();
     }
 
     // Getters y Setters

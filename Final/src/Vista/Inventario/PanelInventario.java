@@ -1,9 +1,8 @@
-package Vista;
-
-import Modelo.pjs.Objeto;
+package Vista.Inventario;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.List;
 
@@ -11,19 +10,21 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 
-// Ventana emergente que lista los objetos de la mochila y el detalle del seleccionado
+import Vista.Ventana;
+
 public class PanelInventario extends JDialog {
 
-    private final DefaultListModel<Objeto> modeloLista = new DefaultListModel<>();
-    private final JList<Objeto> lista = new JList<>(modeloLista);
+    private final DefaultListModel<FilaInventario> modeloLista = new DefaultListModel<>();
+    private final JList<FilaInventario> lista = new JList<>(modeloLista);
     private final JTextArea detalle = new JTextArea();
-    private final JButton usar = new JButton("Usar / Equipar");
+    private final JButton usar = new JButton("Usar");
     private final JButton cerrar = new JButton("Cerrar");
 
     public PanelInventario(Ventana ventana) {
@@ -37,10 +38,13 @@ public class PanelInventario extends JDialog {
         panelPrincipal.setBackground(Color.DARK_GRAY);
 
         lista.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        lista.setCellRenderer((jlist, objeto, indice, seleccionado, foco) -> {
-            javax.swing.JLabel etiqueta = new javax.swing.JLabel(" " + objeto.getNombre());
+        lista.setCellRenderer((jlist, fila, indice, seleccionado, foco) -> {
+            JLabel etiqueta = new JLabel(" " + fila.nombre() + (fila.equipado() ? "  [Equipado]" : ""));
             etiqueta.setOpaque(true);
             etiqueta.setBackground(seleccionado ? Color.LIGHT_GRAY : Color.WHITE);
+            if (fila.equipado()) {
+                etiqueta.setFont(etiqueta.getFont().deriveFont(Font.BOLD));
+            }
             return etiqueta;
         });
         lista.addListSelectionListener(e -> mostrarDetalle());
@@ -64,33 +68,33 @@ public class PanelInventario extends JDialog {
         add(panelPrincipal);
     }
 
-    // Reemplaza el contenido de la lista y conserva la selección si el objeto sigue existiendo
-    public void setObjetos(List<Objeto> objetos) {
-        Objeto seleccionado = lista.getSelectedValue();
+    public void setFilas(List<FilaInventario> filas) {
+        int indiceAnterior = lista.getSelectedIndex();
         modeloLista.clear();
-        for (Objeto objeto : objetos) {
-            modeloLista.addElement(objeto);
+        for (FilaInventario fila : filas) {
+            modeloLista.addElement(fila);
         }
-        if (seleccionado != null && modeloLista.contains(seleccionado)) {
-            lista.setSelectedValue(seleccionado, true);
-        } else if (!modeloLista.isEmpty()) {
-            lista.setSelectedIndex(0);
+        if (!modeloLista.isEmpty()) {
+            lista.setSelectedIndex(Math.max(0, Math.min(indiceAnterior, modeloLista.size() - 1)));
         }
         mostrarDetalle();
     }
 
     private void mostrarDetalle() {
-        Objeto objeto = lista.getSelectedValue();
-        if (objeto == null) {
+        FilaInventario fila = lista.getSelectedValue();
+        if (fila == null) {
             detalle.setText(modeloLista.isEmpty() ? "La mochila está vacía." : "");
+            usar.setText("Usar");
         } else {
-            detalle.setText(objeto.getNombre() + "\n\n" + objeto.getDetalle());
+            String estado = fila.equipado() ? "\n[EQUIPADO]" : "";
+            detalle.setText(fila.nombre() + estado + "\n\n" + fila.detalle());
+            usar.setText(fila.textoAccion());
         }
-        usar.setEnabled(objeto != null);
+        usar.setEnabled(fila != null);
     }
 
-    public Objeto getObjetoSeleccionado() {
-        return lista.getSelectedValue();
+    public int getIndiceSeleccionado() {
+        return lista.getSelectedIndex();
     }
 
     public JButton getUsar() {

@@ -1,37 +1,43 @@
 package Modelo.pjs;
 
-public class Arma extends Objeto {
-    private Dados dado;
-    private boolean equipada;
+public class Arma extends ObjetoEquipable {
+    private final Dados dado;
 
     public Arma(int idObjeto, String nombre, double peso, int precio, String descripcion, Dados dado) {
         super(idObjeto, nombre, peso, precio, descripcion);
+        if (dado == null) {
+            throw new IllegalArgumentException("El arma necesita un dado de daño.");
+        }
         this.dado = dado;
-        this.equipada = false;
     }
 
     @Override
-    public void usar(Personaje objetivo) {
-        if (!equipada) {
-            equipada = true;
-            System.out.println("Has equipado el arma: " + super.getNombre());
-            // Lógica para actualizar las estadísticas del jugador
-        } else {
-            equipada = false;
-            System.out.println("Has desequipado: " + super.getNombre());
+    public boolean estaEquipadoPor(Personaje personaje) {
+        return personaje.getArmaEquipada() == this;
+    }
+
+    @Override
+    public void equiparEn(Personaje personaje) {
+        personaje.equipar(this);
+    }
+
+    @Override
+    public void desequiparDe(Personaje personaje) {
+        if (estaEquipadoPor(personaje)) {
+            personaje.desequiparArma();
         }
     }
-    public int tiradaDanio(int car_necesaria){
-        return car_necesaria + dado.rolleo();
-    }
-
-    public boolean isEquipada() {
-        return equipada;
-    }
 
     @Override
-    public String getDetalle() {
-        return super.getDetalle() + "\nDaño: " + dado + "\nEstado: " + (equipada ? "Equipada" : "En la mochila");
+    public String getResumen() {
+        return "Daño " + dado.name();
     }
-    
+
+    public Dados getDado() {
+        return dado;
+    }
+
+    public int tiradaDanio(int car_necesaria) {
+        return car_necesaria + dado.rolleo();
+    }
 }
