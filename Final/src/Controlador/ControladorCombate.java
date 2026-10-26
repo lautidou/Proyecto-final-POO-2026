@@ -6,9 +6,12 @@ import Modelo.objetos.Consumible;
 import Modelo.pjs.Enemigo;
 import Modelo.pjs.Habilidad;
 import Modelo.pjs.Heroe;
+import Modelo.combate.ResultadoCombate;
+import Modelo.combate.SalidaCombate;
 import Vista.Ventana;
 import Vista.VistaCombate;
 
+import javax.swing.Timer;
 import javax.swing.JButton;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
@@ -18,13 +21,16 @@ public class ControladorCombate {
 
     private final VistaCombate vista;
     private final ModeloCombate modelo;
+    private static final int PAUSA_FINAL_MS = 1500; // para alcanzar a leer el último mensaje
+    private final SalidaCombate salida;
 
-    public ControladorCombate(VistaCombate vista, ModeloCombate modelo) {
-        if (vista == null || modelo == null) {
-            throw new IllegalArgumentException("La vista y el modelo son obligatorios");
+    public ControladorCombate(VistaCombate vista, ModeloCombate modelo, SalidaCombate salida) {
+        if (vista == null || modelo == null || salida == null) {
+            throw new IllegalArgumentException("La vista, el modelo y la salida son obligatorios");
         }
         this.vista = vista;
         this.modelo = modelo;
+        this.salida = salida;
 
         // Menú principal
         this.vista.getBotonCombate().addActionListener(evento -> this.ejecutarCombate());
@@ -136,6 +142,9 @@ public class ControladorCombate {
             case ModeloCombate.PROP_MENSAJE:
                 this.vista.agregarMensaje((String) evento.getNewValue());
                 break;
+            case ModeloCombate.PROP_FIN:
+                programarSalida((ResultadoCombate) evento.getNewValue());
+                break;
             default:
                 return;
         }
@@ -150,5 +159,21 @@ public class ControladorCombate {
         }
         this.vista.setHeroe(heroe.getNombre(), heroe.getVida(), heroe.getVidaMaxima());
         this.vista.setEnemigo(enemigo.getNombre(), enemigo.getVida(), enemigo.getVidaMaxima());
+    }
+
+    // ---------- Fin del combate ----------
+    private void programarSalida(ResultadoCombate resultado) {
+        this.vista.mostrarMenuPrincipal();
+        Timer pausa = new Timer(PAUSA_FINAL_MS, evento -> {
+            Heroe heroe = this.modelo.getHeroe();
+            Enemigo enemigo = this.modelo.getEnemigo();
+            if (resultado == ResultadoCombate.VICTORIA) {
+                this.salida.alGanar(heroe, enemigo);
+            } else {
+                this.salida.alPerder(heroe, enemigo);
+            }
+        });
+        pausa.setRepeats(false);
+        pausa.start();
     }
 }

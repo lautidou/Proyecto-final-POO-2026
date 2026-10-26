@@ -84,6 +84,10 @@ public class Mapa {
         enemigos.add(enemigo);
     }
 
+    public boolean quitarEnemigo(Enemigo enemigo) {
+        return enemigos.remove(enemigo);
+    }
+
     public Enemigo getEnemigoEn(Posicion p) {
         for (Enemigo enemigo : enemigos) {
             if (p.equals(enemigo.getPosicion())) {

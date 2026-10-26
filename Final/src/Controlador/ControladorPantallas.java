@@ -12,6 +12,7 @@ import Vista.VistaCombate;
 import Vista.VistaCreacionPersonaje;
 import Vista.VistaMapa;
 import Vista.VistaMenuMain;
+import Vista.VistaMuerte;
 
 public class ControladorPantallas {
 
@@ -30,9 +31,9 @@ public class ControladorPantallas {
         ModeloMapa modeloMapa = new ModeloMapa();
         ModeloPartida modeloPartida = new ModeloPartida(this.partidas, modeloMapa);
         ModeloPausa modeloPausa =  new ModeloPausa();
-
-        ControladorCombate combate = registrarCombate();
-
+        
+        ControladorCombate combate = registrarCombate(modeloMapa, modeloPartida);
+        
         registrarMenuPrincipal(modeloPartida);
         registrarMapa(modeloMapa, modeloPartida, combate, modeloPausa);
         registrarCreacionPersonaje(modeloMapa);
@@ -64,11 +65,15 @@ public class ControladorPantallas {
         new ControladorCreacionPersonaje(vista, modelo, modeloMapa);
     }
 
-    private ControladorCombate registrarCombate() {
+    private ControladorCombate registrarCombate(ModeloMapa modeloMapa, ModeloPartida modeloPartida) {
         ModeloCombate modelo = new ModeloCombate();
         VistaCombate vista = new VistaCombate();
+        VistaMuerte vistaMuerte = new VistaMuerte();
 
         this.ventana.registrarPanel(VistaCombate.NOMBRE, vista);
-        return new ControladorCombate(vista, modelo);
+        this.ventana.registrarPanel(VistaMuerte.NOMBRE, vistaMuerte);
+        new ControladorMuerte(vistaMuerte, modeloPartida);
+
+        return new ControladorCombate(vista, modelo, new ControladorFinCombate(modeloMapa));
     }
 }

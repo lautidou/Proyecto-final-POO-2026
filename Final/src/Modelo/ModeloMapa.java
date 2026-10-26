@@ -18,6 +18,7 @@ public class ModeloMapa {
     public static final String PROP_PERSONAJE = "personaje";
     public static final String PROP_POSICION = "posicion";
     public static final String PROP_ENCUENTRO = "encuentro";
+    public static final String PROP_ENEMIGOS = "enemigos";
 
     private final Mundo mundo;
     private Heroe personaje;
@@ -43,6 +44,13 @@ public class ModeloMapa {
         Mapa mapaAnterior = this.mundo.getMapaActual();
         this.mundo.reiniciar();
         instalar(nuevo, mapaAnterior, this.mundo.getPosicionInicial());
+    }
+
+    public void eliminarEnemigo(Enemigo enemigo) {
+        Mapa actual = this.mundo.getMapaActual();
+        if (actual.quitarEnemigo(enemigo)) {
+            this.soporte.firePropertyChange(PROP_ENEMIGOS, null, actual);
+        }
     }
 
     public boolean restaurar(Heroe heroe, String idEscenario, Posicion posicion) {

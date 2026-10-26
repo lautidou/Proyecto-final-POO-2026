@@ -47,6 +47,10 @@ public abstract class Personaje {
         actualizarHabilidadesDesbloqueadas();
     }
 
+    public boolean estaMuerto() {
+        return this.vida <= 0;
+    }
+
     public void curar(int puntosCurados) {
         this.vida = Math.min(this.vidaMaxima, this.vida + puntosCurados);
     }

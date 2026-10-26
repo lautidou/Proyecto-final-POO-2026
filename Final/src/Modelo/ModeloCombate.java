@@ -17,12 +17,15 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Collections;
 import java.util.List;
+import Modelo.combate.ResultadoCombate;
 
 public class ModeloCombate {
 
     public static final String PROP_ESTADO = "estado";
     public static final String PROP_MENSAJE = "mensaje";
+    public static final String PROP_FIN = "fin";
 
+    private boolean enCurso;
     private Heroe heroe;
     private Enemigo enemigo;
     private ContextoCombate contextoHeroe;    // el héroe dentro de esta pelea, con su visibilidad
@@ -41,7 +44,8 @@ public class ModeloCombate {
         // Contextos nuevos en cada pelea: las condiciones de la anterior no se arrastran.
         this.contextoHeroe = new ContextoCombate(heroe, enemigo, this::registrarMensaje);
         this.contextoEnemigo = new ContextoCombate(enemigo, heroe, this::registrarMensaje);
-        // TODO: si el combate tiene más estado (turno actual, ronda...), reiniciarlo aquí.
+
+        this.enCurso = true;
         notificarCambio();
         registrarMensaje("¡" + heroe.getNombre() + " se enfrenta a " + enemigo.getNombre() + "!");
     }
@@ -61,19 +65,23 @@ public class ModeloCombate {
     }
 
     private void ejecutarAccionDelHeroe(EfectoCombate efecto) {
-        efecto.aplicar(this.contextoHeroe); // si hace daño, el contexto avisa a su estado (atacar delata)
-        turnoEnemigo();
-        notificarCambio();
+        if (!this.enCurso) {
+            return;
+        }
+        efecto.aplicar(this.contextoHeroe);
+        cerrarTurno();
     }
 
     public void procesarBusqueda() {
+        if (!this.enCurso) {
+            return;
+        }
         if (this.contextoEnemigo.esVisible()) {
             registrarMensaje(this.enemigo.getNombre() + " no está escondido.");
         } else {
             buscarA(this.contextoEnemigo);
         }
-        turnoEnemigo();
-        notificarCambio();
+        cerrarTurno();
     }
 
     public void procesarConsumible(Consumible consumible) {
@@ -87,9 +95,35 @@ public class ModeloCombate {
     }
 
     public void procesarEsconderse() {
+        if (!this.enCurso) {
+            return;
+        }
         this.contextoHeroe.esconderse();
         turnoEnemigo();
         notificarCambio();
+        cerrarTurno();
+    }
+
+    private void cerrarTurno() {
+        if (!this.enemigo.estaMuerto()) {
+            turnoEnemigo();
+        }
+        notificarCambio();
+        comprobarFin();
+    }
+
+    private void comprobarFin() {
+        if (this.enemigo.estaMuerto()) {
+            finalizar(ResultadoCombate.VICTORIA, this.enemigo.getNombre() + " ha sido derrotado.");
+        } else if (this.heroe.estaMuerto()) {
+            finalizar(ResultadoCombate.DERROTA, this.heroe.getNombre() + " ha caído en combate...");
+        }
+    }
+
+    private void finalizar(ResultadoCombate resultado, String mensaje) {
+        this.enCurso = false;
+        registrarMensaje(mensaje);
+        this.soporte.firePropertyChange(PROP_FIN, null, resultado);
     }
 
     private void turnoEnemigo() {
