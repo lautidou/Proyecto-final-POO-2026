@@ -48,7 +48,7 @@ public abstract class Personaje {
     }
 
     public void curar(int puntosCurados) {
-        this.vida += puntosCurados;
+        this.vida = Math.min(this.vidaMaxima, this.vida + puntosCurados);
     }
 
     public void recibirDanio(int puntosDanio) {

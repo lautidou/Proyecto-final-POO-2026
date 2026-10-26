@@ -1,30 +1,20 @@
 package Vista.combate;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JViewport;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
+import java.awt.CardLayout;
+import java.awt.GridLayout;
+import java.util.List;
 
 import Vista.BotonImagen;
-
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PanelBotonera extends JPanel {
 
     private static final String MENU_PRINCIPAL = "principal";
     private static final String MENU_COMBATE = "combate";
     private static final String MENU_HABILIDADES = "habilidades";
+    private static final String MENU_INVENTARIO = "inventario";
+
 
     private static final String RUTA_BOTON_COMBATE = "Assets/Pelea/botones/botonCombate.png";
     private static final String RUTA_BOTON_BUSQUEDA = "Assets/Pelea/botones/botonBuscar.png";
@@ -48,9 +38,9 @@ public class PanelBotonera extends JPanel {
     private final BotonImagen botonHabilidades;
     private final BotonImagen botonVolverCombate;
 
-    // Submenú de habilidades
-    private final JPanel listaHabilidades = new JPanel(new GridLayout(0, 1, 0, 8));
-    private final BotonImagen botonVolverHabilidades;
+    // Submenú de listas 
+    private final MenuLista menuHabilidades = new MenuLista(RUTA_BOTON_VOLVER, "No conocés ninguna habilidad.");
+    private final MenuLista menuInventario = new MenuLista(RUTA_BOTON_VOLVER, "No tenés consumibles.");
 
     public PanelBotonera() {
         setLayout(this.tarjetas);
@@ -64,11 +54,11 @@ public class PanelBotonera extends JPanel {
         this.botonBasico = new BotonImagen(RUTA_BOTON_BASICO, "Básico");
         this.botonHabilidades = new BotonImagen(RUTA_BOTON_HABILIDADES, "Habilidades");
         this.botonVolverCombate = new BotonImagen(RUTA_BOTON_VOLVER, "Volver");
-        this.botonVolverHabilidades = new BotonImagen(RUTA_BOTON_VOLVER, "Volver");
 
         add(crearMenuPrincipal(), MENU_PRINCIPAL);
         add(crearMenuCombate(), MENU_COMBATE);
-        add(crearMenuHabilidades(), MENU_HABILIDADES);
+        add(this.menuHabilidades, MENU_HABILIDADES);
+        add(this.menuInventario, MENU_INVENTARIO);
     }
 
     // ---------- Construcción ----------
@@ -92,33 +82,6 @@ public class PanelBotonera extends JPanel {
         return menu;
     }
 
-    private JPanel crearMenuHabilidades() {
-        this.listaHabilidades.setOpaque(false);
-        JPanel arriba = new JPanel(new BorderLayout()); 
-        arriba.setOpaque(false);
-        arriba.add(this.listaHabilidades, BorderLayout.NORTH);
-
-        JScrollPane desplazamiento = new JScrollPane(arriba);
-        desplazamiento.setBorder(null);
-        desplazamiento.setOpaque(false);
-        desplazamiento.getViewport().setOpaque(false);
-        desplazamiento.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE); // evita rastros al ser transparente
-        desplazamiento.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        desplazamiento.getVerticalScrollBar().setUnitIncrement(16);
-
-        JPanel pie = new JPanel(new BorderLayout());
-        pie.setOpaque(false);
-        pie.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        pie.setPreferredSize(new Dimension(0, 50));
-        pie.add(this.botonVolverHabilidades, BorderLayout.CENTER);
-
-        JPanel menu = new JPanel(new BorderLayout());
-        menu.setOpaque(false);
-        menu.add(desplazamiento, BorderLayout.CENTER);
-        menu.add(pie, BorderLayout.SOUTH);
-        return menu;
-    }
-
     // ---------- Navegación ----------
 
     public void mostrarMenuPrincipal() {
@@ -133,30 +96,18 @@ public class PanelBotonera extends JPanel {
         this.tarjetas.show(this, MENU_HABILIDADES);
     }
 
+    public void mostrarMenuInventario() {
+        this.tarjetas.show(this, MENU_INVENTARIO);
+    }
+
     // ---------- Habilidades (cambian de un combate a otro) ----------
-
     public List<JButton> setHabilidades(List<String> nombres, List<String> descripciones) {
-        if (nombres.size() != descripciones.size()) {
-            throw new IllegalArgumentException("Debe haber una descripción por cada habilidad.");
-        }
-        this.listaHabilidades.removeAll();
-        List<JButton> botones = new ArrayList<>();
+        return this.menuHabilidades.setOpciones(nombres, descripciones);
+    }
 
-        if (nombres.isEmpty()) {
-            JLabel vacio = new JLabel("No conocés ninguna habilidad.", SwingConstants.CENTER);
-            vacio.setForeground(new Color(240, 230, 210));
-            vacio.setFont(new Font("SansSerif", Font.BOLD, 18));
-            this.listaHabilidades.add(vacio);
-        }
-        for (int i = 0; i < nombres.size(); i++) {
-            BotonTexto boton = new BotonTexto(nombres.get(i));
-            boton.setToolTipText(descripciones.get(i));
-            this.listaHabilidades.add(boton);
-            botones.add(boton);
-        }
-        this.listaHabilidades.revalidate();
-        this.listaHabilidades.repaint();
-        return botones;
+    // ---------- Objetos (cambian de un combate a otro) ----------
+    public List<JButton> setConsumibles(List<String> nombres, List<String> descripciones) {
+        return this.menuInventario.setOpciones(nombres, descripciones);
     }
 
     // ---------- Botones (el controlador les agrega los listeners) ----------
@@ -190,6 +141,10 @@ public class PanelBotonera extends JPanel {
     }
 
     public JButton getBotonVolverHabilidades() {
-        return this.botonVolverHabilidades;
+        return this.menuHabilidades.getBotonVolver();
+    }
+
+    public JButton getBotonVolverInventario() {
+        return this.menuInventario.getBotonVolver();
     }
 }

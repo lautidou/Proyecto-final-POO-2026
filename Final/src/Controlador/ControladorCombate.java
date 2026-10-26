@@ -2,6 +2,7 @@ package Controlador;
 
 import Audio.ReproductorAudio;
 import Modelo.ModeloCombate;
+import Modelo.objetos.Consumible;
 import Modelo.pjs.Enemigo;
 import Modelo.pjs.Habilidad;
 import Modelo.pjs.Heroe;
@@ -28,16 +29,20 @@ public class ControladorCombate {
         // Menú principal
         this.vista.getBotonCombate().addActionListener(evento -> this.ejecutarCombate());
         this.vista.getBotonBusqueda().addActionListener(evento -> this.ejecutarBusqueda());
-        this.vista.getBotonInventario().addActionListener(evento -> this.ejecutarInventario());
+        this.vista.getBotonInventario().addActionListener(evento -> this.abrirMenuInventario());
         this.vista.getBotonEsconderse().addActionListener(evento -> this.ejecutarEsconderse());
 
         // Submenú de combate
         this.vista.getBotonBasico().addActionListener(evento -> this.ejecutarBasico());
         this.vista.getBotonHabilidades().addActionListener(evento -> this.abrirMenuHabilidades());
         this.vista.getBotonVolverCombate().addActionListener(evento -> this.vista.mostrarMenuPrincipal());
+        this.vista.getBotonInventario().addActionListener(evento -> this.abrirMenuInventario());
 
         // Submenú de habilidades (los botones de cada habilidad se enganchan al abrirlo)
         this.vista.getBotonVolverHabilidades().addActionListener(evento -> this.vista.mostrarMenuCombate());
+
+        // Submenú de inventario
+        this.vista.getBotonVolverInventario().addActionListener(evento -> this.vista.mostrarMenuPrincipal());
 
         this.modelo.addPropertyChangeListener(this::alCambiarModelo);
     }
@@ -57,10 +62,6 @@ public class ControladorCombate {
 
     private void ejecutarBusqueda() {
         this.modelo.procesarBusqueda();
-    }
-
-    private void ejecutarInventario() {
-        this.modelo.procesarInventario();
     }
 
     private void ejecutarEsconderse() {
@@ -100,6 +101,30 @@ public class ControladorCombate {
         }
         this.modelo.procesarHabilidad(habilidad);
         this.vista.mostrarMenuPrincipal();
+    }
+
+    // ---------- Submenú de inventario ----------
+    private void abrirMenuInventario() {
+        List<Consumible> consumibles = this.modelo.getConsumiblesDelHeroe();
+
+        List<String> nombres = new ArrayList<>();
+        List<String> descripciones = new ArrayList<>();
+        for (Consumible consumible : consumibles) {
+            nombres.add(consumible.getNombre() + " x" + consumible.getCantidad());
+            descripciones.add(consumible.getDetalle());
+        }
+
+        List<JButton> botones = this.vista.setConsumibles(nombres, descripciones);
+        for (int i = 0; i < botones.size(); i++) {
+            Consumible consumible = consumibles.get(i);
+            botones.get(i).addActionListener(evento -> this.ejecutarConsumible(consumible));
+        }
+        this.vista.mostrarMenuInventario();
+    }
+
+    private void ejecutarConsumible(Consumible consumible) {
+        this.modelo.procesarConsumible(consumible);
+        this.vista.mostrarMenuPrincipal(); // gasta el turno, como las demás acciones
     }
 
     // ---------- Cambios del modelo ----------

@@ -175,8 +175,16 @@ public class VistaCombate extends JPanel {
         this.botonera.mostrarMenuHabilidades();
     }
 
+    public void mostrarMenuInventario() {
+        this.botonera.mostrarMenuInventario();
+    }
+
     public List<JButton> setHabilidades(List<String> nombres, List<String> descripciones) {
         return this.botonera.setHabilidades(nombres, descripciones);
+    }
+
+    public List<JButton> setConsumibles(List<String> nombres, List<String> descripciones) {
+        return this.botonera.setConsumibles(nombres, descripciones);
     }
 
     // ---------- Botones (el controlador les agrega los listeners) ----------
@@ -205,13 +213,15 @@ public class VistaCombate extends JPanel {
         return this.botonera.getBotonHabilidades();
     }
 
-    /** "Volver" del submenú de combate: regresa al menú principal. */
     public JButton getBotonVolverCombate() {
         return this.botonera.getBotonVolverCombate();
     }
 
-    /** "Volver" del submenú de habilidades: regresa al submenú de combate. */
     public JButton getBotonVolverHabilidades() {
         return this.botonera.getBotonVolverHabilidades();
+    }
+
+    public JButton getBotonVolverInventario() {
+        return this.botonera.getBotonVolverInventario();
     }
 }

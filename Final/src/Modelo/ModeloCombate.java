@@ -9,6 +9,9 @@ import Modelo.pjs.Enemigo;
 import Modelo.pjs.Habilidad;
 import Modelo.pjs.Heroe;
 import Modelo.pjs.Personaje;
+import Modelo.objetos.Consumible;
+import Modelo.objetos.Objeto;
+import java.util.ArrayList;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -73,8 +76,14 @@ public class ModeloCombate {
         notificarCambio();
     }
 
-    public void procesarInventario() {
-        // TODO
+    public void procesarConsumible(Consumible consumible) {
+        if (consumible == null) {
+            throw new IllegalArgumentException("El consumible no puede ser nulo.");
+        }
+        if (!getConsumiblesDelHeroe().contains(consumible)) {
+            throw new IllegalArgumentException("El héroe no tiene " + consumible.getNombre() + " disponible.");
+        }
+        ejecutarAccionDelHeroe(contexto -> contexto.usarConsumible(consumible));
     }
 
     public void procesarEsconderse() {
@@ -113,6 +122,19 @@ public class ModeloCombate {
 
     private void registrarMensaje(String mensaje) {
         this.soporte.firePropertyChange(PROP_MENSAJE, null, mensaje);
+    }
+
+    public List<Consumible> getConsumiblesDelHeroe() {
+        List<Consumible> consumibles = new ArrayList<>();
+        if (this.heroe == null) {
+            return consumibles;
+        }
+        for (Objeto objeto : this.heroe.getInventario()) {   // <- ajustar si se llama distinto
+            if (objeto instanceof Consumible && ((Consumible) objeto).getCantidad() > 0) {
+                consumibles.add((Consumible) objeto);
+            }
+        }
+        return consumibles;
     }
 
     public List<Habilidad> getHabilidadesDelHeroe() {

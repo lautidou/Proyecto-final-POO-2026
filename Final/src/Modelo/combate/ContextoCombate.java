@@ -4,6 +4,7 @@ import Modelo.pjs.Habilidad;
 import Modelo.pjs.Personaje;
 import Modelo.pjs.escondite.EstadoVisibilidad;
 import Modelo.pjs.escondite.Visible;
+import Modelo.objetos.Consumible;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,6 +64,14 @@ public final class ContextoCombate {
         int curado = Math.max(0, Math.min(puntos, faltante));
         this.actor.curar(curado);
         mensaje(this.actor.getNombre() + " recupera " + curado + " PV.");
+    }
+
+    // ---- Objetos ----
+    public void usarConsumible(Consumible consumible) {
+        int vidaAntes = this.actor.getVida();
+        consumible.usar(this.actor); // el propio objeto sabe qué efecto tiene
+        mensaje(this.actor.getNombre() + " usa " + consumible.getNombre() 
+        + " y recupera " + (this.actor.getVida() - vidaAntes) + " PV.");
     }
 
     // ---- Usos de habilidades (por pelea: un contexto nuevo los repone) ----
