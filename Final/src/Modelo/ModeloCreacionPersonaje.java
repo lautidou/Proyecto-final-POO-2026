@@ -1,11 +1,11 @@
 package Modelo;
 
+import Modelo.objetos.Objeto;
 import Modelo.pjs.Caracteristicas;
 import Modelo.pjs.Clases;
 import Modelo.pjs.Dados;
 import Modelo.pjs.Habilidad;
 import Modelo.pjs.Heroe;
-import Modelo.pjs.Objeto;
 import Modelo.pjs.Raza;
 
 import java.util.ArrayList;

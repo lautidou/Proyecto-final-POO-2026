@@ -2,6 +2,9 @@ package Modelo.pjs;
 
 import Modelo.combate.CatalogoHabilidades;
 import Modelo.combate.CatalogoObjetos;
+import Modelo.objetos.Arma;
+import Modelo.objetos.Armadura;
+import Modelo.objetos.Objeto;
 
 import java.util.ArrayList;
 import java.util.Arrays;

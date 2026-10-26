@@ -1,4 +1,4 @@
-package Modelo.pjs;
+package Modelo.objetos;
 
 public class Armadura extends ObjetoEquipable {
     private final int defensa;
@@ -12,28 +12,15 @@ public class Armadura extends ObjetoEquipable {
     }
 
     @Override
-    public boolean estaEquipadoPor(Personaje personaje) {
-        return personaje.getArmaduraEquipada() == this;
-    }
-
-    @Override
-    public void equiparEn(Personaje personaje) {
-        personaje.equipar(this);
-    }
-
-    @Override
-    public void desequiparDe(Personaje personaje) {
-        if (estaEquipadoPor(personaje)) {
-            personaje.desequiparArmadura();
-        }
-    }
-
-    @Override
     public String getResumen() {
         return "Defensa +" + defensa;
     }
 
     public int getDefensa() {
         return defensa;
+    }
+
+    public RanuraEquipo getRanura() {
+        return RanuraEquipo.ARMADURA;
     }
 }

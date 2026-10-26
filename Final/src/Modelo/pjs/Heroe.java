@@ -3,6 +3,8 @@ package Modelo.pjs;
 import java.util.ArrayList;
 import java.util.List;
 
+import Modelo.objetos.Objeto;
+
 public class Heroe extends Personaje {
     private int experiencia;
     private List<Objeto> inventario;

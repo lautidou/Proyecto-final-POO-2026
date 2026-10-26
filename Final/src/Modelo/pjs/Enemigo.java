@@ -1,6 +1,8 @@
 package Modelo.pjs;
 import java.util.List;
 
+import Modelo.objetos.Objeto;
+
 public class Enemigo extends Personaje {
     private TipoEnemigo tipoEnemigo;
     private int experienciaDada;

@@ -1,8 +1,8 @@
 package Modelo.combate;
 
-import Modelo.pjs.Arma;
-import Modelo.pjs.Armadura;
-import Modelo.pjs.Consumible;
+import Modelo.objetos.Arma;
+import Modelo.objetos.Armadura;
+import Modelo.objetos.Consumible;
 import Modelo.pjs.Dados;
 
 public final class CatalogoObjetos {

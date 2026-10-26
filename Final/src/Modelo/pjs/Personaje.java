@@ -1,8 +1,15 @@
 package Modelo.pjs;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+
 import Modelo.mapa.Posicion;
+import Modelo.objetos.Arma;
+import Modelo.objetos.Armadura;
+import Modelo.objetos.Equipable;
+import Modelo.objetos.RanuraEquipo;
 
 public abstract class Personaje {
     // Atributos
@@ -14,8 +21,7 @@ public abstract class Personaje {
     private List<Habilidad> habilidades;
     private Caracteristicas caracteristicas;
     private Posicion posicion;
-    private Arma armaEquipada;
-    private Armadura armaduraEquipada;
+    private final Map<RanuraEquipo, Equipable> equipo = new EnumMap<>(RanuraEquipo.class);
 
     public Personaje(String nombre, int nivel, Clases clase, List<Habilidad> habilidades,
                       Caracteristicas caracteristicas) {
@@ -81,52 +87,17 @@ public abstract class Personaje {
     }
 
     // Equipo
-    public Arma equipar(Arma arma) {
-        if (arma == null) {
-            throw new IllegalArgumentException("El arma no puede ser nula.");
-        }
-        if (arma == this.armaEquipada) {
-            return null;
-        }
-        Arma anterior = this.armaEquipada;
-        this.armaEquipada = arma;
-        return anterior;
+    public void equipar(Equipable e) {
+        if (e == null) throw new IllegalArgumentException("El equipo no puede ser nulo.");
+            equipo.put(e.getRanura(), e);              // reemplaza lo que hubiera en esa ranura
     }
 
-    public Armadura equipar(Armadura armadura) {
-        if (armadura == null) {
-            throw new IllegalArgumentException("La armadura no puede ser nula.");
-        }
-        if (armadura == this.armaduraEquipada) {
-            return null;
-        }
-        Armadura anterior = this.armaduraEquipada;
-        this.armaduraEquipada = armadura;
-        return anterior;
+    public void desequipar(Equipable e) {
+        equipo.remove(e.getRanura(), e);           // solo saca si es el que lleva puesto
     }
 
-    public Arma desequiparArma() {
-        Arma arma = this.armaEquipada;
-        this.armaEquipada = null;
-        return arma;
-    }
-
-    public Armadura desequiparArmadura() {
-        Armadura armadura = this.armaduraEquipada;
-        this.armaduraEquipada = null;
-        return armadura;
-    }
-
-    public Arma getArmaEquipada() {
-        return armaEquipada;
-    }
-
-    public Armadura getArmaduraEquipada() {
-        return armaduraEquipada;
-    }
-
-    public int getDefensa() {
-        return (armaduraEquipada == null) ? 0 : armaduraEquipada.getDefensa();
+    public boolean estaEquipado(Equipable e) {
+        return equipo.get(e.getRanura()) == e;
     }
 
     // Getters y Setters
@@ -172,5 +143,13 @@ public abstract class Personaje {
 
     public List<Habilidad> getHabilidades() {
         return habilidades;
+    }
+
+    public Arma getArmaEquipada() {
+        return (Arma) equipo.get(RanuraEquipo.ARMA); 
+    }
+
+    public Armadura getArmaduraEquipada() {
+        return (Armadura) equipo.get(RanuraEquipo.ARMADURA);
     }
 }

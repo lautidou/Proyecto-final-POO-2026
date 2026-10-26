@@ -1,4 +1,6 @@
-package Modelo.pjs;
+package Modelo.objetos;
+
+import Modelo.pjs.Personaje;
 
 public abstract class ObjetoEquipable extends Objeto implements Equipable {
 
@@ -8,11 +10,8 @@ public abstract class ObjetoEquipable extends Objeto implements Equipable {
 
     @Override
     public final void usar(Personaje objetivo) {
-        if (estaEquipadoPor(objetivo)) {
-            desequiparDe(objetivo);
-        } else {
-            equiparEn(objetivo);
-        }
+        if (objetivo.estaEquipado(this)) objetivo.desequipar(this);
+        else objetivo.equipar(this);
     }
 
     @Override

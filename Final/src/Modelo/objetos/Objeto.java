@@ -1,4 +1,7 @@
-package Modelo.pjs;
+package Modelo.objetos;
+
+import Modelo.pjs.Personaje;
+
 public abstract class Objeto {
     private String nombre;
     private int idObjeto;

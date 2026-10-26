@@ -1,4 +1,6 @@
-package Modelo.pjs;
+package Modelo.objetos;
+
+import Modelo.pjs.Dados;
 
 public class Arma extends ObjetoEquipable {
     private final Dados dado;
@@ -12,23 +14,6 @@ public class Arma extends ObjetoEquipable {
     }
 
     @Override
-    public boolean estaEquipadoPor(Personaje personaje) {
-        return personaje.getArmaEquipada() == this;
-    }
-
-    @Override
-    public void equiparEn(Personaje personaje) {
-        personaje.equipar(this);
-    }
-
-    @Override
-    public void desequiparDe(Personaje personaje) {
-        if (estaEquipadoPor(personaje)) {
-            personaje.desequiparArma();
-        }
-    }
-
-    @Override
     public String getResumen() {
         return "Daño " + dado.name();
     }
@@ -39,5 +24,9 @@ public class Arma extends ObjetoEquipable {
 
     public int tiradaDanio(int car_necesaria) {
         return car_necesaria + dado.rolleo();
+    }
+
+    public RanuraEquipo getRanura() {
+        return RanuraEquipo.ARMA;
     }
 }

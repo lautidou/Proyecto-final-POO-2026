@@ -1,15 +1,15 @@
 package Modelo;
 
-import Modelo.pjs.Consumible;
-import Modelo.pjs.Equipable;
+import Modelo.objetos.Consumible;
+import Modelo.objetos.Equipable;
+import Modelo.objetos.Objeto;
 import Modelo.pjs.Heroe;
-import Modelo.pjs.Objeto;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class ModeloInventario {
 
@@ -25,12 +25,12 @@ public class ModeloInventario {
         this.modeloMapa = modeloMapa;
     }
 
+    private Optional<Heroe> heroe() {
+        return Optional.ofNullable(this.modeloMapa.getPersonaje());
+    }
+
     public List<Objeto> getObjetos() {
-        Heroe heroe = this.modeloMapa.getPersonaje();
-        if (heroe == null) {
-            return Collections.emptyList();
-        }
-        return new ArrayList<>(heroe.getInventario());
+        return heroe().map(h -> new ArrayList<>(h.getInventario())).orElseGet(ArrayList::new);
     }
 
     public boolean esEquipable(Objeto objeto) {
@@ -38,13 +38,12 @@ public class ModeloInventario {
     }
 
     public boolean estaEquipado(Objeto objeto) {
-        Heroe heroe = this.modeloMapa.getPersonaje();
-        return heroe != null && objeto instanceof Equipable
-                && ((Equipable) objeto).estaEquipadoPor(heroe);
+        return objeto instanceof Equipable
+        && heroe().map(h -> h.estaEquipado((Equipable) objeto)).orElse(false);
     }
 
     public boolean usarObjeto(Objeto objeto) {
-        Heroe heroe = this.modeloMapa.getPersonaje();
+        Heroe heroe = heroe().orElse(null);
         if (heroe == null || objeto == null || !heroe.getInventario().contains(objeto)) {
             return false;
         }
@@ -55,7 +54,7 @@ public class ModeloInventario {
         this.soporte.firePropertyChange(PROP_INVENTARIO, null, this);
         return true;
     }
-
+    
     public void addPropertyChangeListener(PropertyChangeListener oyente) {
         this.soporte.addPropertyChangeListener(oyente);
     }
