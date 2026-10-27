@@ -74,6 +74,6 @@ public class ControladorPantallas {
         this.ventana.registrarPanel(VistaMuerte.NOMBRE, vistaMuerte);
         new ControladorMuerte(vistaMuerte, modeloPartida);
 
-        return new ControladorCombate(vista, modelo, new ControladorFinCombate(modeloMapa));
+        return new ControladorCombate(vista, modelo, modeloMapa);
     }
 }

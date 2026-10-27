@@ -7,9 +7,11 @@ import Modelo.pjs.Enemigo;
 import Modelo.pjs.Habilidad;
 import Modelo.pjs.Heroe;
 import Modelo.combate.ResultadoCombate;
-import Modelo.combate.SalidaCombate;
+import Modelo.ModeloMapa;
 import Vista.Ventana;
 import Vista.VistaCombate;
+import Vista.VistaMapa;
+import Vista.VistaMuerte;
 
 import javax.swing.Timer;
 import javax.swing.JButton;
@@ -22,15 +24,15 @@ public class ControladorCombate {
     private final VistaCombate vista;
     private final ModeloCombate modelo;
     private static final int PAUSA_FINAL_MS = 1500; // para alcanzar a leer el último mensaje
-    private final SalidaCombate salida;
+    private final ModeloMapa modeloMapa;
 
-    public ControladorCombate(VistaCombate vista, ModeloCombate modelo, SalidaCombate salida) {
-        if (vista == null || modelo == null || salida == null) {
-            throw new IllegalArgumentException("La vista, el modelo y la salida son obligatorios");
+    public ControladorCombate(VistaCombate vista, ModeloCombate modelo, ModeloMapa modeloMapa) {
+        if (vista == null || modelo == null || modeloMapa == null) {
+            throw new IllegalArgumentException("La vista, el modelo y el modelo del mapa son obligatorios");
         }
         this.vista = vista;
         this.modelo = modelo;
-        this.salida = salida;
+        this.modeloMapa = modeloMapa;
 
         // Menú principal
         this.vista.getBotonCombate().addActionListener(evento -> this.ejecutarCombate());
@@ -165,14 +167,14 @@ public class ControladorCombate {
     private void programarSalida(ResultadoCombate resultado) {
         this.vista.mostrarMenuPrincipal();
         Timer pausa = new Timer(PAUSA_FINAL_MS, evento -> {
-            Heroe heroe = this.modelo.getHeroe();
             Enemigo enemigo = this.modelo.getEnemigo();
-            if (resultado == ResultadoCombate.VICTORIA) {
-                this.salida.alGanar(heroe, enemigo);
+            if (resultado == ResultadoCombate.VICTORIA) { // Lo que sucede si se gana
+                this.modeloMapa.eliminarEnemigo(enemigo);
+                Ventana.getInstancia().mostrarPanel(VistaMapa.NOMBRE);
             } else {
-                this.salida.alPerder(heroe, enemigo);
-            }
-        });
+                ReproductorAudio.detenerMusica();
+                Ventana.getInstancia().mostrarPanel(VistaMuerte.NOMBRE);            }
+            });
         pausa.setRepeats(false);
         pausa.start();
     }
