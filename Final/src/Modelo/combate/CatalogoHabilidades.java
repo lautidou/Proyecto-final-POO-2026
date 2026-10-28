@@ -45,7 +45,7 @@ public final class CatalogoHabilidades {
 
     public static Habilidad curacionMenor() {
         return new Habilidad(3, "Curación menor", "Recupera vida: d8 + Sabiduría.",
-                contexto -> contexto.curarse(Reglas.tirada(Dados.d8, sabiduria(contexto))), 2);
+                contexto -> contexto.curarse(Reglas.tirada(Dados.d8, sabiduria(contexto))), 2, true);
     }
 
     public static Habilidad rafagaDeGolpes() {

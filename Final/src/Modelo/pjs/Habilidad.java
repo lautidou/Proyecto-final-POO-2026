@@ -9,9 +9,14 @@ public class Habilidad {
     private final String descripcion;
     private final EfectoCombate efecto;
     private final int usosTotales;
-    private int usosRestantes;
+    private final boolean curativa;
 
     public Habilidad(int idHabilidad, String nombre, String descripcion, EfectoCombate efecto, int usosTotales) {
+        this(idHabilidad, nombre, descripcion, efecto, usosTotales, false);
+    }
+
+    public Habilidad(int idHabilidad, String nombre, String descripcion, EfectoCombate efecto, int usosTotales,
+                     boolean curativa) {
         if (idHabilidad <= 0) {
             throw new IllegalArgumentException("El ID de la habilidad debe ser mayor que cero.");
         }
@@ -29,17 +34,17 @@ public class Habilidad {
         this.descripcion = descripcion;
         this.efecto = efecto;
         this.usosTotales = usosTotales;
-        this.usosRestantes = usosTotales;
+        this.curativa = curativa;
     }
 
     public void usar(ContextoCombate contexto) {
-        if (usosRestantes <= 0) {
+        if (contexto.usosRestantes(this) <= 0) {
             contexto.mensaje(contexto.getActor().getNombre() + " intenta usar " + nombre + ", pero ya no tiene usos disponibles.");
             return;
         }
         contexto.mensaje(contexto.getActor().getNombre() + " usa " + nombre + ".");
         efecto.aplicar(contexto);
-        usosRestantes--;
+        contexto.registrarUso(this);
     }
 
     public int getIdHabilidad() {
@@ -58,7 +63,7 @@ public class Habilidad {
         return usosTotales;
     }
 
-    public int getUsosRestantes() {
-        return usosRestantes;
+    public boolean esCurativa() {
+        return curativa;
     }
 }

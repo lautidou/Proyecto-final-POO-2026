@@ -14,4 +14,12 @@ public abstract class Enemigo extends Personaje {
         this.experienciaDada = experienciaDada;
         this.recompensa = recompensa;
     }
+
+    public int getExperienciaDada() {
+        return experienciaDada;
+    }
+
+    public List<Objeto> getRecompensa() {
+        return recompensa;
+    }
 }

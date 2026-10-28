@@ -2,6 +2,7 @@ package Modelo.pjs;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,9 @@ public abstract class Personaje {
     private Caracteristicas caracteristicas;
     private Posicion posicion;
     private final Map<RanuraEquipo, Equipable> equipo = new EnumMap<>(RanuraEquipo.class);
+    // Usos gastados por habilidad (id -> veces). Son del personaje y duran toda la campaña,
+    // porque la Habilidad en sí la comparten todos los personajes de la clase.
+    private final Map<Integer, Integer> usosGastados = new HashMap<>();
 
     public Personaje(String nombre, int nivel, Clases clase, List<Habilidad> habilidades,
                       Caracteristicas caracteristicas) {
@@ -63,6 +67,21 @@ public abstract class Personaje {
         }
     }
     
+    // ---- Usos de habilidades ----
+    public int getUsosRestantes(Habilidad habilidad) {
+        Integer gastados = this.usosGastados.get(habilidad.getIdHabilidad());
+        return Math.max(0, habilidad.getUsosTotales() - (gastados == null ? 0 : gastados));
+    }
+
+    public void registrarUsoHabilidad(Habilidad habilidad) {
+        this.usosGastados.merge(habilidad.getIdHabilidad(), 1, Integer::sum);
+    }
+
+    // Devuelve todas las habilidades a sus usos totales (para cuando pase el día).
+    public void regenerarUsosHabilidades() {
+        this.usosGastados.clear();
+    }
+
     public void aprenderHabilidad(Habilidad habilidad) {
         if (habilidad == null) return;
         boolean yaExiste = habilidades.stream()

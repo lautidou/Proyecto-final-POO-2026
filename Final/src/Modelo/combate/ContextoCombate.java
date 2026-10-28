@@ -6,8 +6,6 @@ import Modelo.pjs.escondite.EstadoVisibilidad;
 import Modelo.pjs.escondite.Visible;
 import Modelo.objetos.Consumible;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Consumer;
 
 public final class ContextoCombate {
@@ -16,7 +14,6 @@ public final class ContextoCombate {
     private final Personaje oponente;
     private final Consumer<String> salidaMensajes;
     private EstadoVisibilidad estado = new Visible(); // todo combatiente empieza a la vista
-    private final Map<Integer, Integer> usosGastados = new HashMap<>(); // id de habilidad -> veces usada en esta pelea
 
     public ContextoCombate(Personaje actor, Personaje oponente, Consumer<String> salidaMensajes) {
         this.actor = actor;
@@ -74,14 +71,13 @@ public final class ContextoCombate {
         + " y recupera " + (this.actor.getVida() - vidaAntes) + " PV.");
     }
 
-    // ---- Usos de habilidades (por pelea: un contexto nuevo los repone) ----
+    // ---- Usos de habilidades (son del personaje y persisten entre peleas) ----
     public int usosRestantes(Habilidad habilidad) {
-        Integer gastados = this.usosGastados.get(habilidad.getIdHabilidad());
-        return habilidad.getUsosTotales() - (gastados == null ? 0 : gastados);
+        return this.actor.getUsosRestantes(habilidad);
     }
 
     public void registrarUso(Habilidad habilidad) {
-        this.usosGastados.merge(habilidad.getIdHabilidad(), 1, Integer::sum);
+        this.actor.registrarUsoHabilidad(habilidad);
     }
 
     public void mensaje(String texto) {
