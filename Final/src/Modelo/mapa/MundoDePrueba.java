@@ -1,11 +1,7 @@
 package Modelo.mapa;
 
-import Modelo.pjs.Caracteristicas;
-import Modelo.pjs.Clases;
-import Modelo.pjs.Enemigo;
-import Modelo.pjs.TipoEnemigo;
+import Modelo.pjs.enemigos.FactoryEnemigos;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -74,7 +70,7 @@ public final class MundoDePrueba {
         abrirSalida(cueva, 9, 29, 30, 29, ID_ENTRADA_CUEVA, new Posicion(14, 10));
 
         // ---- Enemigos (despues de los portales, para no taparlos) ----
-        villa.agregarEnemigo(crearGoblin(), POSICION_GOBLIN);
+        villa.agregarEnemigo(FactoryEnemigos.crear("Goblin"), POSICION_GOBLIN);
 
         Mundo mundo = new Mundo();
         mundo.agregarMapa(pueblo);
@@ -122,13 +118,6 @@ public final class MundoDePrueba {
     }
 
     // ------------------------------------------------------------------ utilidades
-
-    //Crea un Goblin
-    private static Enemigo crearGoblin() {
-        return new Enemigo("Goblin", 1, Clases.Barbaro, new ArrayList<>(),
-        new Caracteristicas(8, 14, 10, 10, 8, 8), TipoEnemigo.Goblin, 50, new ArrayList<>());
-    }
-
     /** Crea el mapa con el tamano de la capa de colisiones y pone pared en cada celda no vacia. */
     private static Mapa mapaDesdeColisiones(String id, String rutaColisiones) {
         int[][] colisiones = CargarMapa.cargarCapa(rutaColisiones);

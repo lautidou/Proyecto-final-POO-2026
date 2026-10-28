@@ -25,7 +25,6 @@ public class Heroe extends Personaje {
     public void ganarExperiencia(int puntosExp) {
         if (puntosExp <= 0) return;
         this.experiencia += puntosExp;
-        System.out.println(getNombre() + " ha ganado " + puntosExp + " puntos de experiencia (Total: " + this.experiencia + " XP).");
         while (getNivel() < 20 && experienciaRequeridaParaSiguienteNivel() <= this.experiencia) {
             subirNivel();
         }

@@ -69,17 +69,14 @@ public abstract class Personaje {
                 .anyMatch(h -> h.getIdHabilidad() == habilidad.getIdHabilidad());
         if (!yaExiste) {
             habilidades.add(habilidad);
-            System.out.println(nombre + " ha aprendido la habilidad: " + habilidad.getNombre());
         }
     }
 
     public void subirNivel() {
         if (this.nivel >= 20) {
-            System.out.println(this.nombre + " ya ha alcanzado el nivel máximo.");
             return;
         }
         this.nivel++;
-        System.out.println(this.nombre + " ha subido al Nivel " + this.nivel + "!");
         actualizarHabilidadesDesbloqueadas();
     }
 

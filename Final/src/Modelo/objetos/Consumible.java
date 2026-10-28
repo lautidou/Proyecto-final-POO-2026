@@ -24,15 +24,13 @@ public class Consumible extends Objeto {
     public void eliminarObjeto() {
         if (this.cantidad > 0) {
             this.cantidad--;
-            System.out.println("Se ha usado un " + super.getNombre() + ". Quedan " + this.cantidad + " unidades.");
         } else {
-            System.out.println("No quedan unidades de " + super.getNombre() + " para usar.");
+            throw new IllegalStateException("No hay más consumibles para eliminar.");
         }
     }
 
     @Override
     public void usar(Personaje objetivo) {
-        System.out.println("Usando " + super.getNombre() + ", " + objetivo.getNombre() + " recupera " + this.puntosRestauracion + " puntos de vida.");
             objetivo.curar(this.puntosRestauracion);
             eliminarObjeto();
     }

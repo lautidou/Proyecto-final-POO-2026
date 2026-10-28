@@ -43,7 +43,6 @@ public class ControladorMenuMain {
 
     private void ejecutarBotonUno() {
         ReproductorAudio.efectoBotonMenu();
-        System.out.println("Se presionó el Botón 1");
         this.modelo.procesarAccionUno();
         // Navega a la pantalla de creación de personaje
         Ventana.getInstancia().mostrarPanel(VistaCreacionPersonaje.NOMBRE);
@@ -51,7 +50,6 @@ public class ControladorMenuMain {
 
     private void ejecutarBotonDos() {
         ReproductorAudio.efectoBotonMenu();
-        System.out.println("Se presionó el Botón 2");
         if (this.modeloPartida.cargar()) {
             Ventana.getInstancia().mostrarPanel(VistaMapa.NOMBRE);
         } else {
@@ -62,7 +60,6 @@ public class ControladorMenuMain {
 
     private void ejecutarBotonTres() {
         ReproductorAudio.efectoBotonMenu();
-        System.out.println("Se presionó el Botón 3");
         System.exit(0);
     }
 }
