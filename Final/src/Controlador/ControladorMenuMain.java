@@ -3,6 +3,7 @@ package Controlador;
 import Audio.ReproductorAudio;
 import Modelo.ModeloMenuMain;
 import Modelo.ModeloPartida;
+import Vista.PanelOpciones;
 import Vista.Ventana;
 import Vista.VistaCreacionPersonaje;
 import Vista.VistaMapa;
@@ -38,6 +39,7 @@ public class ControladorMenuMain {
         // Registro de eventos para los tres botones del panel central
         this.vista.getBotonUno().addActionListener(evento -> this.ejecutarBotonUno());
         this.vista.getBotonDos().addActionListener(evento -> this.ejecutarBotonDos());
+        this.vista.getBotonOpciones().addActionListener(evento -> this.ejecutarBotonOpciones());
         this.vista.getBotonTres().addActionListener(evento -> this.ejecutarBotonTres());
     }
 
@@ -62,4 +64,10 @@ public class ControladorMenuMain {
         ReproductorAudio.efectoBotonMenu();
         System.exit(0);
     }
+
+    private void ejecutarBotonOpciones() {
+    ReproductorAudio.efectoBotonMenu();
+    PanelOpciones opciones = new PanelOpciones(Ventana.getInstancia());
+    opciones.setVisible(true); 
+}
 }

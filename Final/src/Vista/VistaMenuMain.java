@@ -14,6 +14,7 @@ public class VistaMenuMain extends JPanel {
     private final JButton botonUno;
     private final JButton botonDos;
     private final JButton botonTres;
+    private final JButton botonOpciones;
 
     public VistaMenuMain() {
         super(new BorderLayout());
@@ -30,16 +31,18 @@ public class VistaMenuMain extends JPanel {
         panelPergamino.setLayout(new GridBagLayout());
         panelPergamino.setPreferredSize(new Dimension(350, 350));
 
-        JPanel panelBotones = new JPanel(new GridLayout(3, 1, 0, 20));
+        JPanel panelBotones = new JPanel(new GridLayout(4, 1, 0, 20));
         panelBotones.setOpaque(false);
-        panelBotones.setPreferredSize(new Dimension(200, 150));//ver despues tamaño de las letras
+        panelBotones.setPreferredSize(new Dimension(200, 210));//ver despues tamaño de las letras
 
         this.botonUno = new BotonImagen("Assets/MenuMain/botonCrearPartida.png", "Crear partida");
         this.botonDos = new BotonImagen("Assets/MenuMain/botonCargarPartida.png", "Cargar partida");
+        this.botonOpciones = new BotonImagen("Assets/MenuMain/botonOpciones.png", "Opciones");
         this.botonTres = new BotonImagen("Assets/MenuMain/botonSalir.png", "Salir");
 
         panelBotones.add(this.botonUno);
         panelBotones.add(this.botonDos);
+        panelBotones.add(this.botonOpciones);
         panelBotones.add(this.botonTres);
 
         panelPergamino.add(panelBotones);
@@ -59,4 +62,8 @@ public class VistaMenuMain extends JPanel {
     public JButton getBotonTres() {
         return this.botonTres;
     }
+
+       public JButton getBotonOpciones() {
+        return this.botonOpciones;
+    } 
 }

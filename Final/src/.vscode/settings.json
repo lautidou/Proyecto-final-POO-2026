@@ -3,6 +3,7 @@
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
         "c:\\Users\\Lautaro ojeda\\OneDrive\\Desktop\\WORKSPACE\\Trabajo final POO\\Proyecto-final-POO-2026\\Final\\lib\\sqlite-jdbc-3.50.3.0.jar",
-        "c:\\Workspace_Java\\POO\\TPFinal\\Proyecto-final-POO-2026\\Final\\lib\\sqlite-jdbc-3.50.3.0.jar"
+        "c:\\Workspace_Java\\POO\\TPFinal\\Proyecto-final-POO-2026\\Final\\lib\\sqlite-jdbc-3.50.3.0.jar",
+        "c:\\WORKSPACE\\Trabajo final POO\\Proyecto-final-POO-2026\\Final\\lib\\sqlite-jdbc-3.50.3.0.jar"
     ]
 }

@@ -4,10 +4,12 @@ import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import Modelo.ModeloPausa;
+import Vista.PanelOpciones;
 import Vista.PanelPausa;
 import Vista.Ventana;
 
@@ -47,9 +49,11 @@ public class ControladorPantallaPausa {
             panelDeJuego.requestFocusInWindow();// vuelve el foco al juego pausado
         });
 
-        /*menuPausa.getOpciones().addActionListener(e->{
-            //hay que poner opciones jeje
-        });*/
+        menuPausa.getOpciones().addActionListener(e -> {
+            PanelOpciones opciones = new PanelOpciones(ventana);
+            opciones.setVisible(true);
+            menuPausa.requestFocusInWindow();
+        });
 
         menuPausa.getSalir().addActionListener(e->{
             menuPausa.dispose();

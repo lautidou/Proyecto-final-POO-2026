@@ -3,6 +3,7 @@ package Audio;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 import java.io.File;
 import java.text.Normalizer;
@@ -26,6 +27,7 @@ public final class ReproductorAudio {
 
     private static Clip musica;
     private static String musicaActual;
+    private static float volumenGeneral = 1.0f;
 
     private ReproductorAudio() {
     }
@@ -71,6 +73,13 @@ public final class ReproductorAudio {
             musica = null;
         }
         musicaActual = null;
+    }
+
+    public static void setVolumen(float volumen){
+        volumenGeneral = Math.max(0.0f, Math.min(1.0f,volumen));
+        if (musica!=null) {
+            aplicarVolumen(musica, volumenGeneral);
+        }
     }
 
     private static synchronized void reproducirMusica(String ruta) {
@@ -120,4 +129,17 @@ public final class ReproductorAudio {
         String sinTildes = Normalizer.normalize(nombre, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
         return sinTildes.toLowerCase().trim().replaceAll("[^a-z0-9]+", "_");
     }
+
+    private static void aplicarVolumen(Clip clip, float volumen) {
+        if (clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+            FloatControl control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            if (volumen == 0.0f) {
+                control.setValue(control.getMinimum());
+            } else {
+                float decibelios = 20f * (float) Math.log10(volumen);
+                control.setValue(decibelios);
+            }
+        }
+    }
+    //TODO: Le agrego setVolumen y aplicarVolumen para regular el volumen del juego mediante ControladorPantallaPausa
 }

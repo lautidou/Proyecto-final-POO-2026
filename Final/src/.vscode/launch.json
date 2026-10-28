@@ -9,6 +9,13 @@
             "name": "Juego",
             "request": "launch",
             "mainClass": "Juego",
+            "projectName": "src_dacbc706"
+        },
+        {
+            "type": "java",
+            "name": "Juego",
+            "request": "launch",
+            "mainClass": "Juego",
             "projectName": "src_42296a04"
         },
         {
