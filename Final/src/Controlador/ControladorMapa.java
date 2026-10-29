@@ -75,6 +75,9 @@ public class ControladorMapa {
                 mostrarEscenario((Mapa) evento.getNewValue());
                 mostrarEnemigos((Mapa) evento.getNewValue());
                 break;
+            case ModeloMapa.PROP_ENEMIGOS:
+                mostrarEnemigos((Mapa) evento.getNewValue());
+                break;
             case ModeloMapa.PROP_PERSONAJE:
             case ModeloMapa.PROP_POSICION:
                 mostrarPersonaje();
