@@ -214,7 +214,7 @@ public class ModeloCombate {
             return consumibles;
         }
         for (Objeto objeto : this.heroe.getInventario()) {   // <- ajustar si se llama distinto
-            if (objeto instanceof Consumible && ((Consumible) objeto).getCantidad() > 0) {
+            if (objeto.esConsumible() && !objeto.debeDesecharse()) {
                 consumibles.add((Consumible) objeto);
             }
         }

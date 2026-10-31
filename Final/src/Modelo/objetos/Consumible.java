@@ -30,6 +30,16 @@ public class Consumible extends Objeto {
     }
 
     @Override
+        public boolean esConsumible() { 
+            return true; 
+        }
+
+    @Override
+        public boolean debeDesecharse() { 
+            return this.getCantidad() <= 0; 
+    }
+
+    @Override
     public void usar(Personaje objetivo) {
             objetivo.curar(this.puntosRestauracion);
             eliminarObjeto();

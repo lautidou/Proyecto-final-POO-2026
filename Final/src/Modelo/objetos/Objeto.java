@@ -44,5 +44,21 @@ public abstract class Objeto {
         return descripcion;
     }
 
+    public boolean esConsumible() { 
+        return false; 
+    }
+    
+    public boolean esEquipable() { 
+        return false; 
+    }
+    
+    public boolean estaEquipadoPor(Personaje p) { 
+        return false; 
+    }
+    
+    public boolean debeDesecharse() { 
+        return false; 
+    }
+
     public abstract void usar(Personaje objetivo);
 }

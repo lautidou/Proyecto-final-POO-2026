@@ -3,7 +3,6 @@ package Controlador;
 import Audio.ReproductorAudio;
 import Modelo.ModeloInventario;
 import Modelo.ModeloPausa;
-import Modelo.objetos.Consumible;
 import Modelo.objetos.Objeto;
 import Vista.Inventario.FilaInventario;
 import Vista.Inventario.PanelInventario;
@@ -64,7 +63,7 @@ public class ControladorInventario {
                 return;
             }
             Objeto objeto = objetosMostrados.get(indice);
-            if (modeloInventario.usarObjeto(objeto) && objeto instanceof Consumible) {
+            if (modeloInventario.usarObjeto(objeto) && objeto.esConsumible()) {
                 ReproductorAudio.efectoDeConsumible(objeto.getNombre());
             }
         });

@@ -9,6 +9,16 @@ public abstract class ObjetoEquipable extends Objeto implements Equipable {
     }
 
     @Override
+    public boolean esEquipable() { 
+        return true; 
+    }
+
+    @Override
+    public boolean estaEquipadoPor(Personaje p) { 
+        return p.estaEquipado(this); 
+    }
+
+    @Override
     public final void usar(Personaje objetivo) {
         if (objetivo.estaEquipado(this)) objetivo.desequipar(this);
         else objetivo.equipar(this);

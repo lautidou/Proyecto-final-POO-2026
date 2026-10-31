@@ -1,7 +1,5 @@
 package Modelo;
 
-import Modelo.objetos.Consumible;
-import Modelo.objetos.Equipable;
 import Modelo.objetos.Objeto;
 import Modelo.pjs.Heroe;
 
@@ -34,12 +32,11 @@ public class ModeloInventario {
     }
 
     public boolean esEquipable(Objeto objeto) {
-        return objeto instanceof Equipable;
+        return objeto.esEquipable();
     }
 
     public boolean estaEquipado(Objeto objeto) {
-        return objeto instanceof Equipable
-        && heroe().map(h -> h.estaEquipado((Equipable) objeto)).orElse(false);
+        return heroe().map(objeto::estaEquipadoPor).orElse(false);
     }
 
     public boolean usarObjeto(Objeto objeto) {
@@ -48,7 +45,7 @@ public class ModeloInventario {
             return false;
         }
         objeto.usar(heroe);
-        if (objeto instanceof Consumible && ((Consumible) objeto).getCantidad() == 0) {
+        if (objeto.debeDesecharse()) {
             heroe.getInventario().remove(objeto);
         }
         this.soporte.firePropertyChange(PROP_INVENTARIO, null, this);
