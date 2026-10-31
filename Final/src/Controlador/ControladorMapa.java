@@ -7,7 +7,6 @@ import Modelo.ModeloPartida;
 import Modelo.mapa.Direccion;
 import Modelo.mapa.Mapa;
 import Modelo.mapa.Posicion;
-import Modelo.mapa.Terreno;
 import Modelo.pjs.Enemigo;
 import Modelo.pjs.Heroe;
 import Modelo.pjs.Personaje;
@@ -16,6 +15,7 @@ import Vista.Ventana;
 import Vista.VistaMapa;
 import Vista.VistaMenuMain;
 
+import java.awt.Point;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
@@ -92,36 +92,40 @@ public class ControladorMapa {
     }
 
     private void mostrarEscenario(Mapa mapa) {
-        this.vista.setEscenario(mapa.getId(), extraerTerrenos(mapa));
+        this.vista.setEscenario(mapa.getId(), mapa.getFilas(), mapa.getColumnas(), extraerObstaculos(mapa));
         ReproductorAudio.musicaDeMapa(mapa.getId());
     }
 
     private void mostrarEnemigos(Mapa mapa) {
-        Map<Posicion, String> enemigos = new LinkedHashMap<>();
+        Map<Point, String> enemigosVisuales = new LinkedHashMap<>();
         for (Enemigo enemigo : mapa.getEnemigos()) {
-            enemigos.put(enemigo.getPosicion(), enemigo.getNombre());
+            enemigosVisuales.put(
+                new Point(enemigo.getPosicion().getX(), enemigo.getPosicion().getY()), 
+                enemigo.getNombre()
+            );
         }
-        this.vista.setEnemigos(enemigos);
+        this.vista.setEnemigos(enemigosVisuales);
     }
 
-    private void mostrarPersonaje() {
+   private void mostrarPersonaje() {
         Personaje pj = this.modelo.getPersonaje();
         if (pj != null && pj.getPosicion() != null) {
-            this.vista.setPersonaje(pj.getNombre(), pj.getPosicion());
+            this.vista.setPersonaje(pj.getNombre(), pj.getPosicion().getX(), pj.getPosicion().getY());
         } else {
             this.vista.quitarPersonaje();
         }
     }
 
-    private Terreno[][] extraerTerrenos(Mapa mapa) {
-        Terreno[][] terrenos = new Terreno[mapa.getFilas()][mapa.getColumnas()];
-        for (int y = 0; y < mapa.getFilas(); y++) {
-            for (int x = 0; x < mapa.getColumnas(); x++) {
-                terrenos[y][x] = mapa.getCelda(new Posicion(x, y)).getTerreno();
-            }
+    private boolean[][] extraerObstaculos(Mapa mapa) {
+    boolean[][] obstaculos = new boolean[mapa.getFilas()][mapa.getColumnas()];
+    for (int y = 0; y < mapa.getFilas(); y++) {
+        for (int x = 0; x < mapa.getColumnas(); x++) {
+            // Si el terreno NO es pasable, es un obstáculo (true)
+            obstaculos[y][x] = !mapa.getCelda(new Posicion(x, y)).esPasable();
         }
-        return terrenos;
     }
+    return obstaculos;
+}
 
     private void registrarTeclas() {
         asignarMovimiento(KeyEvent.VK_W, Direccion.ARRIBA);

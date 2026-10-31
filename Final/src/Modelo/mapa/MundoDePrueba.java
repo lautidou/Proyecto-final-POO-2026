@@ -1,6 +1,7 @@
 package Modelo.mapa;
 
 import Modelo.pjs.enemigos.FactoryEnemigos;
+import Recursos.Rutas;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,24 +16,21 @@ public final class MundoDePrueba {
     public static final String ID_ENTRADA_CUEVA = "EntradaCueva";
     public static final String ID_CUEVA = "Cueva";
 
-    private static final String CARPETA = "Assets/Mapas/";
-
-    //
-    private static final String PUEBLO_COLISIONES = CARPETA + "Pueblo_colisiones.csv";
-    private static final String PUEBLO_PAREDES = CARPETA + "Pueblo_Paredes.csv";
-    private static final String PUEBLO_TECHOS = CARPETA + "Pueblo_techos.csv";
-    private static final String PUEBLO_TECHOS_2 = CARPETA + "Pueblo_techos2.csv";
-    private static final String PUEBLO_ESTRUCTURAS = CARPETA + "Pueblo_estructuras.csv";
+    private static final String PUEBLO_COLISIONES = Rutas.PUEBLO_COLISIONES;
+    private static final String PUEBLO_PAREDES = Rutas.PUEBLO_PAREDES;
+    private static final String PUEBLO_TECHOS = Rutas.PUEBLO_TECHOS;
+    private static final String PUEBLO_TECHOS_2 = Rutas.PUEBLO_TECHOS_2;
+    private static final String PUEBLO_ESTRUCTURAS = Rutas.PUEBLO_ESTRUCTURAS;
     private static final boolean BLOQUEAR_CASAS = true;
 
-    // Inicio: frente a la puerta de la casa del pueblo (columna, fila), no en pixeles
+    // Inicio: frente a la puerta de la casa del pueblo
     private static final Posicion INICIO = new Posicion(18, 8);
 
-    private static final String VV_COLISIONES = CARPETA + "colisiones_VillaVerde_colisiones.csv";
-    private static final String VV_VEGETACION = CARPETA + "colisiones_VillaVerde_vegetacion.csv";
-    private static final String VV_AGUA = CARPETA + "colisiones_VillaVerde_agua.csv";
-    private static final String VV_ELEVACIONES = CARPETA + "colisiones_VillaVerde_elevaciones.csv";
-    private static final String VV_ELEVACIONES_2 = CARPETA + "colisiones_VillaVerde_elevaciones_2.csv";
+    private static final String VV_COLISIONES = Rutas.VV_COLISIONES;
+    private static final String VV_VEGETACION = Rutas.VV_VEGETACION;
+    private static final String VV_AGUA = Rutas.VV_AGUA;
+    private static final String VV_ELEVACIONES = Rutas.VV_ELEVACIONES;
+    private static final String VV_ELEVACIONES_2 = Rutas.VV_ELEVACIONES_2;
 
     private static final boolean BLOQUEAR_AGUA = true;
     private static final Set<Integer> TILES_AGUA =
@@ -44,10 +42,10 @@ public final class MundoDePrueba {
 
     private static final boolean BLOQUEAR_ELEVACIONES = true;
 
-    private static final String ENTRADA_COLISIONES = CARPETA + "EntradaCueva_colisiones.csv";
+    private static final String ENTRADA_COLISIONES = Rutas.ENTRADA_COLISIONES;
 
-    private static final String CUEVA_COLISIONES = CARPETA + "Cueva_colisiones.csv";
-    private static final String CUEVA_PAREDES_FOSOS = CARPETA + "Cueva_paredes_fosos.csv";
+    private static final String CUEVA_COLISIONES = Rutas.CUEVA_COLISIONES;
+    private static final String CUEVA_PAREDES_FOSOS = Rutas.CUEVA_PAREDES_FOSOS;
 
     private MundoDePrueba() {
     }
@@ -116,9 +114,6 @@ public final class MundoDePrueba {
         marcarCapaCompleta(mapa, CUEVA_PAREDES_FOSOS, Terreno.PARED);
         return mapa;
     }
-
-    // ------------------------------------------------------------------ utilidades
-    /** Crea el mapa con el tamano de la capa de colisiones y pone pared en cada celda no vacia. */
     private static Mapa mapaDesdeColisiones(String id, String rutaColisiones) {
         int[][] colisiones = CargarMapa.cargarCapa(rutaColisiones);
         Mapa mapa = new Mapa(id, colisiones.length, colisiones[0].length, Terreno.PASTO);
@@ -132,11 +127,6 @@ public final class MundoDePrueba {
         return mapa;
     }
 
-    /**
-     * Convierte el rectangulo de celdas [x0..x1] x [y0..y1] en puerta y le agrega un portal
-     * hacia otro mapa. La posicion de llegada debe ser una celda libre que NO sea portal,
-     * al lado de la salida del mapa destino, para no volver al mapa anterior sin querer.
-     */
     private static void abrirSalida(Mapa origen, int x0, int y0, int x1, int y1,
                                     String idDestino, Posicion llegada) {
         for (int y = y0; y <= y1; y++) {

@@ -1,7 +1,6 @@
 package Vista;
 
-import Modelo.mapa.Posicion;
-import Modelo.mapa.Terreno;
+import Recursos.Rutas;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -21,39 +20,46 @@ public class VistaMapa extends JPanel {
 
     public static final String NOMBRE = "Mapa";
 
-    private static final boolean MODO_DEPURACION = false;
+    private static boolean MODO_DEPURACION = false;
     private static final Map<String, String> RUTAS_FONDO = new HashMap<>();
     static {
-        RUTAS_FONDO.put("VillaVerde", "Assets/Mapas/VillaVerde.png");
-        RUTAS_FONDO.put("Pueblo", "Assets/Mapas/Pueblo.png");
-        RUTAS_FONDO.put("Cueva", "Assets/Mapas/Cueva.png");
-        RUTAS_FONDO.put("EntradaCueva", "Assets/Mapas/EntradaCueva.png");
+        RUTAS_FONDO.put("VillaVerde", Rutas.MAPA_VILLA_VERDE);
+        RUTAS_FONDO.put("Pueblo", Rutas.MAPA_PUEBLO);
+        RUTAS_FONDO.put("Cueva", Rutas.MAPA_CUEVA); 
+        RUTAS_FONDO.put("EntradaCueva", Rutas.MAPA_ENTRADA_CUEVA);
     }
 
     private final Map<String, Image> imagenes = new HashMap<>();
 
     private String nombreEscenario;
-    private Terreno[][] terrenos;        // [fila][columna]
+    private boolean[][] obstaculos;
+    private int filas;
+    private int columnas;
+
     private String nombrePersonaje;
-    private Posicion posicionPersonaje;
-    private Map<Posicion, String> enemigos = new HashMap<>(); // posicion -> nombre
+    private java.awt.Point posicionPersonaje;
+    private Map<java.awt.Point, String> enemigos = new HashMap<>(); // posicion -> nombre
 
     public VistaMapa() {
         super();
         setBackground(Color.BLACK);
     }
 
-    public void setEscenario(String nombre, Terreno[][] terrenos) {
+    public void setEscenario(String nombre, int filas, int columnas, boolean[][] obstaculos) {
         this.nombreEscenario = nombre;
-        this.terrenos = terrenos;
+        this.filas = filas;
+        this.columnas = columnas;
+        this.obstaculos = obstaculos;
+        repaint();
     }
 
-    public void setPersonaje(String nombre, Posicion posicion) {
+    public void setPersonaje(String nombre, int x, int y) {
         this.nombrePersonaje = nombre;
-        this.posicionPersonaje = posicion;
+        this.posicionPersonaje = new java.awt.Point(x,y);
+        repaint();
     }
 
-    public void setEnemigos(Map<Posicion, String> enemigos) {
+    public void setEnemigos(Map<java.awt.Point, String> enemigos) {
         this.enemigos = new HashMap<>(enemigos);
     }
 
@@ -83,15 +89,12 @@ public class VistaMapa extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (terrenos == null) {
+        if (obstaculos == null || filas == 0 || columnas == 0) {
             return;
         }
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-
-        int filas = terrenos.length;
-        int cols = terrenos[0].length;
 
         int mapaX = 0, mapaY = 0, mapaAncho = getWidth(), mapaAlto = getHeight();
         Image fondo = imagenDe(nombreEscenario);
@@ -108,17 +111,17 @@ public class VistaMapa extends JPanel {
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
 
-        double celdaAncho = mapaAncho / (double) cols;
+        double celdaAncho = mapaAncho / (double) columnas;
         double celdaAlto = mapaAlto / (double) filas;
 
         if (MODO_DEPURACION) {
             for (int y = 0; y < filas; y++) {
-                for (int x = 0; x < cols; x++) {
+                for (int x = 0; x < columnas; x++) {
                     int x0 = mapaX + (int) Math.round(x * celdaAncho);
                     int y0 = mapaY + (int) Math.round(y * celdaAlto);
                     int x1 = mapaX + (int) Math.round((x + 1) * celdaAncho);
                     int y1 = mapaY + (int) Math.round((y + 1) * celdaAlto);
-                    if (!terrenos[y][x].esPasable()) {
+                    if (!obstaculos[y][x]) {
                         g2.setColor(new Color(255, 0, 0, 90));
                         g2.fillRect(x0, y0, x1 - x0, y1 - y0);
                     }
@@ -128,12 +131,14 @@ public class VistaMapa extends JPanel {
             }
         }
 
-        for (Map.Entry<Posicion, String> enemigo : enemigos.entrySet()) {
-            dibujarFicha(g2, mapaX, mapaY, celdaAncho, celdaAlto, enemigo.getKey(), enemigo.getValue(),
+        for (Map.Entry<java.awt.Point, String> enemigo : enemigos.entrySet()) {
+            dibujarFicha(g2, mapaX, mapaY, celdaAncho, celdaAlto, 
+                    enemigo.getKey().x, enemigo.getKey().y, enemigo.getValue(),
                     new Color(130, 60, 170));
         }
         if (posicionPersonaje != null && nombrePersonaje != null) {
-            dibujarFicha(g2, mapaX, mapaY, celdaAncho, celdaAlto, posicionPersonaje, nombrePersonaje,
+            dibujarFicha(g2, mapaX, mapaY, celdaAncho, celdaAlto, 
+                    posicionPersonaje.x, posicionPersonaje.y, nombrePersonaje,
                     new Color(200, 40, 40));
         }
 
@@ -153,9 +158,9 @@ public class VistaMapa extends JPanel {
 
     /** Circulo con la inicial del nombre, dentro de la celda indicada. */
     private void dibujarFicha(Graphics2D g2, int mapaX, int mapaY, double celdaAncho, double celdaAlto,
-                              Posicion posicion, String nombre, Color color) {
-        int px = mapaX + (int) Math.round(posicion.getX() * celdaAncho);
-        int py = mapaY + (int) Math.round(posicion.getY() * celdaAlto);
+                              int posX, int posY, String nombre, Color color) {
+        int px = mapaX + (int) Math.round(posX * celdaAncho);
+        int py = mapaY + (int) Math.round(posY * celdaAlto);
         int w = (int) Math.round(celdaAncho);
         int h = (int) Math.round(celdaAlto);
         int tam = Math.min(w, h);
