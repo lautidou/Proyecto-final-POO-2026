@@ -85,9 +85,6 @@ public class ControladorMapa {
             case ModeloMapa.PROP_ENCUENTRO:
                 this.iniciarCombate.accept(this.modelo.getPersonaje(), (Enemigo) evento.getNewValue());
                 return;
-            case ModeloMapa.PROP_ENEMIGOS:
-                mostrarEnemigos((Mapa) evento.getNewValue());
-            break;
             default:
                 return;
         }
