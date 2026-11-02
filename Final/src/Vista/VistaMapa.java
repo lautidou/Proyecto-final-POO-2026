@@ -47,6 +47,9 @@ public class VistaMapa extends JPanel {
     private java.awt.Point posicionPersonaje;
     private Map<java.awt.Point, DatosEnemigo> enemigos = new HashMap<>();
     private final Map<String, BufferedImage> cacheSprites = new HashMap<>();
+    private float visualX = -1f;
+    private float visualY = -1f;
+    private javax.swing.Timer timerAnimacion;
 
     public VistaMapa() {
         super();
@@ -61,12 +64,37 @@ public class VistaMapa extends JPanel {
         repaint();
     }
 
-    public void setPersonaje(String nombre, int x, int y, String rutaSprite, Direccion dir, int frame) {
+   public void setPersonaje(String nombre, int x, int y, String rutaSprite, Direccion dir, int frame) {
         this.nombrePersonaje = nombre;
         this.posicionPersonaje = new java.awt.Point(x,y);
         this.rutaSpritePersonaje = rutaSprite;
         this.orientacionPersonaje = dir != null ? dir : Direccion.ABAJO;
         this.frameAnimacionPersonaje = frame;
+        
+        if (visualX == -1f) {
+            // Primera vez que entra al mapa: aparece instantáneamente
+            visualX = x;
+            visualY = y;
+        } else {
+            // Deslizamiento fluido hacia la nueva celda
+            if (timerAnimacion != null && timerAnimacion.isRunning()) {
+                timerAnimacion.stop();
+            }
+            timerAnimacion = new javax.swing.Timer(16, e -> {
+                // Se acerca un 25% de la distancia restante por cada frame (16ms)
+                visualX += (x - visualX) * 0.25f;
+                visualY += (y - visualY) * 0.25f;
+                
+                // Si está lo suficientemente cerca, lo encajamos exacto y paramos el timer
+                if (Math.abs(x - visualX) < 0.02f && Math.abs(y - visualY) < 0.02f) {
+                    visualX = x;
+                    visualY = y;
+                    timerAnimacion.stop();
+                }
+                repaint();
+            });
+            timerAnimacion.start();
+        }
         repaint();
     }
 
@@ -161,7 +189,7 @@ public class VistaMapa extends JPanel {
         }
         if (posicionPersonaje != null && nombrePersonaje != null) {
             dibujarFicha(g2, mapaX, mapaY, celdaAncho, celdaAlto, 
-                    posicionPersonaje.x, posicionPersonaje.y, nombrePersonaje,
+                    visualX, visualY, nombrePersonaje,
                     new Color(200, 40, 40), rutaSpritePersonaje, orientacionPersonaje, frameAnimacionPersonaje);
         }
 
@@ -180,7 +208,7 @@ public class VistaMapa extends JPanel {
     }
 
     private void dibujarFicha(Graphics2D g2, int mapaX, int mapaY, double celdaAncho, double celdaAlto,
-                              int posX, int posY, String nombre, Color color, String rutaSprite, 
+                              float posX, float posY, String nombre, Color color, String rutaSprite, 
                               Modelo.mapa.Direccion orientacion, int frameAnimacion) {
         
         int px = mapaX + (int) Math.round(posX * celdaAncho);

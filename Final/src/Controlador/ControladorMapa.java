@@ -36,6 +36,7 @@ public class ControladorMapa {
     private final BiConsumer<Heroe, Enemigo> iniciarCombate; // lo que pasa cuando el héroe choca con un enemigo
     private final ControladorPantallaPausa controladorPausa;
     private final ModeloPausa modeloPausa;
+    private boolean enMovimiento = false;
 
     public ControladorMapa(VistaMapa vista, ModeloMapa modelo, ModeloPartida modeloPartida,
                            BiConsumer<Heroe, Enemigo> iniciarCombate,ModeloPausa modeloPausa) {
@@ -160,11 +161,18 @@ public class ControladorMapa {
         });
     }
     //pongo un if para que no se mueva si esta en pausa el juego
-    private void ejecutarMovimiento(Direccion direccion) {
-        if (this.modeloPausa.isJuegoPausado()) {
-            return;
+   private void ejecutarMovimiento(Direccion direccion) {
+        if (this.modeloPausa.isJuegoPausado() || enMovimiento) {
+            return; // Bloquea si está pausado o si la animación del paso anterior no terminó
         }
+        
+        enMovimiento = true;
         this.modelo.moverPersonaje(direccion);
+        
+        // Liberamos el teclado tras 150ms (el tiempo que tarda visualmente en llegar a la otra celda)
+        javax.swing.Timer bloqueo = new javax.swing.Timer(150, e -> enMovimiento = false);
+        bloqueo.setRepeats(false);
+        bloqueo.start();
     }
 
     public void ejecutarSalir() {
