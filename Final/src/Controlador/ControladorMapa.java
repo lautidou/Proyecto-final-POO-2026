@@ -97,11 +97,16 @@ public class ControladorMapa {
     }
 
     private void mostrarEnemigos(Mapa mapa) {
-        Map<Point, String> enemigosVisuales = new LinkedHashMap<>();
+        Map<Point, VistaMapa.DatosEnemigo> enemigosVisuales = new LinkedHashMap<>();
         for (Enemigo enemigo : mapa.getEnemigos()) {
             enemigosVisuales.put(
                 new Point(enemigo.getPosicion().getX(), enemigo.getPosicion().getY()), 
-                enemigo.getNombre()
+                new VistaMapa.DatosEnemigo(
+                    enemigo.getNombre(), 
+                    enemigo.getRutaSprite(), 
+                    enemigo.getOrientacion(), 
+                    enemigo.getFrameAnimacion()
+                )
             );
         }
         this.vista.setEnemigos(enemigosVisuales);
@@ -110,7 +115,7 @@ public class ControladorMapa {
    private void mostrarPersonaje() {
         Personaje pj = this.modelo.getPersonaje();
         if (pj != null && pj.getPosicion() != null) {
-            this.vista.setPersonaje(pj.getNombre(), pj.getPosicion().getX(), pj.getPosicion().getY());
+            this.vista.setPersonaje(pj.getNombre(), pj.getPosicion().getX(), pj.getPosicion().getY(), pj.getRutaSprite(), pj.getOrientacion(), pj.getFrameAnimacion());
         } else {
             this.vista.quitarPersonaje();
         }

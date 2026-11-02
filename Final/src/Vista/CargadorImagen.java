@@ -26,6 +26,20 @@ public final class CargadorImagen {
         }
     }
 
+    public static BufferedImage cargarSinRecorte(String ruta) {
+        try {
+            BufferedImage leida = ImageIO.read(new File(ruta));
+            if (leida == null) {
+                throw new IOException("Formato de imagen no soportado.");
+            }
+            return leida; // Devolvemos la imagen original sin pasar por recortarTransparencia
+        } catch (IOException e) {
+            System.err.println("Error: No se pudo cargar la imagen.");
+            System.err.println("Java está buscando en esta ruta absoluta: " + new File(ruta).getAbsolutePath());
+            return null;
+        }
+    }
+
     private static BufferedImage recortarTransparencia(BufferedImage imagen) {
         int w = imagen.getWidth();
         int h = imagen.getHeight();

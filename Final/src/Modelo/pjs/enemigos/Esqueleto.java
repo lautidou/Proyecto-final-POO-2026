@@ -11,5 +11,6 @@ public class Esqueleto extends Enemigo {
     public Esqueleto() {
         super("Esqueleto", 2, Clases.Monje, new ArrayList<>(),
         new Caracteristicas(10, 8, 14, 6, 15, 5), 80, new ArrayList<>());
+         setRutaSprite(Recursos.Rutas.ESQUELETO);
     }
 }

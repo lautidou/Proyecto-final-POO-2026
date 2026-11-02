@@ -4,6 +4,9 @@ import Recursos.Rutas;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+
+import Modelo.mapa.Direccion;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -11,6 +14,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,8 +41,12 @@ public class VistaMapa extends JPanel {
     private int columnas;
 
     private String nombrePersonaje;
+    private String rutaSpritePersonaje;
+    private Direccion orientacionPersonaje = Direccion.ABAJO;
+    private int frameAnimacionPersonaje = 0;
     private java.awt.Point posicionPersonaje;
-    private Map<java.awt.Point, String> enemigos = new HashMap<>(); // posicion -> nombre
+    private Map<java.awt.Point, DatosEnemigo> enemigos = new HashMap<>();
+    private final Map<String, BufferedImage> cacheSprites = new HashMap<>();
 
     public VistaMapa() {
         super();
@@ -53,14 +61,28 @@ public class VistaMapa extends JPanel {
         repaint();
     }
 
-    public void setPersonaje(String nombre, int x, int y) {
+    public void setPersonaje(String nombre, int x, int y, String rutaSprite, Direccion dir, int frame) {
         this.nombrePersonaje = nombre;
         this.posicionPersonaje = new java.awt.Point(x,y);
+        this.rutaSpritePersonaje = rutaSprite;
+        this.orientacionPersonaje = dir != null ? dir : Direccion.ABAJO;
+        this.frameAnimacionPersonaje = frame;
         repaint();
     }
 
-    public void setEnemigos(Map<java.awt.Point, String> enemigos) {
+    public void setEnemigos(Map<java.awt.Point, DatosEnemigo> enemigos) {
         this.enemigos = new HashMap<>(enemigos);
+    }
+
+    public static class DatosEnemigo {
+        public String nombre;
+        public String rutaSprite;
+        public Modelo.mapa.Direccion orientacion;
+        public int frame;
+        
+        public DatosEnemigo(String n, String r, Modelo.mapa.Direccion o, int f) {
+            this.nombre = n; this.rutaSprite = r; this.orientacion = o; this.frame = f;
+        }
     }
 
     public void quitarPersonaje() {
@@ -131,15 +153,16 @@ public class VistaMapa extends JPanel {
             }
         }
 
-        for (Map.Entry<java.awt.Point, String> enemigo : enemigos.entrySet()) {
+        for (Map.Entry<java.awt.Point, DatosEnemigo> entrada : enemigos.entrySet()) {
+            DatosEnemigo enemigo = entrada.getValue();
             dibujarFicha(g2, mapaX, mapaY, celdaAncho, celdaAlto, 
-                    enemigo.getKey().x, enemigo.getKey().y, enemigo.getValue(),
-                    new Color(130, 60, 170));
+                    entrada.getKey().x, entrada.getKey().y, enemigo.nombre,
+                    new Color(130, 60, 170), enemigo.rutaSprite, enemigo.orientacion, enemigo.frame);
         }
         if (posicionPersonaje != null && nombrePersonaje != null) {
             dibujarFicha(g2, mapaX, mapaY, celdaAncho, celdaAlto, 
                     posicionPersonaje.x, posicionPersonaje.y, nombrePersonaje,
-                    new Color(200, 40, 40));
+                    new Color(200, 40, 40), rutaSpritePersonaje, orientacionPersonaje, frameAnimacionPersonaje);
         }
 
         //muestra el nombre del escenario
@@ -158,11 +181,82 @@ public class VistaMapa extends JPanel {
 
     /** Circulo con la inicial del nombre, dentro de la celda indicada. */
     private void dibujarFicha(Graphics2D g2, int mapaX, int mapaY, double celdaAncho, double celdaAlto,
-                              int posX, int posY, String nombre, Color color) {
+                              int posX, int posY, String nombre, Color color, String rutaSprite, 
+                              Modelo.mapa.Direccion orientacion, int frameAnimacion) {
+        
         int px = mapaX + (int) Math.round(posX * celdaAncho);
         int py = mapaY + (int) Math.round(posY * celdaAlto);
         int w = (int) Math.round(celdaAncho);
         int h = (int) Math.round(celdaAlto);
+
+        // Intento de dibujar sprite
+        if (rutaSprite != null && !rutaSprite.isEmpty()) {
+            
+            // Cargamos la imagen desde la caché, o la leemos del disco si es la primera vez
+            BufferedImage hojaSprites = cacheSprites.get(rutaSprite);
+            if (hojaSprites == null) {
+                hojaSprites = CargadorImagen.cargarSinRecorte(rutaSprite);
+                if (hojaSprites != null) {
+                    cacheSprites.put(rutaSprite, hojaSprites);
+                }
+            }
+
+            if (hojaSprites != null) {
+                int columnasSprite = 4; 
+                int filasSprite = 4;
+                int filaCaminata = 0;
+                
+                if (rutaSprite.contains("Wizard")) {
+                    filasSprite = 18; // Dividimos la altura total entre 18
+                    filaCaminata = 4; // Los pasos de caminar del mago empiezan en la fila 5 (índice 4)
+                } else if (rutaSprite.contains("Enemy")) {
+                    columnasSprite = 3;
+                }
+
+                int anchoFrame = hojaSprites.getWidth() / columnasSprite;
+                int altoFrame = hojaSprites.getHeight() / filasSprite;
+                
+                int col = 0;
+                int fila = 0;
+                
+                if (rutaSprite.contains("Enemy")) {
+                    // ENEMIGOS (3x4): Columnas = Animación, Filas = Dirección
+                    col = frameAnimacion % columnasSprite; 
+                    
+                    if (orientacion != null) {
+                        switch (orientacion) {
+                            case ABAJO:     fila = 0; break;
+                            case IZQUIERDA: fila = 1; break;
+                            case DERECHA:   fila = 2; break;
+                            case ARRIBA:    fila = 3; break;
+                        }
+                    }
+                } else {
+                    // HÉROES (4x4): Columnas = Dirección, Filas = Animación
+                    fila = frameAnimacion % filasSprite;
+                    
+                    if (orientacion != null) {
+                        switch (orientacion) {
+                            case ABAJO:     col = 0; break;
+                            case ARRIBA:    col = 1; break;
+                            case IZQUIERDA: col = 2; break;
+                            case DERECHA:   col = 3; break;
+                        }
+                    }
+                    fila = fila + filaCaminata; // Aplicamos el offset para el Mago
+                }
+                
+                // Calculamos el punto exacto de recorte usando la Columna para X y la Fila para Y
+                int recorteX = col * anchoFrame;
+                int recorteY = fila * altoFrame;
+                
+                BufferedImage frameActual = hojaSprites.getSubimage(recorteX, recorteY, anchoFrame, altoFrame);
+                g2.drawImage(frameActual, px, py, w, h, null);
+                return; // Cortamos la ejecución para que no dibuje el círculo debajo
+            }
+        }
+
+        // Fallback: si no hay imagen, dibuja el círculo con la inicial
         int tam = Math.min(w, h);
         int margen = tam / 8;
         g2.setColor(color);

@@ -49,4 +49,12 @@ public final class Rutas {
     public static final String FONDO_BOSQUE = PELEA + "fondoPeleaBosque.png";
     public static final String TABLERO = PELEA + "tablero.png";
     public static final String BOTONES_PELEA = PELEA + "botones/";
+
+    public static final String BARBARO = "Assets/Sprites/SpriteSheetcaveman.png";
+    public static final String MONJE = "Assets/Sprites/SpriteSheetmonk.png";
+    public static final String MAGO = "Assets/Sprites/Wizard sheet.png";
+
+    public static final String ESQUELETO = "Assets/Sprites/Enemy 04-1.png";
+    public static final String GOBLIN = "Assets/Sprites/Enemy 18.png";
+    public static final String OGRO = "Assets/Sprites/Enemy 20.png";
 }

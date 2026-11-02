@@ -9,6 +9,8 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JButton;
+
+import Audio.Configuracion;
 import Audio.ReproductorAudio;
 
 public class PanelOpciones extends JDialog {
@@ -33,7 +35,8 @@ public class PanelOpciones extends JDialog {
         panelContenido.setOpaque(false);
         panelContenido.setPreferredSize(new Dimension(250, 100));
 
-        deslizadorVolumen = new JSlider(0, 100, 100);
+        int volActual = (int) (ReproductorAudio.getVolumen() * 100);
+        deslizadorVolumen = new JSlider(0, 100, volActual);
         deslizadorVolumen.setOpaque(false);
         deslizadorVolumen.addChangeListener(e -> {
             float volumen = deslizadorVolumen.getValue() / 100f;
@@ -42,6 +45,7 @@ public class PanelOpciones extends JDialog {
 
         botonVolver = new BotonImagen("Assets/Pelea/botones/botonVolver.png", "Volver");
         botonVolver.addActionListener(e -> {
+            Configuracion.guardarVolumen(ReproductorAudio.getVolumen());
             this.dispose();
         });
 

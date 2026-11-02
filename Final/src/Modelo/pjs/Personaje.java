@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import Modelo.mapa.Direccion;
 import Modelo.mapa.Posicion;
 import Modelo.objetos.Arma;
 import Modelo.objetos.Armadura;
@@ -15,6 +16,11 @@ import Modelo.objetos.RanuraEquipo;
 public abstract class Personaje {
     // Atributos
     private String nombre;
+    
+    protected String rutaSprite;
+    private Direccion orientacion = Direccion.ABAJO; 
+    private int frameAnimacion = 0;
+
     private int vida;
     private int vidaMaxima;
     private int nivel;
@@ -46,6 +52,7 @@ public abstract class Personaje {
         this.clase = clase;
         this.caracteristicas = caracteristicas;
         this.habilidades = (habilidades != null) ? habilidades : new ArrayList<>();
+        this.rutaSprite = clase.getRutaSprite();
         actualizarHabilidadesDesbloqueadas();
     }
 
@@ -129,6 +136,30 @@ public abstract class Personaje {
 
     public String getNombre() {
         return nombre;
+    }
+
+    public String getRutaSprite() {
+        return rutaSprite;
+    }
+
+    protected void setRutaSprite(String rutaSprite) {
+        this.rutaSprite = rutaSprite;
+    }
+
+    public Direccion getOrientacion() {
+        return orientacion;
+    }
+
+    public void setOrientacion(Direccion orientacion) {
+        this.orientacion = orientacion;
+    }
+
+    public int getFrameAnimacion() {
+        return frameAnimacion;
+    }
+
+    public void avanzarAnimacion() {
+        this.frameAnimacion = (this.frameAnimacion + 1) % 4; 
     }
 
     public void setVida(int Valor){

@@ -11,5 +11,6 @@ public class Ogro extends Enemigo {
     public Ogro() {
         super("Ogro", 3, Clases.Barbaro, new ArrayList<>(),
         new Caracteristicas(16, 11, 12, 7, 16, 10), 150, new ArrayList<>());
+        setRutaSprite(Recursos.Rutas.OGRO);
     }
 }

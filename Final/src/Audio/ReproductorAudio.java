@@ -7,12 +7,6 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 import java.io.File;
 import java.text.Normalizer;
-
-/**
- * Reproduce todos los sonidos, en bucle de a una para los fondos de los mapas
- * y un sfx para los items y ataques. Los archivos se buscan en Assets/audio
- * Tienen que ser WAV, AIFF, AU.
- */
 public final class ReproductorAudio {
 
     private static final String CARPETA = "Assets/Audio/";
@@ -24,10 +18,11 @@ public final class ReproductorAudio {
     public static final String HABILIDADES = "Habilidades/";
     public static final String CONSUMIBLES = "Consumibles/";
     public static final String ATAQUE_BASICO = "ataque_basico";
+    
 
     private static Clip musica;
     private static String musicaActual;
-    private static float volumenGeneral = 1.0f;
+    private static float volumenGeneral = Configuracion.cargarVolumen();
 
     private ReproductorAudio() {
     }
@@ -75,6 +70,10 @@ public final class ReproductorAudio {
         musicaActual = null;
     }
 
+    public static float getVolumen() {
+        return volumenGeneral;
+    }
+
     public static void setVolumen(float volumen){
         volumenGeneral = Math.max(0.0f, Math.min(1.0f,volumen));
         if (musica!=null) {
@@ -94,6 +93,7 @@ public final class ReproductorAudio {
         clip.loop(Clip.LOOP_CONTINUOUSLY);
         musica = clip;
         musicaActual = ruta;
+        aplicarVolumen(musica, volumenGeneral);
     }
 
     private static void efecto(String ruta) {
@@ -106,6 +106,7 @@ public final class ReproductorAudio {
                 clip.close();
             }
         });
+        aplicarVolumen(clip, volumenGeneral);
         clip.start();
     }
 
@@ -140,6 +141,7 @@ public final class ReproductorAudio {
                 control.setValue(decibelios);
             }
         }
+
+        
     }
-    //TODO: Le agrego setVolumen y aplicarVolumen para regular el volumen del juego mediante ControladorPantallaPausa
 }

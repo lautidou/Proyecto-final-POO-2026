@@ -5,6 +5,7 @@ import Modelo.combate.CatalogoObjetos;
 import Modelo.objetos.Arma;
 import Modelo.objetos.Armadura;
 import Modelo.objetos.Objeto;
+import Recursos.Rutas;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +15,7 @@ import java.util.function.Supplier;
 
 public enum Clases {
 
-    Barbaro(Dados.d12,
+    Barbaro(Rutas.BARBARO,Dados.d12,
             CatalogoObjetos::hachaDeGuerra, CatalogoObjetos::armaduraDePieles,
             new Desbloqueo(1, CatalogoHabilidades.golpePoderoso()),
             new Desbloqueo(3, CatalogoHabilidades.tajoBrutal()),
@@ -26,12 +27,12 @@ public enum Clases {
     //Explorador(Dados.d10),
     //Guerrero(Dados.d10),
     //Hechicero(Dados.d6),
-    Mago(Dados.d6,
+    Mago(Rutas.MAGO,Dados.d6,
             CatalogoObjetos::bastonArcano, CatalogoObjetos::tunicaDeMago,
             new Desbloqueo(1, CatalogoHabilidades.proyectilMagico()),
             new Desbloqueo(3, CatalogoHabilidades.bolaDeFuego()),
             new Desbloqueo(5, CatalogoHabilidades.rayoArcano())),
-    Monje(Dados.d8,
+    Monje(Rutas.MONJE,Dados.d8,
             CatalogoObjetos::vendajesDeCombate, CatalogoObjetos::ropasDeMonje,
             new Desbloqueo(1, CatalogoHabilidades.punoDePalma()),
             new Desbloqueo(3, CatalogoHabilidades.curacionMenor()),
@@ -43,9 +44,11 @@ public enum Clases {
     private final Supplier<Arma> armaInicial;
     private final Supplier<Armadura> armaduraInicial;
     private final List<Desbloqueo> desbloqueos;
+    private final String rutaSprite;
 
-    Clases(Dados puntosGolpe, Supplier<Arma> armaInicial, Supplier<Armadura> armaduraInicial,
+    Clases(String rutaSprite,Dados puntosGolpe, Supplier<Arma> armaInicial, Supplier<Armadura> armaduraInicial,
            Desbloqueo... desbloqueos){
+        this.rutaSprite = rutaSprite;   
         this.puntosGolpe = puntosGolpe;
         this.armaInicial = armaInicial;
         this.armaduraInicial = armaduraInicial;
@@ -85,5 +88,9 @@ public enum Clases {
 
     public boolean permiteAprender(Habilidad habilidad, int nivel){
         return getHabilidadesHastaNivel(nivel).contains(habilidad);
+    }
+
+    public String getRutaSprite() {
+        return rutaSprite;
     }
 }
