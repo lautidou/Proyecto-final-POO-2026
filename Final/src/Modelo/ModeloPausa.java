@@ -23,7 +23,7 @@ public class ModeloPausa {
     }
 
     public void setJuegoPausado(boolean pausa){
-        if (!this.juegoPausado != pausa) {
+        if (this.juegoPausado != pausa) {
         this.juegoPausado =  pausa;
         //notificamos a los contoladores que el estado de pausa cambio
         notificarCambio(); 

@@ -1,6 +1,7 @@
 package Modelo;
 
 import Modelo.mapa.Direccion;
+import Modelo.partida.EnemigoDerrotado;
 import Modelo.mapa.Mapa;
 import Modelo.mapa.Mundo;
 import Modelo.mapa.MundoDePrueba;
@@ -11,9 +12,14 @@ import Modelo.pjs.Heroe;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.function.Supplier;
 
 public class ModeloMapa {
 
@@ -28,48 +34,82 @@ public class ModeloMapa {
 
     private final Random azar = new Random();
     private int pasosDesdeMovimientoEnemigos = 0;
-    private final Mundo mundo;
+
+    // Cómo se arma un mundo nuevo: así se puede volver a empezar con todos los enemigos vivos
+    private final Supplier<Mundo> fabricaMundo;
+    private Mundo mundo;
     private Heroe personaje;
+    private final Set<EnemigoDerrotado> derrotados = new LinkedHashSet<>();
     private final PropertyChangeSupport soporte = new PropertyChangeSupport(this);
 
     public ModeloMapa() {
-        this(MundoDePrueba.crear());
+        this(MundoDePrueba::crear);
     }
 
-    public ModeloMapa(Mundo mundo) {
-        if (mundo == null) {
-            throw new IllegalArgumentException("El mundo no puede ser nulo.");
+    public ModeloMapa(Supplier<Mundo> fabricaMundo) {
+        if (fabricaMundo == null) {
+            throw new IllegalArgumentException("La fábrica de mundos no puede ser nula.");
         }
-        mundo.validar();
-        mundo.reiniciar();
-        this.mundo = mundo;
+        this.fabricaMundo = fabricaMundo;
+        this.mundo = nuevoMundo();
     }
 
+    private Mundo nuevoMundo() {
+        Mundo nuevo = this.fabricaMundo.get();
+        if (nuevo == null) {
+            throw new IllegalStateException("La fábrica de mundos devolvió null.");
+        }
+        nuevo.validar();
+        nuevo.reiniciar();
+        return nuevo;
+    }
+
+    // Partida nueva: mundo nuevo, con todos los enemigos vivos
     public void colocarPersonaje(Heroe nuevo) {
         if (nuevo == null) {
             throw new IllegalArgumentException("El personaje no puede ser nulo.");
         }
         Mapa mapaAnterior = this.mundo.getMapaActual();
-        this.mundo.reiniciar();
+        this.mundo = nuevoMundo();
+        this.derrotados.clear();
         instalar(nuevo, mapaAnterior, this.mundo.getPosicionInicial());
     }
 
     public void eliminarEnemigo(Enemigo enemigo) {
         Mapa actual = this.mundo.getMapaActual();
+        Posicion posicion = enemigo.getPosicion();
         if (actual.quitarEnemigo(enemigo)) {
+            this.derrotados.add(new EnemigoDerrotado(actual.getId(), posicion));
             this.soporte.firePropertyChange(PROP_ENEMIGOS, null, actual);
         }
     }
 
-    public boolean restaurar(Heroe heroe, String idEscenario, Posicion posicion) {
-        if (heroe == null || idEscenario == null || posicion == null) {
+    // Para guardar la partida
+    public Set<EnemigoDerrotado> getEnemigosDerrotados() {
+        return Collections.unmodifiableSet(this.derrotados);
+    }
+
+    // Cargar partida: se arma un mundo nuevo y se le quitan los enemigos que ya estaban vencidos
+    public boolean restaurar(Heroe heroe, String idEscenario, Posicion posicion,
+                             Collection<EnemigoDerrotado> yaDerrotados) {
+        if (heroe == null || idEscenario == null || posicion == null || yaDerrotados == null) {
             return false;
         }
-        Mapa destino = this.mundo.getMapa(idEscenario);
+        Mundo nuevo = nuevoMundo();   // si algo falla acá, el mundo actual no se toca
+        Mapa destino = nuevo.getMapa(idEscenario);
         if (destino == null || !destino.esTransitable(posicion)) {
             return false;
         }
         Mapa mapaAnterior = this.mundo.getMapaActual();
+        this.mundo = nuevo;
+        this.derrotados.clear();
+        for (EnemigoDerrotado muerto : yaDerrotados) {
+            Mapa mapa = this.mundo.getMapa(muerto.idMapa());
+            Enemigo enemigo = (mapa == null) ? null : mapa.getEnemigoEn(muerto.posicion());
+            if (enemigo != null && mapa.quitarEnemigo(enemigo)) {
+                this.derrotados.add(muerto);
+            }
+        }
         this.mundo.irA(idEscenario);
         instalar(heroe, mapaAnterior, posicion);
         return true;
@@ -78,10 +118,8 @@ public class ModeloMapa {
     private void instalar(Heroe nuevo, Mapa mapaAnterior, Posicion posicion) {
         Heroe anterior = this.personaje;
         Posicion posicionAnterior = (anterior == null) ? null : anterior.getPosicion();
-
         nuevo.setPosicion(posicion);
         this.personaje = nuevo;
-
         this.soporte.firePropertyChange(PROP_ESCENARIO, mapaAnterior, this.mundo.getMapaActual());
         this.soporte.firePropertyChange(PROP_PERSONAJE, anterior, nuevo);
         this.soporte.firePropertyChange(PROP_POSICION, posicionAnterior, nuevo.getPosicion());
@@ -101,6 +139,7 @@ public class ModeloMapa {
             this.soporte.firePropertyChange(PROP_ENCUENTRO, null, enemigo);
             return false;
         }
+
         if (!mapaAnterior.esTransitable(destino)) {
             return false;
         }

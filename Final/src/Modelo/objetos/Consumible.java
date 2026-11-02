@@ -45,6 +45,7 @@ public class Consumible extends Objeto {
             eliminarObjeto();
     }
 
+    @Override
     public int getCantidad() {
         return cantidad;
     }

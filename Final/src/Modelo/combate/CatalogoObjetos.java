@@ -3,12 +3,31 @@ package Modelo.combate;
 import Modelo.objetos.Arma;
 import Modelo.objetos.Armadura;
 import Modelo.objetos.Consumible;
+import Modelo.objetos.Objeto;
 import Modelo.pjs.Dados;
 
 public final class CatalogoObjetos {
 
     private CatalogoObjetos() {
     }
+
+     public static Objeto crear(int idObjeto, int cantidad) {
+        switch (idObjeto) {
+            case 1:  return espadaCorta();
+            case 2:  return dagaDeHierro();
+            case 3:  return armaduraDeCuero();
+            case 4:  return armaduraDeMalla();
+            case 5:  return pocionCurativa(cantidad);
+            case 6:  return hachaDeGuerra();
+            case 7:  return bastonArcano();
+            case 8:  return vendajesDeCombate();
+            case 9:  return armaduraDePieles();
+            case 10: return tunicaDeMago();
+            case 11: return ropasDeMonje();
+            default: return null;
+        }
+    }
+
     // ---- Armas ----
     public static Arma espadaCorta() {
         return new Arma(1, "Espada corta", 2.0, 15, "Una espada ligera y equilibrada.", Dados.d8);

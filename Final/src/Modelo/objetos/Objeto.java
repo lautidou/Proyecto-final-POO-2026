@@ -60,5 +60,13 @@ public abstract class Objeto {
         return false; 
     }
 
+    public int getIdObjeto() {
+        return idObjeto; 
+    }
+
+    public int getCantidad() {
+        return 1; 
+    }
+
     public abstract void usar(Personaje objetivo);
 }

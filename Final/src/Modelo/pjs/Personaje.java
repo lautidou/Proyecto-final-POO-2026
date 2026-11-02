@@ -23,8 +23,6 @@ public abstract class Personaje {
     private Caracteristicas caracteristicas;
     private Posicion posicion;
     private final Map<RanuraEquipo, Equipable> equipo = new EnumMap<>(RanuraEquipo.class);
-    // Usos gastados por habilidad (id -> veces). Son del personaje y duran toda la campaña,
-    // porque la Habilidad en sí la comparten todos los personajes de la clase.
     private final Map<Integer, Integer> usosGastados = new HashMap<>();
 
     public Personaje(String nombre, int nivel, Clases clase, List<Habilidad> habilidades,
@@ -171,5 +169,18 @@ public abstract class Personaje {
 
     public Armadura getArmaduraEquipada() {
         return (Armadura) equipo.get(RanuraEquipo.ARMADURA);
+    }
+
+    public List<Equipable> getEquipados() {
+        return new ArrayList<>(equipo.values()); 
+    }
+
+    public Map<Integer, Integer> getUsosGastados() {
+        return new HashMap<>(usosGastados); 
+    }
+
+    public void restaurarUsosGastados(Map<Integer, Integer> usos) {
+        usosGastados.clear();
+        usosGastados.putAll(usos);
     }
 }

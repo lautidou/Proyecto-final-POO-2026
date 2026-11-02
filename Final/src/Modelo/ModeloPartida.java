@@ -1,11 +1,15 @@
 package Modelo;
 
+import Modelo.combate.CatalogoObjetos;
 import Modelo.mapa.Mapa;
+import Modelo.objetos.Objeto;
+import Modelo.partida.ObjetoGuardado;
 import Modelo.partida.PartidaGuardada;
 import Modelo.partida.PartidaGuardadaDAO;
 import Modelo.pjs.Heroe;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ModeloPartida {
 
@@ -27,9 +31,14 @@ public class ModeloPartida {
             return false;
         }
         try {
+            List<ObjetoGuardado> inventario = new ArrayList<>();
+            for (Objeto o : heroe.getInventario()) {
+                if (o.getCantidad() <= 0) continue; 
+                inventario.add(new ObjetoGuardado(o.getIdObjeto(), o.getCantidad(), o.estaEquipadoPor(heroe))); 
+            }
             return this.partidas.guardar(new PartidaGuardada(heroe.getNombre(), heroe.getRaza(), heroe.getClase(),
-                    heroe.getNivel(), heroe.getExperiencia(), heroe.getVida(), heroe.getCaracteristicas(),
-                    escenario.getId(), heroe.getPosicion()));
+            heroe.getNivel(), heroe.getExperiencia(), heroe.getVida(), heroe.getCaracteristicas(),
+            escenario.getId(), heroe.getPosicion(), inventario, heroe.getUsosGastados(), new ArrayList<>(modeloMapa.getEnemigosDerrotados())));
         } catch (IllegalArgumentException e) {
             return false;
         }
@@ -42,9 +51,18 @@ public class ModeloPartida {
         }
         try {
             Heroe heroe = new Heroe(partida.getNombre(), partida.getNivel(), partida.getRaza(), partida.getClase(),
-                    new ArrayList<>(), partida.getCaracteristicas(), partida.getExperiencia(), new ArrayList<>());
+            new ArrayList<>(), partida.getCaracteristicas(), partida.getExperiencia(), new ArrayList<>());
             heroe.setVida(partida.getVida());
-            return this.modeloMapa.restaurar(heroe, partida.getEscenario(), partida.getPosicion());
+            for (ObjetoGuardado og : partida.getInventario()) {
+                Objeto objeto = CatalogoObjetos.crear(og.idObjeto(), og.cantidad());
+                heroe.getInventario().add(objeto);
+                if (og.equipado()) {
+                    objeto.usar(heroe);
+                }           
+            }
+            heroe.restaurarUsosGastados(partida.getUsosHabilidades());
+            return this.modeloMapa.restaurar(heroe, partida.getEscenario(), partida.getPosicion(),
+            partida.getEnemigosDerrotados());
         } catch (IllegalArgumentException e) {
             return false;
         }

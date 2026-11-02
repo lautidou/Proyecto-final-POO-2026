@@ -44,7 +44,6 @@ public class ControladorCombate {
         this.vista.getBotonBasico().addActionListener(evento -> this.ejecutarBasico());
         this.vista.getBotonHabilidades().addActionListener(evento -> this.abrirMenuHabilidades());
         this.vista.getBotonVolverCombate().addActionListener(evento -> this.vista.mostrarMenuPrincipal());
-        this.vista.getBotonInventario().addActionListener(evento -> this.abrirMenuInventario());
 
         // Submenú de habilidades (los botones de cada habilidad se enganchan al abrirlo)
         this.vista.getBotonVolverHabilidades().addActionListener(evento -> this.vista.mostrarMenuCombate());
