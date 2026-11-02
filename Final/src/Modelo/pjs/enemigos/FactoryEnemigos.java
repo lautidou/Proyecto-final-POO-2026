@@ -15,6 +15,7 @@ public final class FactoryEnemigos {
             case "Goblin":    return new Goblin();
             case "Esqueleto": return new Esqueleto();
             case "Ogro":      return new Ogro();
+            case "JefeFinal": return new JefeFinal();
             default:
                 throw new IllegalArgumentException("Tipo de enemigo desconocido: " + tipoEnemigo);
         }

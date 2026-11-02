@@ -179,7 +179,6 @@ public class VistaMapa extends JPanel {
         g2.dispose();
     }
 
-    /** Circulo con la inicial del nombre, dentro de la celda indicada. */
     private void dibujarFicha(Graphics2D g2, int mapaX, int mapaY, double celdaAncho, double celdaAlto,
                               int posX, int posY, String nombre, Color color, String rutaSprite, 
                               Modelo.mapa.Direccion orientacion, int frameAnimacion) {
@@ -189,10 +188,8 @@ public class VistaMapa extends JPanel {
         int w = (int) Math.round(celdaAncho);
         int h = (int) Math.round(celdaAlto);
 
-        // Intento de dibujar sprite
         if (rutaSprite != null && !rutaSprite.isEmpty()) {
-            
-            // Cargamos la imagen desde la caché, o la leemos del disco si es la primera vez
+
             BufferedImage hojaSprites = cacheSprites.get(rutaSprite);
             if (hojaSprites == null) {
                 hojaSprites = CargadorImagen.cargarSinRecorte(rutaSprite);
@@ -206,9 +203,12 @@ public class VistaMapa extends JPanel {
                 int filasSprite = 4;
                 int filaCaminata = 0;
                 
-                if (rutaSprite.contains("Wizard")) {
-                    filasSprite = 18; // Dividimos la altura total entre 18
-                    filaCaminata = 4; // Los pasos de caminar del mago empiezan en la fila 5 (índice 4)
+                if (rutaSprite.contains("boss")) {
+                    columnasSprite = 1;
+                    filasSprite = 1;
+                } else if (rutaSprite.contains("Wizard")) {
+                    filasSprite = 18; 
+                    filaCaminata = 4; 
                 } else if (rutaSprite.contains("Enemy")) {
                     columnasSprite = 3;
                 }
@@ -219,10 +219,11 @@ public class VistaMapa extends JPanel {
                 int col = 0;
                 int fila = 0;
                 
-                if (rutaSprite.contains("Enemy")) {
-                    // ENEMIGOS (3x4): Columnas = Animación, Filas = Dirección
+                if (rutaSprite.contains("boss")) {
+                    col = 0;
+                    fila = 0;
+                } else if (rutaSprite.contains("Enemy")) {
                     col = frameAnimacion % columnasSprite; 
-                    
                     if (orientacion != null) {
                         switch (orientacion) {
                             case ABAJO:     fila = 0; break;
@@ -232,9 +233,7 @@ public class VistaMapa extends JPanel {
                         }
                     }
                 } else {
-                    // HÉROES (4x4): Columnas = Dirección, Filas = Animación
                     fila = frameAnimacion % filasSprite;
-                    
                     if (orientacion != null) {
                         switch (orientacion) {
                             case ABAJO:     col = 0; break;
@@ -243,20 +242,17 @@ public class VistaMapa extends JPanel {
                             case DERECHA:   col = 3; break;
                         }
                     }
-                    fila = fila + filaCaminata; // Aplicamos el offset para el Mago
+                    fila = fila + filaCaminata; 
                 }
                 
-                // Calculamos el punto exacto de recorte usando la Columna para X y la Fila para Y
                 int recorteX = col * anchoFrame;
                 int recorteY = fila * altoFrame;
                 
                 BufferedImage frameActual = hojaSprites.getSubimage(recorteX, recorteY, anchoFrame, altoFrame);
                 g2.drawImage(frameActual, px, py, w, h, null);
-                return; // Cortamos la ejecución para que no dibuje el círculo debajo
-            }
+                return; 
         }
 
-        // Fallback: si no hay imagen, dibuja el círculo con la inicial
         int tam = Math.min(w, h);
         int margen = tam / 8;
         g2.setColor(color);
@@ -268,5 +264,6 @@ public class VistaMapa extends JPanel {
         g2.drawString(inicial,
                 px + (w - fm.stringWidth(inicial)) / 2,
                 py + (h + fm.getAscent() - fm.getDescent()) / 2);
+    }
     }
 }

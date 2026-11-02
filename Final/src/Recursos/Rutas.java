@@ -57,4 +57,5 @@ public final class Rutas {
     public static final String ESQUELETO = "Assets/Sprites/Enemy 04-1.png";
     public static final String GOBLIN = "Assets/Sprites/Enemy 18.png";
     public static final String OGRO = "Assets/Sprites/Enemy 20.png";
+    public static final String BOSS = "Assets/Sprites/pipo-boss002.jpg";
 }
