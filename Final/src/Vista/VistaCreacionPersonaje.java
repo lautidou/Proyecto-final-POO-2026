@@ -1,13 +1,12 @@
 package Vista;
 
-import Modelo.pjs.Clases;
-import Modelo.pjs.Raza;
-
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -20,19 +19,20 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 public class VistaCreacionPersonaje extends JPanel {
 
     public static final String NOMBRE = "CreacionPersonaje";
 
     private final JTextField campoNombre;
-    private final JComboBox<Raza> comboRaza;
-    private final JComboBox<Clases> comboClase;
+    private final JComboBox<String> comboRaza;
+    private final JComboBox<String> comboClase;
     private final JButton botonCrear;
     private final JButton botonVolver;
     private final JLabel imagenPersonaje;
 
-    private static final String RUTA_IMAGENES = "Assets/MenuSeleccion/";
     private static final int ANCHO_IMAGEN = 350;
     private static final int ALTO_IMAGEN = 450;
 
@@ -93,14 +93,14 @@ public class VistaCreacionPersonaje extends JPanel {
         labelRaza.setForeground(Color.WHITE);
         contenedorDerecha.add(labelRaza);
 
-        this.comboRaza = new JComboBox<>(Raza.values());
+        this.comboRaza = new JComboBox<>();
         contenedorDerecha.add(this.comboRaza);
 
         JLabel labelClase = new JLabel("Clase:");
         labelClase.setForeground(Color.WHITE);
         contenedorDerecha.add(labelClase);
 
-        this.comboClase = new JComboBox<>(Clases.values());
+        this.comboClase = new JComboBox<>();
         contenedorDerecha.add(this.comboClase);
 
         JPanel envolturaDerecha = new JPanel(new GridBagLayout());
@@ -111,38 +111,53 @@ public class VistaCreacionPersonaje extends JPanel {
         // AGREGA AL PANEL DE FONDO
         panelFondo.add(envolturaCentral, BorderLayout.CENTER);
         panelFondo.add(envolturaDerecha, BorderLayout.EAST);
-
-        // Cambia la imagen cuando se elige otra clase
-        this.comboClase.addActionListener(evento -> this.mostrarImagenClase(this.getClaseSeleccionada()));
-        this.mostrarImagenClase(this.getClaseSeleccionada());
     }
 
-    public void mostrarImagenClase(Clases clase) {
-        if (clase == null) {
-            this.imagenPersonaje.setIcon(null);
-            return;
-        }
-        String ruta = RUTA_IMAGENES + clase.name().toLowerCase() + "Seleccion.png";
-        ImageIcon original = new ImageIcon(ruta);
-        if (original.getIconWidth() <= 0) {
-            System.err.println("No se encontró la imagen: " + ruta);
-            this.imagenPersonaje.setIcon(null);
-            return;
-        }
-        Image escalada = original.getImage().getScaledInstance(ANCHO_IMAGEN, ALTO_IMAGEN, Image.SCALE_FAST);
-        this.imagenPersonaje.setIcon(new ImageIcon(escalada));
+    public void setImagenPersonaje(String ruta) {
+    ImageIcon original = ruta == null ? null : new ImageIcon(ruta);
+    if (original == null || original.getIconWidth() <= 0) {
+        imagenPersonaje.setIcon(null);
+        return;
     }
+    Image escalada = original.getImage()
+            .getScaledInstance(ANCHO_IMAGEN, ALTO_IMAGEN, Image.SCALE_FAST);
+    imagenPersonaje.setIcon(new ImageIcon(escalada));
+    }
+
 
     public String getNombreIngresado() {
         return this.campoNombre.getText();
     }
 
-    public Raza getRazaSeleccionada() {
-        return (Raza) this.comboRaza.getSelectedItem();
+    public void setRazas(List<String> nombres)  { 
+        cargar(comboRaza, nombres); 
+    }
+    public void setClases(List<String> nombres) {
+        cargar(comboClase, nombres); 
     }
 
-    public Clases getClaseSeleccionada() {
-        return (Clases) this.comboClase.getSelectedItem();
+    private void cargar(JComboBox<String> combo, List<String> nombres) {
+        combo.setModel(new DefaultComboBoxModel<>(nombres.toArray(new String[0])));
+    }
+
+    public int getIndiceRaza()  {   
+        return comboRaza.getSelectedIndex(); 
+    }
+
+    public int getIndiceClase() { 
+        return comboClase.getSelectedIndex(); 
+    }
+
+    public void addClaseListener(ActionListener l) { 
+        comboClase.addActionListener(l); 
+    }
+
+    public void mostrarMensaje(String texto) {
+        JOptionPane.showMessageDialog(this, texto);
+    }
+
+    public void mostrarError(String texto) {
+        JOptionPane.showMessageDialog(this, texto, "Error al crear personaje", JOptionPane.ERROR_MESSAGE);
     }
 
     public void limpiarCampos() {

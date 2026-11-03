@@ -59,7 +59,7 @@ public class VistaCombate extends JPanel {
 
         this.hudHeroe = new PanelHud();
         this.hudEnemigo = new PanelHud();
-        this.spriteHeroe = new PanelSprite(new Color(60, 120, 200));
+        this.spriteHeroe   = new PanelSprite(new Color(60, 120, 200));
         this.spriteEnemigo = new PanelSprite(new Color(190, 50, 50));
 
         this.botonera = new PanelBotonera();
@@ -142,14 +142,15 @@ public class VistaCombate extends JPanel {
 
     // ---------- Datos que entrega el controlador ----------
 
-    public void setHeroe(String nombre, int vida, int vidaMaxima) {
+    public void setHeroe(String nombre, String rutaSprite, int vida, int vidaMaxima) {
         this.hudHeroe.setDatos(nombre, vida, vidaMaxima);
-        this.spriteHeroe.setNombre(nombre);
+        this.spriteHeroe.setDatos(nombre, rutaSprite);
     }
 
-    public void setEnemigo(String nombre, int vida, int vidaMaxima) {
+
+    public void setEnemigo(String nombre, String rutaSprite, int vida, int vidaMaxima) {
         this.hudEnemigo.setDatos(nombre, vida, vidaMaxima);
-        this.spriteEnemigo.setNombre(nombre);
+        this.spriteEnemigo.setDatos(nombre, rutaSprite);
     }
 
     public void agregarMensaje(String mensaje) {

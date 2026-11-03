@@ -158,8 +158,8 @@ public class ControladorCombate {
         if (heroe == null || enemigo == null) {
             return;
         }
-        this.vista.setHeroe(heroe.getNombre(), heroe.getVida(), heroe.getVidaMaxima());
-        this.vista.setEnemigo(enemigo.getNombre(), enemigo.getVida(), enemigo.getVidaMaxima());
+        this.vista.setHeroe(heroe.getNombre(), heroe.getRutaSpritePelea(), heroe.getVida(), heroe.getVidaMaxima());
+        this.vista.setEnemigo(enemigo.getNombre(), enemigo.getRutaSpritePelea(), enemigo.getVida(), enemigo.getVidaMaxima());
     }
 
     // ---------- Fin del combate ----------

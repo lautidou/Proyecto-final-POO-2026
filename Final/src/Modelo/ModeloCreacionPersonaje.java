@@ -64,4 +64,12 @@ public class ModeloCreacionPersonaje {
     public Heroe getHeroeCreado() {
         return this.heroeCreado;
     }
+
+    public List<Raza> getRazas() {
+        return List.of(Raza.values());
+    }
+
+    public List<Clases> getClases() {
+        return List.of(Clases.values());
+    }
 }

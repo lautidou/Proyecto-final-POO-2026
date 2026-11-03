@@ -46,6 +46,7 @@ public final class Rutas {
     
     // --- COMBATE (Usados en VistaCombate y PanelTablon) ---
     public static final String PELEA = RAIZ + "Pelea/";
+    public static final String SPRITES_PELEA = PELEA + "Sprites/";
     public static final String FONDO_BOSQUE = PELEA + "fondoPeleaBosque.png";
     public static final String TABLERO = PELEA + "tablero.png";
     public static final String BOTONES_PELEA = PELEA + "botones/";
@@ -53,6 +54,12 @@ public final class Rutas {
     public static final String BARBARO = "Assets/Sprites/SpriteSheetcaveman.png";
     public static final String MONJE = "Assets/Sprites/SpriteSheetmonk.png";
     public static final String MAGO = "Assets/Sprites/Wizard sheet.png";
+
+    public static final String BARBARO_PELEA = SPRITES_PELEA + "barbaroPelea.png";
+    public static final String MAGO_PELEA = SPRITES_PELEA + "magoPelea.png";
+    public static final String MONJE_PELEA = SPRITES_PELEA + "monjePelea.png";
+
+    public static final String GOBLIN_PELEA = SPRITES_PELEA + "goblinPelea.png";
 
     public static final String ESQUELETO = "Assets/Sprites/Enemy 04-1.png";
     public static final String GOBLIN = "Assets/Sprites/Enemy 18.png";

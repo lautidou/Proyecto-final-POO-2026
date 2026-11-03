@@ -18,6 +18,7 @@ public abstract class Personaje {
     private String nombre;
     
     protected String rutaSprite;
+    protected String rutaSpritePelea;
     private Direccion orientacion = Direccion.ABAJO; 
     private int frameAnimacion = 0;
 
@@ -53,6 +54,7 @@ public abstract class Personaje {
         this.caracteristicas = caracteristicas;
         this.habilidades = (habilidades != null) ? habilidades : new ArrayList<>();
         this.rutaSprite = clase.getRutaSprite();
+        this.rutaSpritePelea = clase.getRutaSpritePelea();
         actualizarHabilidadesDesbloqueadas();
     }
 
@@ -144,6 +146,14 @@ public abstract class Personaje {
 
     protected void setRutaSprite(String rutaSprite) {
         this.rutaSprite = rutaSprite;
+    }
+
+    public String getRutaSpritePelea() { 
+        return rutaSpritePelea; 
+    }
+
+    protected void setRutaSpritePelea(String ruta) { 
+        this.rutaSpritePelea = ruta; 
     }
 
     public Direccion getOrientacion() {
