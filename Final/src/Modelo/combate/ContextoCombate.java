@@ -51,8 +51,13 @@ public final class ContextoCombate {
 
     // ---- Lo que pueden hacer los efectos de las acciones ----
     public void infligirDanio(int puntos) {
-        this.oponente.recibirDanio(puntos);
-        mensaje(this.oponente.getNombre() + " recibe " + puntos + " de daño.");
+        int danio = Reglas.danioTrasDefensa(puntos, Reglas.defensa(this.oponente));
+        this.oponente.recibirDanio(danio);
+
+        int absorbido = puntos - danio;
+        String texto = this.oponente.getNombre() + " recibe " + danio + " de daño";
+        mensaje(absorbido > 0 ? texto + " (la armadura absorbe " + absorbido + ")." : texto + ".");
+
         this.estado.atacar(this); // hacer daño es atacar: delata a quien está escondido
     }
 
