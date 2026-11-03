@@ -37,6 +37,7 @@ public class ControladorMapa {
     private final ControladorPantallaPausa controladorPausa;
     private final ModeloPausa modeloPausa;
     private boolean enMovimiento = false;
+    private final javax.swing.Timer timerAutoguardado;
 
     public ControladorMapa(VistaMapa vista, ModeloMapa modelo, ModeloPartida modeloPartida,
                            BiConsumer<Heroe, Enemigo> iniciarCombate,ModeloPausa modeloPausa) {
@@ -51,6 +52,34 @@ public class ControladorMapa {
 
         this.controladorPausa = new ControladorPantallaPausa(Ventana.getInstancia(), this.modeloPausa, this.vista, this);
         this.controladorPausa.configurarTeclas();
+
+        this.timerAutoguardado = new javax.swing.Timer(3000, evento -> {
+            this.modeloPartida.guardar();
+        });
+        this.timerAutoguardado.start();
+
+        this.vista.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                ReproductorAudio.musicaDeMapa(modelo.getMapaActual().getId());
+                timerAutoguardado.restart(); // Inicia o reinicia al ver el mapa
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                timerAutoguardado.stop(); // Se detiene al entrar a combate o salir al menú
+            }
+        });
+
+        this.modeloPausa.addPropertyChangeListener(evento -> {
+            if (ModeloPausa.PROP_ESTADO_PAUSA.equals(evento.getPropertyName())) {
+                if (this.modeloPausa.isJuegoPausado()) {
+                    this.timerAutoguardado.stop(); // Pausa el reloj
+                } else {
+                    this.timerAutoguardado.restart(); // Reinicia el conteo desde cero al volver a jugar
+                }
+            }
+        });
 
         new ControladorInventario(Ventana.getInstancia(), new ModeloInventario(this.modelo), this.modeloPausa, this.vista)
                 .configurarTeclas();

@@ -7,14 +7,20 @@ import Modelo.partida.ObjetoGuardado;
 import Modelo.partida.PartidaGuardada;
 import Modelo.partida.PartidaGuardadaDAO;
 import Modelo.pjs.Heroe;
+import Persistencia.GuardadorDePartidas;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ModeloPartida {
 
     private final PartidaGuardadaDAO partidas;
     private final ModeloMapa modeloMapa;
+
+    private final BlockingQueue<PartidaGuardada> pendientes;
+    private final Thread hiloGuardador;
 
     public ModeloPartida(PartidaGuardadaDAO partidas, ModeloMapa modeloMapa) {
         if (partidas == null || modeloMapa == null) {
@@ -22,6 +28,12 @@ public class ModeloPartida {
         }
         this.partidas = partidas;
         this.modeloMapa = modeloMapa;
+
+        // Se inicializa la cola y el hilo consumidor
+        this.pendientes = new LinkedBlockingQueue<>();
+        GuardadorDePartidas guardador = new GuardadorDePartidas(this.pendientes, this.partidas);
+        this.hiloGuardador = new Thread(guardador);
+        this.hiloGuardador.start();
     }
 
     public boolean guardar() {
@@ -36,11 +48,30 @@ public class ModeloPartida {
                 if (o.getCantidad() <= 0) continue; 
                 inventario.add(new ObjetoGuardado(o.getIdObjeto(), o.getCantidad(), o.estaEquipadoPor(heroe))); 
             }
-            return this.partidas.guardar(new PartidaGuardada(heroe.getNombre(), heroe.getRaza(), heroe.getClase(),
-            heroe.getNivel(), heroe.getExperiencia(), heroe.getVida(), heroe.getCaracteristicas(),
-            escenario.getId(), heroe.getPosicion(), inventario, heroe.getUsosGastados(), new ArrayList<>(modeloMapa.getEnemigosDerrotados())));
-        } catch (IllegalArgumentException e) {
+            
+            PartidaGuardada nuevaPartida = new PartidaGuardada(
+                    heroe.getNombre(), heroe.getRaza(), heroe.getClase(),
+                    heroe.getNivel(), heroe.getExperiencia(), heroe.getVida(), heroe.getCaracteristicas(),
+                    escenario.getId(), heroe.getPosicion(), inventario, heroe.getUsosGastados(), 
+                    new ArrayList<>(modeloMapa.getEnemigosDerrotados())
+            );
+            this.pendientes.put(nuevaPartida);
+            return true;
+        } catch (IllegalArgumentException | InterruptedException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             return false;
+        }
+    }
+
+    // Método para cerrar ordenadamente al salir del juego
+    public void apagarGuardador() {
+        try {
+            this.pendientes.put(GuardadorDePartidas.FIN); // avisa al consumidor que termine
+            this.hiloGuardador.join(); // espera a que se guarde lo pendiente antes de cerrar
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
