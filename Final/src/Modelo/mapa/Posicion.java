@@ -19,7 +19,7 @@ public final class Posicion {
     @Override
     public boolean equals(Object otro) {
         if (this == otro) return true;
-        if (!(otro instanceof Posicion)) return false;
+        if (otro == null || this.getClass() != otro.getClass()) return false;
         Posicion p = (Posicion) otro;
         return x == p.x && y == p.y;
     }
