@@ -6,6 +6,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import Recursos.Rutas;
 
 public class VistaMenuMain extends JPanel {
 
@@ -19,14 +20,14 @@ public class VistaMenuMain extends JPanel {
     public VistaMenuMain() {
         super(new BorderLayout());
 
-        PanelFondo panelFondo = new PanelFondo("Assets/fondoInicio.png");
+        PanelFondo panelFondo = new PanelFondo(Rutas.FONDO_INICIO);
         panelFondo.setLayout(new BorderLayout());
         this.add(panelFondo, BorderLayout.CENTER);
 
         JPanel panelContenedorCentral = new JPanel(new GridBagLayout());
         panelContenedorCentral.setOpaque(false);
 
-        PanelFondo panelPergamino = new PanelFondo("Assets/panelOpciones.png");
+        PanelFondo panelPergamino = new PanelFondo(Rutas.PANEL_OPCIONES);
         panelPergamino.setOpaque(false);
         panelPergamino.setLayout(new GridBagLayout());
         panelPergamino.setPreferredSize(new Dimension(350, 350));
@@ -35,10 +36,10 @@ public class VistaMenuMain extends JPanel {
         panelBotones.setOpaque(false);
         panelBotones.setPreferredSize(new Dimension(200, 210));//ver despues tamaño de las letras
 
-        this.botonUno = new BotonImagen("Assets/MenuMain/botonCrearPartida.png", "Crear partida");
-        this.botonDos = new BotonImagen("Assets/MenuMain/botonCargarPartida.png", "Cargar partida");
-        this.botonOpciones = new BotonImagen("Assets/MenuMain/botonOpciones.png", "Opciones");
-        this.botonTres = new BotonImagen("Assets/MenuMain/botonSalir.png", "Salir");
+        this.botonUno = new BotonImagen("src/Assets/MenuMain/botonCrearPartida.png", "Crear partida");
+        this.botonDos = new BotonImagen("src/Assets/MenuMain/botonCargarPartida.png", "Cargar partida");
+        this.botonOpciones = new BotonImagen("src/Assets/MenuMain/botonOpciones.png", "Opciones");
+        this.botonTres = new BotonImagen("src/Assets/MenuMain/botonSalir.png", "Salir");
 
         panelBotones.add(this.botonUno);
         panelBotones.add(this.botonDos);

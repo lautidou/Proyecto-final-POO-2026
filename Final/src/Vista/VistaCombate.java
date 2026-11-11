@@ -26,7 +26,7 @@ public class VistaCombate extends JPanel {
 
     public static final String NOMBRE = "Combate";
 
-    private static final String RUTA_FONDO_ESCENA = "Assets/Pelea/fondoPeleaBosque.png";
+    private static final String RUTA_FONDO_ESCENA = "src/Assets/Pelea/fondoPeleaBosque.png";
 
     // Proporciones de la pantalla
     private static final double PESO_ALTO_ESCENA = 0.62;
@@ -51,7 +51,7 @@ public class VistaCombate extends JPanel {
     public VistaCombate() {
         super(new BorderLayout());
  
-        PanelFondo panelFondo = new PanelFondo("Assets/Pelea/fondoMenuPelea.png");
+        PanelFondo panelFondo = new PanelFondo("src/Assets/Pelea/fondoMenuPelea.png");
         panelFondo.setBackground(COLOR_PANTALLA);
         panelFondo.setLayout(new GridBagLayout());
         panelFondo.setBorder(BorderFactory.createEmptyBorder(MARGEN_PANTALLA, MARGEN_PANTALLA, MARGEN_PANTALLA, MARGEN_PANTALLA));

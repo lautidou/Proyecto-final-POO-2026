@@ -21,6 +21,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.util.List;
+import Recursos.Rutas;
 
 public class VistaCreacionPersonaje extends JPanel {
 
@@ -40,7 +41,7 @@ public class VistaCreacionPersonaje extends JPanel {
         super(new BorderLayout());
 
         // FONDO (igual que en VistaMenuMain)
-        PanelFondo panelFondo = new PanelFondo("Assets/fondoInicio.png");
+        PanelFondo panelFondo = new PanelFondo(Rutas.FONDO_INICIO);
         panelFondo.setLayout(new BorderLayout());
         this.add(panelFondo, BorderLayout.CENTER);
 

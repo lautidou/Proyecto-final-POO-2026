@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Juego",
+      "request": "launch",
+      "mainClass": "Juego",
+      "vmArgs": "--enable-native-access=ALL-UNNAMED"
+    },
+    {
+      "type": "java",
+      "name": "Prueba",
+      "request": "launch",
+      "mainClass": "Prueba",
+      "vmArgs": "--enable-native-access=ALL-UNNAMED"
+    },
+    {
+      "type": "java",
+      "name": "Current File",
+      "request": "launch",
+      "mainClass": "${file}"
+    }
+  ]
+}

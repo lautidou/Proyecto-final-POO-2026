@@ -6,7 +6,7 @@ public final class Rutas {
     }
 
     //carpeta principal
-    public static final String RAIZ = "Assets/";
+    public static final String RAIZ = "src/Assets/";
 
     // Mapas
     public static final String MAPAS = RAIZ + "Mapas/";

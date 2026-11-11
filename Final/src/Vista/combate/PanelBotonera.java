@@ -16,14 +16,14 @@ public class PanelBotonera extends JPanel {
     private static final String MENU_INVENTARIO = "inventario";
 
 
-    private static final String RUTA_BOTON_COMBATE = "Assets/Pelea/botones/botonCombate.png";
-    private static final String RUTA_BOTON_BUSQUEDA = "Assets/Pelea/botones/botonBuscar.png";
-    private static final String RUTA_BOTON_INVENTARIO = "Assets/Pelea/botones/botonMochila.png";
-    private static final String RUTA_BOTON_ESCONDERSE = "Assets/Pelea/botones/botonEsconderse.png";
+    private static final String RUTA_BOTON_COMBATE = "src/Assets/Pelea/botones/botonCombate.png";
+    private static final String RUTA_BOTON_BUSQUEDA = "src/Assets/Pelea/botones/botonBuscar.png";
+    private static final String RUTA_BOTON_INVENTARIO = "src/Assets/Pelea/botones/botonMochila.png";
+    private static final String RUTA_BOTON_ESCONDERSE = "src/Assets/Pelea/botones/botonEsconderse.png";
 
-    private static final String RUTA_BOTON_BASICO = "Assets/Pelea/botones/botonBasico.png";
-    private static final String RUTA_BOTON_HABILIDADES = "Assets/Pelea/botones/botonHabilidades.png";
-    private static final String RUTA_BOTON_VOLVER = "Assets/Pelea/botones/botonVolver.png";
+    private static final String RUTA_BOTON_BASICO = "src/Assets/Pelea/botones/botonBasico.png";
+    private static final String RUTA_BOTON_HABILIDADES = "src/Assets/Pelea/botones/botonHabilidades.png";
+    private static final String RUTA_BOTON_VOLVER = "src/Assets/Pelea/botones/botonVolver.png";
 
     private final CardLayout tarjetas = new CardLayout();
 
