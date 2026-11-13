@@ -17,7 +17,7 @@ public class Ventana {
 
     private Ventana() {
         this.frame = new JFrame();
-        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.frame.setUndecorated(true);
         this.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.frame.setResizable(false);

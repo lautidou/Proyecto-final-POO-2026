@@ -33,10 +33,25 @@ public class GuardadorDePartidas implements Runnable {
                 if (partida == FIN) { 
                     return;
                 }
-                this.partidasDAO.guardar(partida);
+                guardarSinMorir(partida);
             }
         } catch (InterruptedException e) {
+            PartidaGuardada partida;
+            while ((partida = this.pendientes.poll()) != null) {
+                if (partida != FIN) {
+                    guardarSinMorir(partida);
+                }
+            }
             Thread.currentThread().interrupt();
         }
     }
+
+    private void guardarSinMorir(PartidaGuardada partida) {
+        try {
+            this.partidasDAO.guardar(partida);
+        } catch (RuntimeException e) {
+            System.err.println("No se pudo guardar la partida: " + e.getMessage());
+        }
+    }
+    // si el dao falla, el hulo sigue vivo para las siguientes
 }

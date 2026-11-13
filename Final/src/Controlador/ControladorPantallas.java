@@ -14,6 +14,9 @@ import Vista.VistaMapa;
 import Vista.VistaMenuMain;
 import Vista.VistaMuerte;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 public class ControladorPantallas {
 
     private final Ventana ventana;
@@ -38,8 +41,22 @@ public class ControladorPantallas {
         registrarMapa(modeloMapa, modeloPartida, combate, modeloPausa);
         registrarCreacionPersonaje(modeloMapa);
 
+        registrarSalida(modeloPartida);
+
         this.ventana.mostrarPanel(VistaMenuMain.NOMBRE);
         this.ventana.mostrar();
+    }
+
+        private void registrarSalida(ModeloPartida modeloPartida) {
+        // Cerrar la ventana (Alt+F4, etc.)
+        this.ventana.getFrame().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                SalidaDelJuego.salir(modeloPartida);
+            }
+        });
+        // Red de seguridad: Ctrl+C, kill, o cualquier System.exit que alguien agregue despues
+        Runtime.getRuntime().addShutdownHook(new Thread(modeloPartida::apagarGuardador, "cierre-guardador"));
     }
 
     private void registrarMenuPrincipal(ModeloPartida modeloPartida) {

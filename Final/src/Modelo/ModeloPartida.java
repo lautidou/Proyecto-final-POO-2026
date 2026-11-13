@@ -22,6 +22,10 @@ public class ModeloPartida {
     private final BlockingQueue<PartidaGuardada> pendientes;
     private final Thread hiloGuardador;
 
+    //se pone en true cuando termina
+    private boolean cerrado = false;
+
+
     public ModeloPartida(PartidaGuardadaDAO partidas, ModeloMapa modeloMapa) {
         if (partidas == null || modeloMapa == null) {
             throw new IllegalArgumentException("El DAO y el modelo del mapa son obligatorios");
@@ -36,7 +40,12 @@ public class ModeloPartida {
         this.hiloGuardador.start();
     }
 
-    public boolean guardar() {
+    
+
+    public synchronized boolean guardar() {
+            if (this.cerrado) {
+            return false; // el consumidor ya recibio el FIN: lo que entrara ahora no se guardaria nunca
+        }
         Heroe heroe = this.modeloMapa.getPersonaje();
         Mapa escenario = this.modeloMapa.getMapaActual();
         if (heroe == null || heroe.getPosicion() == null) {
@@ -67,10 +76,22 @@ public class ModeloPartida {
 
     // Método para cerrar ordenadamente al salir del juego
     public void apagarGuardador() {
-        try {
-            this.pendientes.put(GuardadorDePartidas.FIN); // avisa al consumidor que termine
-            this.hiloGuardador.join(); // espera a que se guarde lo pendiente antes de cerrar
-        } catch (InterruptedException e) {
+        synchronized (this) {
+            if (!this.cerrado) {
+                this.cerrado = true; // desde aca guardar() ya no encola
+                this.pendientes.add(GuardadorDePartidas.FIN); // cola sin limite: add nunca bloquea
+            }
+        }
+        // Fuera del synchronized: esperamos al consumidor sin trabar a quien llame a guardar()
+        boolean interrumpido = false;
+        while (this.hiloGuardador.isAlive()) {
+            try {
+                this.hiloGuardador.join();
+            } catch (InterruptedException e) {
+                interrumpido = true; // seguimos esperando: salir ahora perderia lo pendiente
+            }
+        }
+        if (interrumpido) {
             Thread.currentThread().interrupt();
         }
     }

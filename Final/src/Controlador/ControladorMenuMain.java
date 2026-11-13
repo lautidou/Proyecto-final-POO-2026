@@ -62,7 +62,7 @@ public class ControladorMenuMain {
 
     private void ejecutarBotonTres() {
         ReproductorAudio.efectoBotonMenu();
-        System.exit(0);
+        SalidaDelJuego.salir(this.modeloPartida);
     }
 
     private void ejecutarBotonOpciones() {
