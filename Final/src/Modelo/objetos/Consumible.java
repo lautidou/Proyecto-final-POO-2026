@@ -1,5 +1,6 @@
 package Modelo.objetos;
 
+import Modelo.partida.ObjetoGuardado;
 import Modelo.pjs.Personaje;
 
 public class Consumible extends Objeto {
@@ -43,6 +44,12 @@ public class Consumible extends Objeto {
     public void usar(Personaje objetivo) {
             objetivo.curar(this.puntosRestauracion);
             eliminarObjeto();
+    }
+
+    @Override
+    public ObjetoGuardado aGuardado(boolean equipado) {
+        return new ObjetoGuardado("CONSUMIBLE", getIdObjeto(), getNombre(), getPeso(), getPrecio(),
+            getDescripcion(), this.cantidad, false, null, 0, this.puntosRestauracion);
     }
 
     @Override

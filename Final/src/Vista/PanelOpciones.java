@@ -12,6 +12,7 @@ import javax.swing.JButton;
 
 import Audio.Configuracion;
 import Audio.ReproductorAudio;
+import Recursos.Rutas;
 
 public class PanelOpciones extends JDialog {
 
@@ -26,7 +27,7 @@ public class PanelOpciones extends JDialog {
         setBackground(new Color(0, 0, 0, 160)); 
         setLayout(new GridBagLayout());
 
-        PanelFondo marcoMadera = new PanelFondo("Assets/Pelea/tablero.png");
+        PanelFondo marcoMadera = new PanelFondo(Rutas.TABLERO);
         marcoMadera.setPreferredSize(new Dimension(450, 250));
         marcoMadera.setOpaque(false); 
         marcoMadera.setLayout(new GridBagLayout());
@@ -43,7 +44,7 @@ public class PanelOpciones extends JDialog {
             ReproductorAudio.setVolumen(volumen);
         });
 
-        botonVolver = new BotonImagen("Assets/Pelea/botones/botonVolver.png", "Volver");
+        botonVolver = new BotonImagen(Rutas.BOTONES_PELEA + "botonVolver.png", "Volver");
         botonVolver.addActionListener(e -> {
             Configuracion.guardarVolumen(ReproductorAudio.getVolumen());
             this.dispose();

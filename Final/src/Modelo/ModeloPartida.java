@@ -1,12 +1,20 @@
 package Modelo;
 
-import Modelo.combate.CatalogoObjetos;
 import Modelo.mapa.Mapa;
+import Modelo.objetos.Arma;
+import Modelo.objetos.Armadura;
+import Modelo.objetos.Consumible;
 import Modelo.objetos.Objeto;
 import Modelo.partida.ObjetoGuardado;
 import Modelo.partida.PartidaGuardada;
 import Modelo.partida.PartidaGuardadaDAO;
+import Modelo.pjs.Caracteristicas;
+import Modelo.pjs.Dados;
 import Modelo.pjs.Heroe;
+import Modelo.pjs.Raza;
+import Modelo.pjs.clases.Barbaro;
+import Modelo.pjs.clases.Mago;
+import Modelo.pjs.clases.Monje;
 import Persistencia.GuardadorDePartidas;
 
 import java.util.ArrayList;
@@ -29,7 +37,6 @@ public class ModeloPartida {
         this.partidas = partidas;
         this.modeloMapa = modeloMapa;
 
-        // Se inicializa la cola y el hilo consumidor
         this.pendientes = new LinkedBlockingQueue<>();
         GuardadorDePartidas guardador = new GuardadorDePartidas(this.pendientes, this.partidas);
         this.hiloGuardador = new Thread(guardador);
@@ -45,14 +52,13 @@ public class ModeloPartida {
         try {
             List<ObjetoGuardado> inventario = new ArrayList<>();
             for (Objeto o : heroe.getInventario()) {
-                if (o.getCantidad() <= 0) continue; 
-                inventario.add(new ObjetoGuardado(o.getIdObjeto(), o.getCantidad(), o.estaEquipadoPor(heroe))); 
+                if (o.getCantidad() <= 0) continue;
+                inventario.add(o.aGuardado(o.estaEquipadoPor(heroe)));
             }
-            
             PartidaGuardada nuevaPartida = new PartidaGuardada(
-                    heroe.getNombre(), heroe.getRaza(), heroe.getClase(),
+                    heroe.getNombre(), heroe.getRaza(), heroe.getClass().getSimpleName(),
                     heroe.getNivel(), heroe.getExperiencia(), heroe.getVida(), heroe.getCaracteristicas(),
-                    escenario.getId(), heroe.getPosicion(), inventario, heroe.getUsosGastados(), 
+                    escenario.getId(), heroe.getPosicion(), inventario, heroe.getUsosGastados(),
                     new ArrayList<>(modeloMapa.getEnemigosDerrotados())
             );
             this.pendientes.put(nuevaPartida);
@@ -65,11 +71,10 @@ public class ModeloPartida {
         }
     }
 
-    // Método para cerrar ordenadamente al salir del juego
     public void apagarGuardador() {
         try {
-            this.pendientes.put(GuardadorDePartidas.FIN); // avisa al consumidor que termine
-            this.hiloGuardador.join(); // espera a que se guarde lo pendiente antes de cerrar
+            this.pendientes.put(GuardadorDePartidas.FIN);
+            this.hiloGuardador.join();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -81,21 +86,55 @@ public class ModeloPartida {
             return false;
         }
         try {
-            Heroe heroe = new Heroe(partida.getNombre(), partida.getNivel(), partida.getRaza(), partida.getClase(),
-            new ArrayList<>(), partida.getCaracteristicas(), partida.getExperiencia(), new ArrayList<>());
+            Heroe heroe = instanciarHeroe(partida);
             heroe.setVida(partida.getVida());
             for (ObjetoGuardado og : partida.getInventario()) {
-                Objeto objeto = CatalogoObjetos.crear(og.idObjeto(), og.cantidad());
+                Objeto objeto = reconstruirObjeto(og);
                 heroe.getInventario().add(objeto);
                 if (og.equipado()) {
                     objeto.usar(heroe);
-                }           
+                }
             }
             heroe.restaurarUsosGastados(partida.getUsosHabilidades());
             return this.modeloMapa.restaurar(heroe, partida.getEscenario(), partida.getPosicion(),
-            partida.getEnemigosDerrotados());
+                    partida.getEnemigosDerrotados());
         } catch (IllegalArgumentException e) {
             return false;
+        }
+    }
+
+    private Objeto reconstruirObjeto(ObjetoGuardado og) {
+        switch (og.tipo()) {
+        case "ARMA":
+            return new Arma(og.idObjeto(), og.nombre(), og.peso(), og.precio(),
+                    og.descripcion(), Dados.valueOf(og.dado()));
+        case "ARMADURA":
+            return new Armadura(og.idObjeto(), og.nombre(), og.peso(), og.precio(),
+                    og.descripcion(), og.defensa());
+        case "CONSUMIBLE":
+            return new Consumible(og.idObjeto(), og.nombre(), og.peso(), og.precio(),
+                    og.descripcion(), og.cantidad(), og.puntosRestauracion());
+        default:
+            throw new IllegalArgumentException("Tipo de objeto desconocido en guardado: " + og.tipo());
+        }
+    }
+
+    private Heroe instanciarHeroe(PartidaGuardada partida) {
+        String nombre = partida.getNombre();
+        int nivel = partida.getNivel();
+        Raza raza = partida.getRaza();
+        Caracteristicas caracteristicas = partida.getCaracteristicas();
+        int experiencia = partida.getExperiencia();
+
+        switch (partida.getClase()) {
+            case "Barbaro":
+                return new Barbaro(nombre, nivel, raza, caracteristicas, experiencia);
+            case "Mago":
+                return new Mago(nombre, nivel, raza, caracteristicas, experiencia);
+            case "Monje":
+                return new Monje(nombre, nivel, raza, caracteristicas, experiencia);
+            default:
+                throw new IllegalArgumentException("Clase desconocida en partida guardada: " + partida.getClase());
         }
     }
 }

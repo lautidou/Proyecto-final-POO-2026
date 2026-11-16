@@ -1,9 +1,9 @@
 package Modelo.combate;
 
-import Modelo.pjs.Habilidad;
 import Modelo.pjs.Personaje;
 import Modelo.pjs.escondite.EstadoVisibilidad;
 import Modelo.pjs.escondite.Visible;
+import Modelo.pjs.habilidades.Habilidad;
 import Modelo.objetos.Consumible;
 
 import java.util.function.Consumer;

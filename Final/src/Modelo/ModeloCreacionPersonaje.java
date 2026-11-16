@@ -1,24 +1,25 @@
 package Modelo;
 
-import Modelo.objetos.Objeto;
 import Modelo.pjs.Caracteristicas;
-import Modelo.pjs.Clases;
 import Modelo.pjs.Dados;
-import Modelo.pjs.Habilidad;
 import Modelo.pjs.Heroe;
 import Modelo.pjs.Raza;
+import Modelo.pjs.clases.Barbaro;
+import Modelo.pjs.clases.Mago;
+import Modelo.pjs.clases.Monje;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ModeloCreacionPersonaje {
+
+    private static final List<String> CLASES_DISPONIBLES = List.of("Barbaro", "Mago", "Monje");
 
     private Heroe heroeCreado;
 
     public ModeloCreacionPersonaje() {
     }
 
-    public Heroe crearHeroe(String nombre, Raza raza, Clases clase) {
+    public Heroe crearHeroe(String nombre, Raza raza, String clase) {
         if (nombre == null || nombre.trim().isEmpty()) {
             throw new IllegalArgumentException("Debe ingresar un nombre para el personaje.");
         }
@@ -30,13 +31,23 @@ public class ModeloCreacionPersonaje {
         }
 
         Caracteristicas caracteristicasBase = generarCaracteristicasBase(raza);
-        List<Habilidad> habilidades = new ArrayList<>();
-        List<Objeto> inventario = new ArrayList<>();
 
-        this.heroeCreado = new Heroe(nombre.trim(), 1, raza, clase, habilidades,
-                caracteristicasBase, 0, inventario);
-        inventario.addAll(clase.crearEquipoInicial(heroeCreado));
+        this.heroeCreado = instanciarHeroe(clase, nombre.trim(), raza, caracteristicasBase);
+        this.heroeCreado.inicializarEquipo();
         return this.heroeCreado;
+    }
+
+    private Heroe instanciarHeroe(String clase, String nombre, Raza raza, Caracteristicas caracteristicas) {
+        switch (clase) {
+            case "Barbaro":
+                return new Barbaro(nombre, 1, raza, caracteristicas, 0);
+            case "Mago":
+                return new Mago(nombre, 1, raza, caracteristicas, 0);
+            case "Monje":
+                return new Monje(nombre, 1, raza, caracteristicas, 0);
+            default:
+                throw new IllegalArgumentException("Clase desconocida: " + clase);
+        }
     }
 
     private Caracteristicas generarCaracteristicasBase(Raza raza) {
@@ -69,7 +80,7 @@ public class ModeloCreacionPersonaje {
         return List.of(Raza.values());
     }
 
-    public List<Clases> getClases() {
-        return List.of(Clases.values());
+    public List<String> getClases() {
+        return CLASES_DISPONIBLES;
     }
 }

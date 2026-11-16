@@ -7,11 +7,12 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
+import Recursos.Rutas;
 import Vista.CargadorImagen;
 
 public class PanelTablon extends JPanel {
 
-    private static final String RUTA_IMAGEN = "Assets/Pelea/tablero.png";
+    private static final String RUTA_IMAGEN = Rutas.TABLERO;
 
     private static final int ESQUINA_ANCHO = 78;
     private static final int ESQUINA_ALTO = 108;

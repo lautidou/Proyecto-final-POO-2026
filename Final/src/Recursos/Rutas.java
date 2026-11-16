@@ -50,10 +50,11 @@ public final class Rutas {
     public static final String FONDO_BOSQUE = PELEA + "fondoPeleaBosque.png";
     public static final String TABLERO = PELEA + "tablero.png";
     public static final String BOTONES_PELEA = PELEA + "botones/";
+    public static final String SPRITES = RAIZ + "Sprites/";
 
-    public static final String BARBARO = "Assets/Sprites/SpriteSheetcaveman.png";
-    public static final String MONJE = "Assets/Sprites/SpriteSheetmonk.png";
-    public static final String MAGO = "Assets/Sprites/Wizard sheet.png";
+    public static final String BARBARO = SPRITES + "SpriteSheetcaveman.png";
+    public static final String MONJE = SPRITES + "SpriteSheetmonk.png";
+    public static final String MAGO = SPRITES + "Wizard sheet.png";
 
     public static final String BARBARO_PELEA = SPRITES_PELEA + "barbaroPelea.png";
     public static final String MAGO_PELEA = SPRITES_PELEA + "magoPelea.png";
@@ -61,8 +62,8 @@ public final class Rutas {
 
     public static final String GOBLIN_PELEA = SPRITES_PELEA + "goblinPelea.png";
 
-    public static final String ESQUELETO = "Assets/Sprites/Enemy 04-1.png";
-    public static final String GOBLIN = "Assets/Sprites/Enemy 18.png";
-    public static final String OGRO = "Assets/Sprites/Enemy 20.png";
-    public static final String BOSS = "Assets/Sprites/pipo-boss002.jpg";
+    public static final String ESQUELETO = SPRITES + "Enemy 04-1.png";
+    public static final String GOBLIN = SPRITES + "Enemy 18.png";
+    public static final String OGRO = SPRITES + "Enemy 20.png";
+    public static final String BOSS = SPRITES + "pipo-boss002.jpg";
 }

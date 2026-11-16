@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import Modelo.ModeloCombate;
 import Modelo.mapa.Direccion;
 import Modelo.mapa.Posicion;
 import Modelo.objetos.Arma;
 import Modelo.objetos.Armadura;
 import Modelo.objetos.Equipable;
 import Modelo.objetos.RanuraEquipo;
+import Modelo.pjs.habilidades.Habilidad;
 
 public abstract class Personaje {
     // Atributos
@@ -25,37 +27,34 @@ public abstract class Personaje {
     private int vida;
     private int vidaMaxima;
     private int nivel;
-    private Clases clase;
     private List<Habilidad> habilidades;
     private Caracteristicas caracteristicas;
     private Posicion posicion;
     private final Map<RanuraEquipo, Equipable> equipo = new EnumMap<>(RanuraEquipo.class);
     private final Map<Integer, Integer> usosGastados = new HashMap<>();
 
-    public Personaje(String nombre, int nivel, Clases clase, List<Habilidad> habilidades,
-                      Caracteristicas caracteristicas) {
+    public Personaje(String nombre, int nivel, Dados dadoGolpe, Caracteristicas caracteristicas,
+                        String rutaSprite, String rutaSpritePelea) {
         if (nombre == null || nombre.isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede ser nulo o vacío.");
         }
         if (nivel <= 0 || nivel > 20) {
-            throw new IllegalArgumentException("El nivel debe ser mayor que cero y menor o igual que 20.");
+            throw new IllegalArgumentException("El nivel debe estar entre 1 y 20.");
         }
-        if (clase == null) {
-            throw new IllegalArgumentException("La clase no puede ser nula.");
+        if (dadoGolpe == null) {
+            throw new IllegalArgumentException("El dado de golpe no puede ser nulo.");
         }
         if (caracteristicas == null) {
             throw new IllegalArgumentException("Las características no pueden ser nulas.");
         }
         this.nombre = nombre;
-        this.vidaMaxima = clase.getMaxPG() + caracteristicas.getConstitucion();
-        setVida(this.vidaMaxima);
+        this.vidaMaxima = dadoGolpe.getMax() + caracteristicas.getConstitucion();
+        this.vida = this.vidaMaxima;
         this.nivel = nivel;
-        this.clase = clase;
         this.caracteristicas = caracteristicas;
-        this.habilidades = (habilidades != null) ? habilidades : new ArrayList<>();
-        this.rutaSprite = clase.getRutaSprite();
-        this.rutaSpritePelea = clase.getRutaSpritePelea();
-        actualizarHabilidadesDesbloqueadas();
+        this.rutaSprite = rutaSprite;
+        this.rutaSpritePelea = rutaSpritePelea;
+        this.habilidades = new ArrayList<>();
     }
 
     public boolean estaMuerto() {
@@ -67,13 +66,11 @@ public abstract class Personaje {
     }
 
     public void recibirDanio(int puntosDanio) {
-        this.vida -= puntosDanio;
-        if (this.vida < 0) {
-            this.vida = 0;
-            // Lógica de muerte
-        }
+        this.vida = Math.max(0, this.vida - puntosDanio);        
     }
     
+    public abstract void alMorir(ModeloCombate modelo);
+
     // ---- Usos de habilidades ----
     public int getUsosRestantes(Habilidad habilidad) {
         Integer gastados = this.usosGastados.get(habilidad.getIdHabilidad());
@@ -95,21 +92,6 @@ public abstract class Personaje {
                 .anyMatch(h -> h.getIdHabilidad() == habilidad.getIdHabilidad());
         if (!yaExiste) {
             habilidades.add(habilidad);
-        }
-    }
-
-    public void subirNivel() {
-        if (this.nivel >= 20) {
-            return;
-        }
-        this.nivel++;
-        actualizarHabilidadesDesbloqueadas();
-    }
-
-    public void actualizarHabilidadesDesbloqueadas() {
-        List<Habilidad> disponibles = clase.getHabilidadesHastaNivel(this.nivel);
-        for (Habilidad habilidad : disponibles) {
-            aprenderHabilidad(habilidad);
         }
     }
 
@@ -176,12 +158,13 @@ public abstract class Personaje {
         this.vida = Valor;
     }
 
-    public int getNivel() {
-        return nivel;
+    public int setNivel(int Valor){
+        this.nivel = Valor;
+        return this.nivel;
     }
 
-    public Clases getClase() {
-        return clase;
+    public int getNivel() {
+        return nivel;
     }
 
     public int getProficiencia(){

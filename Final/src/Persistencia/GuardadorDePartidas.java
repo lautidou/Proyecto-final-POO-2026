@@ -1,20 +1,20 @@
 package Persistencia;
 
+import Modelo.mapa.Posicion;
 import Modelo.partida.PartidaGuardada;
 import Modelo.partida.PartidaGuardadaDAO;
 import Modelo.pjs.Caracteristicas;
-import Modelo.pjs.Clases;
 import Modelo.pjs.Raza;
-import Modelo.mapa.Posicion;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
 public class GuardadorDePartidas implements Runnable {
-    
+
     public static final PartidaGuardada FIN = new PartidaGuardada(
-            "FIN", Raza.Enano, Clases.Barbaro, 1, 0, 0, 
-            new Caracteristicas(0,0,0,0,0,0), "FIN", new Posicion(0,0), 
+            "FIN", Raza.Enano, "Barbaro", 1, 0, 0,
+            new Caracteristicas(0, 0, 0, 0, 0, 0), "FIN", new Posicion(0, 0),
             new ArrayList<>(), new HashMap<>(), new ArrayList<>());
 
     private final BlockingQueue<PartidaGuardada> pendientes;
@@ -29,8 +29,8 @@ public class GuardadorDePartidas implements Runnable {
     public void run() {
         try {
             while (true) {
-                PartidaGuardada partida = this.pendientes.take(); 
-                if (partida == FIN) { 
+                PartidaGuardada partida = this.pendientes.take();
+                if (partida == FIN) {
                     return;
                 }
                 this.partidasDAO.guardar(partida);

@@ -1,5 +1,6 @@
 package Modelo.objetos;
 
+import Modelo.partida.ObjetoGuardado;
 import Modelo.pjs.Personaje;
 
 public abstract class Objeto {
@@ -68,5 +69,15 @@ public abstract class Objeto {
         return 1; 
     }
 
+    public double getPeso() {
+        return peso;
+    }
+
+    public int getPrecio() {
+        return precio;
+    }
+
     public abstract void usar(Personaje objetivo);
+
+    public abstract ObjetoGuardado aGuardado(boolean equipado);
 }

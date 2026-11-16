@@ -1,5 +1,6 @@
 package Modelo.objetos;
 
+import Modelo.partida.ObjetoGuardado;
 import Modelo.pjs.Dados;
 
 public class Arma extends ObjetoEquipable {
@@ -28,5 +29,11 @@ public class Arma extends ObjetoEquipable {
 
     public RanuraEquipo getRanura() {
         return RanuraEquipo.ARMA;
+    }
+
+    @Override
+    public ObjetoGuardado aGuardado(boolean equipado) {
+        return new ObjetoGuardado("ARMA", getIdObjeto(), getNombre(), getPeso(), getPrecio(),
+            getDescripcion(), 1, equipado, this.dado.name(), 0, 0);
     }
 }

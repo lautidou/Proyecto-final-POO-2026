@@ -6,9 +6,9 @@ import Modelo.combate.EfectoCombate;
 import Modelo.combate.Reglas;
 import Modelo.pjs.Dados;
 import Modelo.pjs.Enemigo;
-import Modelo.pjs.Habilidad;
 import Modelo.pjs.Heroe;
 import Modelo.pjs.Personaje;
+import Modelo.pjs.habilidades.Habilidad;
 import Modelo.objetos.Consumible;
 import Modelo.objetos.Objeto;
 import java.util.ArrayList;
@@ -112,76 +112,24 @@ public class ModeloCombate {
 
     private void comprobarFin() {
         if (this.enemigo.estaMuerto()) {
-            finalizar(ResultadoCombate.VICTORIA, this.enemigo.getNombre() + " ha sido derrotado.");
+            this.enemigo.alMorir(this);
         } else if (this.heroe.estaMuerto()) {
-            finalizar(ResultadoCombate.DERROTA, this.heroe.getNombre() + " ha caído en combate...");
+            this.heroe.alMorir(this);
         }
     }
 
-    private void finalizar(ResultadoCombate resultado, String mensaje) {
+    public void finalizar(ResultadoCombate resultado, String mensaje) {
         this.enCurso = false;
         registrarMensaje(mensaje);
         this.soporte.firePropertyChange(PROP_FIN, null, resultado);
     }
 
     // ---------- Turno del enemigo ----------
-    private static final double VIDA_BAJA = 0.3;                  // con este % de vida o menos intenta esconderse
-    private static final double PROB_ESCONDERSE_VIDA_BAJA = 0.4;
-    private static final double VIDA_PARA_CURARSE = 0.5;          // con este % de vida o menos considera curarse
-    private static final double PROB_CURARSE = 0.6;
-    private static final double PROB_USAR_HABILIDAD = 0.5;        // si no, ataque básico
-
     private void turnoEnemigo() {
         if (this.enemigo.estaMuerto() || this.heroe.estaMuerto()) {
             return;
         }
-        // 1) Si el héroe está escondido, el enemigo gasta su turno buscándolo.
-        if (!this.contextoHeroe.esVisible()) {
-            buscarA(this.contextoHeroe);
-            return;
-        }
-        // 2) Si está herido y a la vista, a veces intenta esconderse (misma regla que el héroe).
-        if (this.contextoEnemigo.esVisible() && vidaEnemigoAlMenos(VIDA_BAJA)
-                && Math.random() < PROB_ESCONDERSE_VIDA_BAJA) {
-            this.contextoEnemigo.esconderse();
-            return;
-        }
-        // 3) Si está bastante herido y tiene una habilidad curativa con usos, a veces la usa.
-        if (vidaEnemigoAlMenos(VIDA_PARA_CURARSE) && Math.random() < PROB_CURARSE) {
-            Habilidad cura = elegirHabilidadDelEnemigo(true);
-            if (cura != null) {
-                cura.usar(this.contextoEnemigo);
-                return;
-            }
-        }
-        // 4) A veces usa una habilidad ofensiva con usos disponibles.
-        if (Math.random() < PROB_USAR_HABILIDAD) {
-            Habilidad ataque = elegirHabilidadDelEnemigo(false);
-            if (ataque != null) {
-                ataque.usar(this.contextoEnemigo);
-                return;
-            }
-        }
-        // 5) Ataque básico. Si estaba escondido, el daño lo delata (Escondido.atacar).
-        registrarMensaje(this.enemigo.getNombre() + " ataca.");
-        new AtaqueBasico().aplicar(this.contextoEnemigo);
-    }
-
-    private boolean vidaEnemigoAlMenos(double fraccion) {
-        return this.enemigo.getVida() <= this.enemigo.getVidaMaxima() * fraccion;
-    }
-
-    private Habilidad elegirHabilidadDelEnemigo(boolean curativa) {
-        List<Habilidad> candidatas = new ArrayList<>();
-        for (Habilidad habilidad : this.enemigo.getHabilidades()) {
-            if (habilidad.esCurativa() == curativa && this.contextoEnemigo.usosRestantes(habilidad) > 0) {
-                candidatas.add(habilidad);
-            }
-        }
-        if (candidatas.isEmpty()) {
-            return null;
-        }
-        return candidatas.get((int) (Math.random() * candidatas.size()));
+        this.enemigo.decidirTurno(this.contextoEnemigo, this.contextoHeroe);
     }
 
     private void buscarA(ContextoCombate contextoDelEscondido) {

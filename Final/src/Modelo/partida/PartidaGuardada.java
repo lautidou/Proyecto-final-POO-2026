@@ -5,14 +5,13 @@ import java.util.Map;
 
 import Modelo.mapa.Posicion;
 import Modelo.pjs.Caracteristicas;
-import Modelo.pjs.Clases;
 import Modelo.pjs.Raza;
 
 public class PartidaGuardada {
 
     private final String nombre;
     private final Raza raza;
-    private final Clases clase;
+    private final String clase;
     private final int nivel;
     private final int experiencia;
     private final int vida;
@@ -24,7 +23,7 @@ public class PartidaGuardada {
     private final List<EnemigoDerrotado> enemigosDerrotados;
 
 
-    public PartidaGuardada(String nombre, Raza raza, Clases clase, int nivel, int experiencia, int vida,
+    public PartidaGuardada(String nombre, Raza raza, String clase, int nivel, int experiencia, int vida,
                            Caracteristicas caracteristicas, String escenario, Posicion posicion, List<ObjetoGuardado> inventario,
                            Map<Integer, Integer> usosHabilidades, List<EnemigoDerrotado> enemigosDerrotados) {
         if (nombre == null || nombre.trim().isEmpty() || raza == null || clase == null
@@ -49,7 +48,7 @@ public class PartidaGuardada {
 
     public String getNombre() { return this.nombre; }
     public Raza getRaza() { return this.raza; }
-    public Clases getClase() { return this.clase; }
+    public String getClase() { return this.clase; }
     public int getNivel() { return this.nivel; }
     public int getExperiencia() { return this.experiencia; }
     public int getVida() { return this.vida; }

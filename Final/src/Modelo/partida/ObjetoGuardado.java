@@ -1,4 +1,16 @@
 package Modelo.partida;
 
-public record ObjetoGuardado(int idObjeto, int cantidad, boolean equipado) {
- }
+public record ObjetoGuardado(
+        String tipo,
+        int idObjeto,
+        String nombre,
+        double peso,
+        int precio,
+        String descripcion,
+        int cantidad,
+        boolean equipado,
+        String dado,         
+        int defensa,          
+        int puntosRestauracion 
+) {
+}

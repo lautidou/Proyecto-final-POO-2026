@@ -6,7 +6,6 @@ import Modelo.partida.ObjetoGuardado;
 import Modelo.partida.PartidaGuardada;
 import Modelo.partida.PartidaGuardadaDAO;
 import Modelo.pjs.Caracteristicas;
-import Modelo.pjs.Clases;
 import Modelo.pjs.Raza;
 
 import java.sql.Connection;
@@ -36,7 +35,11 @@ public class PartidaGuardadaDAOSQLite implements PartidaGuardadaDAO {
                     + "fuerza INTEGER NOT NULL, sabiduria INTEGER NOT NULL, destreza INTEGER NOT NULL, "
                     + "inteligencia INTEGER NOT NULL, constitucion INTEGER NOT NULL, carisma INTEGER NOT NULL, "
                     + "escenario TEXT NOT NULL, pos_x INTEGER NOT NULL, pos_y INTEGER NOT NULL)");
-            sentencia.execute("CREATE TABLE IF NOT EXISTS partida_objeto (id_objeto INTEGER NOT NULL, cantidad INTEGER, equipado BOOLEAN)");
+            sentencia.execute("CREATE TABLE IF NOT EXISTS partida_objeto ("
+                + "tipo TEXT NOT NULL, id_objeto INTEGER NOT NULL, nombre TEXT NOT NULL, "
+                + "peso REAL NOT NULL, precio INTEGER NOT NULL, descripcion TEXT NOT NULL, "
+                + "cantidad INTEGER NOT NULL, equipado INTEGER NOT NULL, "
+                + "dado TEXT, defensa INTEGER NOT NULL, puntos_restauracion INTEGER NOT NULL)");
             sentencia.execute("CREATE TABLE IF NOT EXISTS partida_habilidad_uso (id_habilidad INTEGER PRIMARY KEY, usos_gastados INTEGER)");
             sentencia.execute("CREATE TABLE IF NOT EXISTS partida_enemigo_derrotado (escenario TEXT NOT NULL, pos_x INTEGER, pos_y INTEGER)");
         }
@@ -75,7 +78,7 @@ public class PartidaGuardadaDAOSQLite implements PartidaGuardadaDAO {
             Caracteristicas c = partida.getCaracteristicas();
             sentencia.setString(1, partida.getNombre());
             sentencia.setString(2, partida.getRaza().name());
-            sentencia.setString(3, partida.getClase().name());
+            sentencia.setString(3, partida.getClase());
             sentencia.setInt(4, partida.getNivel());
             sentencia.setInt(5, partida.getExperiencia());
             sentencia.setInt(6, partida.getVida());
@@ -96,12 +99,21 @@ public class PartidaGuardadaDAOSQLite implements PartidaGuardadaDAO {
         try (Statement s = conexion.createStatement()) {
             s.executeUpdate("DELETE FROM partida_objeto");
         }
-        String sql = "INSERT INTO partida_objeto (id_objeto, cantidad, equipado) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO partida_objeto (tipo, id_objeto, nombre, peso, precio, descripcion, "
+            + "cantidad, equipado, dado, defensa, puntos_restauracion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             for (ObjetoGuardado o : p.getInventario()) {
-                ps.setInt(1, o.idObjeto());
-                ps.setInt(2, o.cantidad());
-                ps.setInt(3, o.equipado() ? 1 : 0);
+                ps.setString(1, o.tipo());
+                ps.setInt(2, o.idObjeto());
+                ps.setString(3, o.nombre());
+                ps.setDouble(4, o.peso());
+                ps.setInt(5, o.precio());
+                ps.setString(6, o.descripcion());
+                ps.setInt(7, o.cantidad());
+                ps.setInt(8, o.equipado() ? 1 : 0);
+                ps.setString(9, o.dado());
+                ps.setInt(10, o.defensa());
+                ps.setInt(11, o.puntosRestauracion());
                 ps.addBatch();
             }
             ps.executeBatch();
@@ -162,16 +174,24 @@ public class PartidaGuardadaDAOSQLite implements PartidaGuardadaDAO {
                 Map<Integer, Integer> usosHabilidades = new HashMap<>();
                 List<EnemigoDerrotado> enemigosDerrotados = new ArrayList<>();
             // 2. Cargar el inventario
-                try (Statement sObjetos = conexion.createStatement(); 
-                ResultSet rsObjetos = sObjetos.executeQuery("SELECT id_objeto, cantidad, equipado FROM partida_objeto")) {
-                while (rsObjetos.next()) {
-                    inventario.add(new ObjetoGuardado(
-                            rsObjetos.getInt("id_objeto"), 
-                            rsObjetos.getInt("cantidad"), 
-                            rsObjetos.getBoolean("equipado")
-                    ));
+                try (Statement sObjetos = conexion.createStatement();
+                    ResultSet rsObjetos = sObjetos.executeQuery("SELECT tipo, id_objeto, nombre, peso, precio, descripcion, cantidad, equipado, dado, defensa, puntos_restauracion FROM partida_objeto")) {
+                    while (rsObjetos.next()) {
+                        inventario.add(new ObjetoGuardado(
+                        rsObjetos.getString("tipo"),
+                        rsObjetos.getInt("id_objeto"),
+                        rsObjetos.getString("nombre"),
+                        rsObjetos.getDouble("peso"),
+                        rsObjetos.getInt("precio"),
+                        rsObjetos.getString("descripcion"),
+                        rsObjetos.getInt("cantidad"),
+                        rsObjetos.getInt("equipado") == 1,
+                        rsObjetos.getString("dado"),
+                        rsObjetos.getInt("defensa"),
+                        rsObjetos.getInt("puntos_restauracion")
+                        ));
+                    }
                 }
-            }
             // 3. Cargar los usos de habilidades
             try (Statement sUsos = conexion.createStatement(); 
                  ResultSet rsUsos = sUsos.executeQuery("SELECT id_habilidad, usos_gastados FROM partida_habilidad_uso")) {
@@ -190,11 +210,11 @@ public class PartidaGuardadaDAOSQLite implements PartidaGuardadaDAO {
                 }
             }
             // 5. Retornar la partida con las tres nuevas colecciones
-            return new PartidaGuardada(
-                    filas.getString("nombre"), Raza.valueOf(filas.getString("raza")), Clases.valueOf(filas.getString("clase")),
-                    filas.getInt("nivel"), filas.getInt("experiencia"), filas.getInt("vida"),
-                    caracteristicas, filas.getString("escenario"), new Posicion(filas.getInt("pos_x"), filas.getInt("pos_y")),
-                    inventario, usosHabilidades, enemigosDerrotados);
+                return new PartidaGuardada(
+                filas.getString("nombre"), Raza.valueOf(filas.getString("raza")), filas.getString("clase"),
+                filas.getInt("nivel"), filas.getInt("experiencia"), filas.getInt("vida"),
+                caracteristicas, filas.getString("escenario"), new Posicion(filas.getInt("pos_x"), filas.getInt("pos_y")),
+                inventario, usosHabilidades, enemigosDerrotados);
             }
         } catch (SQLException | IllegalArgumentException e) {
             return null;

@@ -1,5 +1,7 @@
 package Modelo.pjs;
 
+import Modelo.pjs.habilidades.Habilidad;
+
 public final class Desbloqueo {
 
     private final int nivelRequerido;

@@ -7,9 +7,12 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 import java.io.File;
 import java.text.Normalizer;
+
+import Recursos.Rutas;
+
 public final class ReproductorAudio {
 
-    private static final String CARPETA = "Assets/Audio/";
+    private static final String CARPETA = Rutas.AUDIO;
     private static final String EXTENSION = ".wav";
 
     public static final String MENU = "Menu/";

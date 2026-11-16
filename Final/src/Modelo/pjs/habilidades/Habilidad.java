@@ -1,21 +1,15 @@
-package Modelo.pjs;
+package Modelo.pjs.habilidades;
 
 import Modelo.combate.ContextoCombate;
-import Modelo.combate.EfectoCombate;
 
-public class Habilidad {
+public abstract class Habilidad {
     private final int idHabilidad;
     private final String nombre;
     private final String descripcion;
-    private final EfectoCombate efecto;
     private final int usosTotales;
     private final boolean curativa;
 
-    public Habilidad(int idHabilidad, String nombre, String descripcion, EfectoCombate efecto, int usosTotales) {
-        this(idHabilidad, nombre, descripcion, efecto, usosTotales, false);
-    }
-
-    public Habilidad(int idHabilidad, String nombre, String descripcion, EfectoCombate efecto, int usosTotales,
+    public Habilidad(int idHabilidad, String nombre, String descripcion, int usosTotales,
                      boolean curativa) {
         if (idHabilidad <= 0) {
             throw new IllegalArgumentException("El ID de la habilidad debe ser mayor que cero.");
@@ -26,16 +20,14 @@ public class Habilidad {
         if (descripcion == null || descripcion.isEmpty()) {
             throw new IllegalArgumentException("La descripción de la habilidad no puede ser nula o vacía.");
         }
-        if (efecto == null) {
-            throw new IllegalArgumentException("La habilidad necesita un efecto.");
-        }
         this.idHabilidad = idHabilidad;
         this.nombre = nombre;
         this.descripcion = descripcion;
-        this.efecto = efecto;
         this.usosTotales = usosTotales;
         this.curativa = curativa;
     }
+
+    public abstract void aplicar(ContextoCombate contexto);
 
     public void usar(ContextoCombate contexto) {
         if (contexto.usosRestantes(this) <= 0) {
@@ -43,7 +35,7 @@ public class Habilidad {
             return;
         }
         contexto.mensaje(contexto.getActor().getNombre() + " usa " + nombre + ".");
-        efecto.aplicar(contexto);
+        aplicar(contexto);
         contexto.registrarUso(this);
     }
 
