@@ -11,6 +11,7 @@ import Modelo.pjs.Enemigo;
 import Modelo.pjs.Heroe;
 import Modelo.pjs.Personaje;
 import Modelo.ModeloPausa;
+import Vista.CatalogoSprites;
 import Vista.Ventana;
 import Vista.VistaMapa;
 import Vista.VistaMenuMain;
@@ -132,10 +133,10 @@ public class ControladorMapa {
             enemigosVisuales.put(
                 new Point(enemigo.getPosicion().getX(), enemigo.getPosicion().getY()), 
                 new VistaMapa.DatosEnemigo(
+                    enemigo,
                     enemigo.getNombre(), 
-                    enemigo.getRutaSprite(), 
-                    enemigo.getOrientacion(), 
-                    enemigo.getFrameAnimacion()
+                    CatalogoSprites.spriteMapa(enemigo), 
+                    enemigo.getOrientacion()
                 )
             );
         }
@@ -145,7 +146,7 @@ public class ControladorMapa {
    private void mostrarPersonaje() {
         Personaje pj = this.modelo.getPersonaje();
         if (pj != null && pj.getPosicion() != null) {
-            this.vista.setPersonaje(pj.getNombre(), pj.getPosicion().getX(), pj.getPosicion().getY(), pj.getRutaSprite(), pj.getOrientacion(), pj.getFrameAnimacion());
+            this.vista.setPersonaje(pj.getNombre(), pj.getPosicion().getX(), pj.getPosicion().getY(), CatalogoSprites.spriteMapa(pj.getClase()), pj.getOrientacion());
         } else {
             this.vista.quitarPersonaje();
         }

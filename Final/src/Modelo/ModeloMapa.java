@@ -131,7 +131,6 @@ public class ModeloMapa {
         }
 
         this.personaje.setOrientacion(direccion);
-        this.personaje.avanzarAnimacion();
         this.soporte.firePropertyChange(PROP_PERSONAJE, null, this.personaje);
 
         Mapa mapaAnterior = this.mundo.getMapaActual();
@@ -188,8 +187,7 @@ public class ModeloMapa {
             Posicion destino = actual.desplazar(dir);
             if (!destino.equals(posHeroe)) {
                 enemigo.setPosicion(destino);
-                enemigo.setOrientacion(dir); 
-                enemigo.avanzarAnimacion();
+                enemigo.setOrientacion(dir);
             }
         }
 

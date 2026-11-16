@@ -8,6 +8,7 @@ import Modelo.pjs.Habilidad;
 import Modelo.pjs.Heroe;
 import Modelo.combate.ResultadoCombate;
 import Modelo.ModeloMapa;
+import Vista.CatalogoSprites;
 import Vista.Ventana;
 import Vista.VistaCombate;
 import Vista.VistaMapa;
@@ -158,8 +159,8 @@ public class ControladorCombate {
         if (heroe == null || enemigo == null) {
             return;
         }
-        this.vista.setHeroe(heroe.getNombre(), heroe.getRutaSpritePelea(), heroe.getVida(), heroe.getVidaMaxima());
-        this.vista.setEnemigo(enemigo.getNombre(), enemigo.getRutaSpritePelea(), enemigo.getVida(), enemigo.getVidaMaxima());
+        this.vista.setHeroe(heroe.getNombre(), CatalogoSprites.spritePelea(heroe.getClase()), heroe.getVida(), heroe.getVidaMaxima());
+        this.vista.setEnemigo(enemigo.getNombre(), CatalogoSprites.spritePelea(enemigo), enemigo.getVida(), enemigo.getVidaMaxima());
     }
 
     // ---------- Fin del combate ----------

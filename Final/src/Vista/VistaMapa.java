@@ -25,6 +25,7 @@ public class VistaMapa extends JPanel {
     public static final String NOMBRE = "Mapa";
 
     private static boolean MODO_DEPURACION = false;
+    private static final int CUADROS_ANIMACION = 4;
     private static final Map<String, String> RUTAS_FONDO = new HashMap<>();
     static {
         RUTAS_FONDO.put("VillaVerde", Rutas.MAPA_VILLA_VERDE);
@@ -43,7 +44,12 @@ public class VistaMapa extends JPanel {
     private String nombrePersonaje;
     private String rutaSpritePersonaje;
     private Direccion orientacionPersonaje = Direccion.ABAJO;
+
     private int frameAnimacionPersonaje = 0;
+
+    private final Map<Object, Integer> framesEnemigos = new HashMap<>();
+    private final Map<Object, java.awt.Point> ultimaPosicionEnemigos = new HashMap<>();
+
     private java.awt.Point posicionPersonaje;
     private Map<java.awt.Point, DatosEnemigo> enemigos = new HashMap<>();
     private final Map<String, BufferedImage> cacheSprites = new HashMap<>();
@@ -64,12 +70,16 @@ public class VistaMapa extends JPanel {
         repaint();
     }
 
-   public void setPersonaje(String nombre, int x, int y, String rutaSprite, Direccion dir, int frame) {
+   public void setPersonaje(String nombre, int x, int y, String rutaSprite, Direccion dir) {
+        java.awt.Point nuevaPosicion = new java.awt.Point(x, y);
+        // Un paso de caminata = un cuadro mas de la animacion (solo si de verdad cambio de casilla)
+        if (this.posicionPersonaje != null && !this.posicionPersonaje.equals(nuevaPosicion)) {
+            this.frameAnimacionPersonaje = (this.frameAnimacionPersonaje + 1) % CUADROS_ANIMACION;
+        }
         this.nombrePersonaje = nombre;
-        this.posicionPersonaje = new java.awt.Point(x,y);
+        this.posicionPersonaje = nuevaPosicion;
         this.rutaSpritePersonaje = rutaSprite;
         this.orientacionPersonaje = dir != null ? dir : Direccion.ABAJO;
-        this.frameAnimacionPersonaje = frame;
         
         if (visualX == -1f) {
             // Primera vez que entra al mapa: aparece instantáneamente
@@ -99,17 +109,34 @@ public class VistaMapa extends JPanel {
     }
 
     public void setEnemigos(Map<java.awt.Point, DatosEnemigo> enemigos) {
+        Map<Object, java.awt.Point> posicionesNuevas = new HashMap<>();
+        for (Map.Entry<java.awt.Point, DatosEnemigo> entrada : enemigos.entrySet()) {
+            DatosEnemigo datos = entrada.getValue();
+            java.awt.Point anterior = this.ultimaPosicionEnemigos.get(datos.id);
+            int frame = this.framesEnemigos.getOrDefault(datos.id, 0);
+            if (anterior != null && !anterior.equals(entrada.getKey())) {
+                frame = (frame + 1) % CUADROS_ANIMACION; // este enemigo dio un paso
+            }
+            datos.frame = frame;
+            this.framesEnemigos.put(datos.id, frame);
+            posicionesNuevas.put(datos.id, entrada.getKey());
+        }
+        // Los enemigos que ya no estan (derrotados o en otro mapa) se olvidan
+        this.framesEnemigos.keySet().retainAll(posicionesNuevas.keySet());
+        this.ultimaPosicionEnemigos.clear();
+        this.ultimaPosicionEnemigos.putAll(posicionesNuevas);
         this.enemigos = new HashMap<>(enemigos);
     }
 
     public static class DatosEnemigo {
+        public final Object id;// identifica al enemigo entre un repintado y otro (la vista no sabe de que tipo es)
         public String nombre;
         public String rutaSprite;
         public Modelo.mapa.Direccion orientacion;
         public int frame;
         
-        public DatosEnemigo(String n, String r, Modelo.mapa.Direccion o, int f) {
-            this.nombre = n; this.rutaSprite = r; this.orientacion = o; this.frame = f;
+        public DatosEnemigo(Object id, String n, String r, Modelo.mapa.Direccion o) {
+            this.id = id; this.nombre = n; this.rutaSprite = r; this.orientacion = o;
         }
     }
 
