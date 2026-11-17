@@ -13,6 +13,7 @@ import Vista.VistaCreacionPersonaje;
 import Vista.VistaMapa;
 import Vista.VistaMenuMain;
 import Vista.VistaMuerte;
+import Vista.VistaVictoria;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -90,7 +91,11 @@ public class ControladorPantallas {
         this.ventana.registrarPanel(VistaCombate.NOMBRE, vista);
         this.ventana.registrarPanel(VistaMuerte.NOMBRE, vistaMuerte);
         new ControladorMuerte(vistaMuerte, modeloPartida);
+        VistaVictoria vistaVictoria = new VistaVictoria();
+        this.ventana.registrarPanel(VistaVictoria.NOMBRE, vistaVictoria);
+        new ControladorVictoria(vistaVictoria, modeloPartida);
 
         return new ControladorCombate(vista, modelo, modeloMapa);
     }
 }
+

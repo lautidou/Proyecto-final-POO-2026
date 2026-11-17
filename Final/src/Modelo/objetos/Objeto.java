@@ -2,6 +2,8 @@ package Modelo.objetos;
 
 import Modelo.pjs.Personaje;
 
+import java.util.function.Consumer;
+
 public abstract class Objeto {
     private String nombre;
     private int idObjeto;
@@ -44,8 +46,8 @@ public abstract class Objeto {
         return descripcion;
     }
 
-    public boolean esConsumible() { 
-        return false; 
+    // Por defecto un objeto no es consumible: no se ofrece. Consumible lo redefine.
+    public void ofrecerComoConsumible(Consumer<Consumible> destino) {
     }
     
     public boolean esEquipable() { 
@@ -70,3 +72,4 @@ public abstract class Objeto {
 
     public abstract void usar(Personaje objetivo);
 }
+

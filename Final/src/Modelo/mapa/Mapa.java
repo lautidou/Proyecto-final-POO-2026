@@ -15,6 +15,7 @@ public class Mapa {
     private final int columnas;
     private final Map<Posicion, Portal> portales = new HashMap<>();
     private final List<Enemigo> enemigos = new ArrayList<>();
+    private final Map<Enemigo, Posicion> origenes = new java.util.IdentityHashMap<>(); // donde nacio cada uno
 
     public Mapa(String id, int filas, int columnas, Terreno base) {
         if (id == null || id.isEmpty()) {
@@ -82,10 +83,25 @@ public class Mapa {
         }
         enemigo.setPosicion(posicion);
         enemigos.add(enemigo);
+        origenes.put(enemigo, posicion);
     }
 
     public boolean quitarEnemigo(Enemigo enemigo) {
         return enemigos.remove(enemigo);
+    }
+
+    // Los enemigos se mueven: para reconocerlos al guardar/cargar se usa donde nacieron, no donde estan.
+    public Posicion getOrigenDe(Enemigo enemigo) {
+        return origenes.get(enemigo);
+    }
+
+    public Enemigo getEnemigoDeOrigen(Posicion origen) {
+        for (Enemigo enemigo : enemigos) {
+            if (origen.equals(origenes.get(enemigo))) {
+                return enemigo;
+            }
+        }
+        return null;
     }
 
     public Enemigo getEnemigoEn(Posicion p) {
@@ -107,3 +123,4 @@ public class Mapa {
         }
     }
 }
+

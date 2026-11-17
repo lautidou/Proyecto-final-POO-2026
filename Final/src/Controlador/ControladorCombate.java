@@ -13,6 +13,7 @@ import Vista.Ventana;
 import Vista.VistaCombate;
 import Vista.VistaMapa;
 import Vista.VistaMuerte;
+import Vista.VistaVictoria;
 
 import javax.swing.Timer;
 import javax.swing.JButton;
@@ -76,14 +77,12 @@ public class ControladorCombate {
         this.modelo.procesarEsconderse();
     }
 
-    // ---------- Submenú de combate ----------
     private void ejecutarBasico() {
         ReproductorAudio.efectoAtaqueBasico();
         this.modelo.procesarAtaqueBasico();
         this.vista.mostrarMenuPrincipal(); // la acción gasta el turno: se vuelve al menú de inicio
     }
 
-    // ---------- Submenú de habilidades ----------
     private void abrirMenuHabilidades() {
         List<Habilidad> habilidades = this.modelo.getHabilidadesDelHeroe();
 
@@ -170,7 +169,12 @@ public class ControladorCombate {
             Enemigo enemigo = this.modelo.getEnemigo();
             if (resultado == ResultadoCombate.VICTORIA) { // Lo que sucede si se gana
                 this.modeloMapa.eliminarEnemigo(enemigo);
-                Ventana.getInstancia().mostrarPanel(VistaMapa.NOMBRE);
+                if (this.modeloMapa.todosLosEnemigosDerrotados()) { // condicion de victoria
+                    ReproductorAudio.detenerMusica();
+                    Ventana.getInstancia().mostrarPanel(VistaVictoria.NOMBRE);
+                } else {
+                    Ventana.getInstancia().mostrarPanel(VistaMapa.NOMBRE);
+                }
             } else {
                 ReproductorAudio.detenerMusica();
                 Ventana.getInstancia().mostrarPanel(VistaMuerte.NOMBRE);            }
@@ -179,3 +183,4 @@ public class ControladorCombate {
         pausa.start();
     }
 }
+

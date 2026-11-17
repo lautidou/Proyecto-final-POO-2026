@@ -112,6 +112,7 @@ public class ModeloCombate {
 
     private void comprobarFin() {
         if (this.enemigo.estaMuerto()) {
+            this.heroe.ganarExperiencia(this.enemigo.getExperienciaDada());
             finalizar(ResultadoCombate.VICTORIA, this.enemigo.getNombre() + " ha sido derrotado.");
         } else if (this.heroe.estaMuerto()) {
             finalizar(ResultadoCombate.DERROTA, this.heroe.getNombre() + " ha caído en combate...");
@@ -213,10 +214,13 @@ public class ModeloCombate {
         if (this.heroe == null) {
             return consumibles;
         }
-        for (Objeto objeto : this.heroe.getInventario()) {   // <- ajustar si se llama distinto
-            if (objeto.esConsumible() && !objeto.debeDesecharse()) {
-                consumibles.add((Consumible) objeto);
-            }
+        // Polimorfismo: cada objeto decide si se ofrece como consumible; este modelo no pregunta tipos ni castea.
+        for (Objeto objeto : this.heroe.getInventario()) {
+            objeto.ofrecerComoConsumible(consumible -> {
+                if (!consumible.debeDesecharse()) {
+                    consumibles.add(consumible);
+                }
+            });
         }
         return consumibles;
     }

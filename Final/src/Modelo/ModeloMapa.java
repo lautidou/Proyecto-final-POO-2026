@@ -77,11 +77,16 @@ public class ModeloMapa {
 
     public void eliminarEnemigo(Enemigo enemigo) {
         Mapa actual = this.mundo.getMapaActual();
-        Posicion posicion = enemigo.getPosicion();
+        Posicion origen = actual.getOrigenDe(enemigo); // se identifica por donde nacio, no por donde murio
         if (actual.quitarEnemigo(enemigo)) {
-            this.derrotados.add(new EnemigoDerrotado(actual.getId(), posicion));
+            this.derrotados.add(new EnemigoDerrotado(actual.getId(), origen));
             this.soporte.firePropertyChange(PROP_ENEMIGOS, null, actual);
         }
+    }
+
+    // Victoria: ya no queda ningun enemigo en el mundo
+    public boolean todosLosEnemigosDerrotados() {
+        return !this.mundo.hayEnemigos();
     }
 
     // Para guardar la partida
@@ -105,7 +110,7 @@ public class ModeloMapa {
         this.derrotados.clear();
         for (EnemigoDerrotado muerto : yaDerrotados) {
             Mapa mapa = this.mundo.getMapa(muerto.idMapa());
-            Enemigo enemigo = (mapa == null) ? null : mapa.getEnemigoEn(muerto.posicion());
+            Enemigo enemigo = (mapa == null) ? null : mapa.getEnemigoDeOrigen(muerto.posicion());
             if (enemigo != null && mapa.quitarEnemigo(enemigo)) {
                 this.derrotados.add(muerto);
             }
@@ -262,3 +267,4 @@ public class ModeloMapa {
         return this.personaje;
     }
 }
+

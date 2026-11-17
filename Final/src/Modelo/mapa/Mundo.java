@@ -65,6 +65,16 @@ public class Mundo {
         this.mapaActual = mapa;
     }
 
+    // Condicion de victoria: no queda ningun enemigo vivo en todo el mundo.
+    public boolean hayEnemigos() {
+        for (Mapa mapa : mapas.values()) {
+            if (!mapa.getEnemigos().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Mapa getMapa(String idMapa) {
         return mapas.get(idMapa);
     }
@@ -77,3 +87,4 @@ public class Mundo {
         return posicionInicial; 
     }
 }
+

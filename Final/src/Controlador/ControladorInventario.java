@@ -63,8 +63,9 @@ public class ControladorInventario {
                 return;
             }
             Objeto objeto = objetosMostrados.get(indice);
-            if (modeloInventario.usarObjeto(objeto) && objeto.esConsumible()) {
-                ReproductorAudio.efectoDeConsumible(objeto.getNombre());
+            if (modeloInventario.usarObjeto(objeto)) {
+                // Solo los consumibles se ofrecen: el sonido no depende de preguntarle el tipo al objeto.
+                objeto.ofrecerComoConsumible(c -> ReproductorAudio.efectoDeConsumible(c.getNombre()));
             }
         });
         panel.getCerrar().addActionListener(e -> {
@@ -98,3 +99,4 @@ public class ControladorInventario {
         panel.setFilas(filas);
     }
 }
+

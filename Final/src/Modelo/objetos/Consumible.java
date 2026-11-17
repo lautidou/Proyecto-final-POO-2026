@@ -2,6 +2,8 @@ package Modelo.objetos;
 
 import Modelo.pjs.Personaje;
 
+import java.util.function.Consumer;
+
 public class Consumible extends Objeto {
     private int cantidad;
     private int puntosRestauracion;
@@ -30,9 +32,9 @@ public class Consumible extends Objeto {
     }
 
     @Override
-        public boolean esConsumible() { 
-            return true; 
-        }
+    public void ofrecerComoConsumible(Consumer<Consumible> destino) {
+        destino.accept(this);
+    }
 
     @Override
         public boolean debeDesecharse() { 
@@ -55,3 +57,5 @@ public class Consumible extends Objeto {
         return super.getDetalle() + "\nCantidad: " + this.cantidad + "\nRestaura: " + this.puntosRestauracion + " PV";
     }
 }
+
+
