@@ -35,9 +35,9 @@ public class ControladorPantallas {
         ModeloMapa modeloMapa = new ModeloMapa();
         ModeloPartida modeloPartida = new ModeloPartida(this.partidas, modeloMapa);
         ModeloPausa modeloPausa =  new ModeloPausa();
-        
+
         ControladorCombate combate = registrarCombate(modeloMapa, modeloPartida);
-        
+
         registrarMenuPrincipal(modeloPartida);
         registrarMapa(modeloMapa, modeloPartida, combate, modeloPausa);
         registrarCreacionPersonaje(modeloMapa);
@@ -95,7 +95,9 @@ public class ControladorPantallas {
         this.ventana.registrarPanel(VistaVictoria.NOMBRE, vistaVictoria);
         new ControladorVictoria(vistaVictoria, modeloPartida);
 
-        return new ControladorCombate(vista, modelo, modeloMapa);
+        return new ControladorCombate(vista, modelo, modeloMapa, vistaVictoria);
     }
 }
+
+
 

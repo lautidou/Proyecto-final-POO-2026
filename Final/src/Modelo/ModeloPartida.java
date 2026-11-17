@@ -7,6 +7,7 @@ import Modelo.partida.ObjetoGuardado;
 import Modelo.partida.PartidaGuardada;
 import Modelo.partida.PartidaGuardadaDAO;
 import Modelo.pjs.Heroe;
+import Modelo.pjs.heroes.FactoryHeroes;
 import Persistencia.GuardadorDePartidas;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class ModeloPartida {
         // Se inicializa la cola y el hilo consumidor
         this.pendientes = new LinkedBlockingQueue<>();
         GuardadorDePartidas guardador = new GuardadorDePartidas(this.pendientes, this.partidas);
+        //aca empieza
         this.hiloGuardador = new Thread(guardador);
         this.hiloGuardador.start();
     }
@@ -102,8 +104,8 @@ public class ModeloPartida {
             return false;
         }
         try {
-            Heroe heroe = new Heroe(partida.getNombre(), partida.getNivel(), partida.getRaza(), partida.getClase(),
-            new ArrayList<>(), partida.getCaracteristicas(), partida.getExperiencia(), new ArrayList<>());
+            Heroe heroe = FactoryHeroes.crear(partida.getClase(), partida.getNombre(), partida.getNivel(),
+                    partida.getRaza(), partida.getCaracteristicas(), partida.getExperiencia(), new ArrayList<>());
             heroe.setVida(partida.getVida());
             for (ObjetoGuardado og : partida.getInventario()) {
                 Objeto objeto = CatalogoObjetos.crear(og.idObjeto(), og.cantidad());
@@ -120,3 +122,4 @@ public class ModeloPartida {
         }
     }
 }
+

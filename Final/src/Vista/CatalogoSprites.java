@@ -11,12 +11,6 @@ import Recursos.Rutas;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-
-/**
- * Sabe QUE IMAGEN corresponde a cada personaje. Es un dato de presentacion, por eso vive en la
- * vista y no en el modelo: el modelo solo dice QUIEN es (la clase del heroe, el tipo de enemigo)
- * y la vista decide como dibujarlo.
- */
 public final class CatalogoSprites {
 
     private static final Map<Clases, String> MAPA_HEROE = new EnumMap<>(Clases.class);
@@ -38,14 +32,17 @@ public final class CatalogoSprites {
         MAPA_ENEMIGO.put(Ogro.class, Rutas.OGRO);
         MAPA_ENEMIGO.put(JefeFinal.class, Rutas.BOSS);
 
-        // Solo el goblin tiene sprite de pelea propio; los demas usan el de su clase
         PELEA_ENEMIGO.put(Goblin.class, Rutas.GOBLIN_PELEA);
+        // Sin sprite de pelea propio: reutilizan el de goblin por practicidad
+        PELEA_ENEMIGO.put(Esqueleto.class, Rutas.GOBLIN_PELEA);
+        PELEA_ENEMIGO.put(Ogro.class, Rutas.GOBLIN_PELEA);
+        PELEA_ENEMIGO.put(JefeFinal.class, Rutas.BOSS);
     }
 
     private CatalogoSprites() {
     }
 
-    /** Sprite del heroe en el mapa segun su clase (null si no hay: la vista dibuja un circulo). */
+    // Sprite del heroe en el mapa segun su clase
     public static String spriteMapa(Clases clase) {
         return MAPA_HEROE.get(clase);
     }
@@ -54,14 +51,14 @@ public final class CatalogoSprites {
         return PELEA_HEROE.get(clase);
     }
 
-    /** Sprite del enemigo en el mapa segun su tipo. */
+    //Sprite del enemigo en el mapa segun su tipo.
     public static String spriteMapa(Enemigo enemigo) {
-        String ruta = MAPA_ENEMIGO.get(enemigo.getClass());
-        return (ruta != null) ? ruta : spriteMapa(enemigo.getClase());
+        return MAPA_ENEMIGO.get(enemigo.getClass());
     }
 
     public static String spritePelea(Enemigo enemigo) {
-        String ruta = PELEA_ENEMIGO.get(enemigo.getClass());
-        return (ruta != null) ? ruta : spritePelea(enemigo.getClase());
+        return PELEA_ENEMIGO.get(enemigo.getClass());
     }
 }
+
+

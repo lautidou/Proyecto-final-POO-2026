@@ -12,13 +12,14 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-// Pantalla que se muestra al derrotar a todos los enemigos del mundo.
+/** Pantalla que se muestra cada vez que se derrota a un enemigo. */
 public class VistaVictoria extends JPanel {
 
     public static final String NOMBRE = "Victoria";
 
     private final BotonTexto botonSeguir = new BotonTexto("Seguir explorando");
     private final BotonTexto botonMenu = new BotonTexto("Menú principal");
+    private final JLabel subtitulo = new JLabel("", SwingConstants.CENTER);
 
     public VistaVictoria() {
         super(new GridBagLayout());
@@ -28,7 +29,6 @@ public class VistaVictoria extends JPanel {
         titulo.setFont(new Font("SansSerif", Font.BOLD, 64));
         titulo.setForeground(new Color(230, 190, 60));
 
-        JLabel subtitulo = new JLabel("Derrotaste a todos los enemigos. El reino está a salvo.", SwingConstants.CENTER);
         subtitulo.setFont(new Font("SansSerif", Font.PLAIN, 18));
         subtitulo.setForeground(new Color(240, 230, 210));
 
@@ -51,6 +51,10 @@ public class VistaVictoria extends JPanel {
         add(this.botonMenu, gbc);
     }
 
+    public void setMensaje(String mensaje) {
+        this.subtitulo.setText(mensaje);
+    }
+
     public JButton getBotonSeguir() {
         return this.botonSeguir;
     }
@@ -59,3 +63,5 @@ public class VistaVictoria extends JPanel {
         return this.botonMenu;
     }
 }
+
+

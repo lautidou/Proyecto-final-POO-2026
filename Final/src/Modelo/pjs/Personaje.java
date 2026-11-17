@@ -22,14 +22,14 @@ public abstract class Personaje {
     private int vida;
     private int vidaMaxima;
     private int nivel;
-    private Clases clase;
+    private final Dados dadoGolpe;
     private List<Habilidad> habilidades;
     private Caracteristicas caracteristicas;
     private Posicion posicion;
     private final Map<RanuraEquipo, Equipable> equipo = new EnumMap<>(RanuraEquipo.class);
     private final Map<Integer, Integer> usosGastados = new HashMap<>();
 
-    public Personaje(String nombre, int nivel, Clases clase, List<Habilidad> habilidades,
+    protected Personaje(String nombre, int nivel, Dados dadoGolpe, List<Habilidad> habilidades,
                       Caracteristicas caracteristicas) {
         if (nombre == null || nombre.isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede ser nulo o vacío.");
@@ -37,20 +37,19 @@ public abstract class Personaje {
         if (nivel <= 0 || nivel > 20) {
             throw new IllegalArgumentException("El nivel debe ser mayor que cero y menor o igual que 20.");
         }
-        if (clase == null) {
-            throw new IllegalArgumentException("La clase no puede ser nula.");
+        if (dadoGolpe == null) {
+            throw new IllegalArgumentException("El dado de golpe no puede ser nulo.");
         }
         if (caracteristicas == null) {
             throw new IllegalArgumentException("Las características no pueden ser nulas.");
         }
         this.nombre = nombre;
-        this.vidaMaxima = clase.getMaxPG() + caracteristicas.getConstitucion();
+        this.dadoGolpe = dadoGolpe;
+        this.vidaMaxima = dadoGolpe.getMax() + caracteristicas.getConstitucion();
         setVida(this.vidaMaxima);
         this.nivel = nivel;
-        this.clase = clase;
         this.caracteristicas = caracteristicas;
-        this.habilidades = (habilidades != null) ? habilidades : new ArrayList<>();
-        actualizarHabilidadesDesbloqueadas();
+        this.habilidades = (habilidades != null) ? new ArrayList<>(habilidades) : new ArrayList<>();
     }
 
     public boolean estaMuerto() {
@@ -102,10 +101,14 @@ public abstract class Personaje {
     }
 
     public void actualizarHabilidadesDesbloqueadas() {
-        List<Habilidad> disponibles = clase.getHabilidadesHastaNivel(this.nivel);
-        for (Habilidad habilidad : disponibles) {
+        for (Habilidad habilidad : habilidadesDesbloqueadas(this.nivel)) {
             aprenderHabilidad(habilidad);
         }
+    }
+
+    // Cada tipo de personaje decide que habilidades tiene a cada nivel (por defecto, ninguna).
+    protected List<Habilidad> habilidadesDesbloqueadas(int nivel) {
+        return new ArrayList<>();
     }
 
     // Equipo
@@ -152,10 +155,6 @@ public abstract class Personaje {
         return nivel;
     }
 
-    public Clases getClase() {
-        return clase;
-    }
-
     public int getProficiencia(){
         return((this.nivel - 1) / 4) + 2;
     } 
@@ -197,3 +196,4 @@ public abstract class Personaje {
         usosGastados.putAll(usos);
     }
 }
+

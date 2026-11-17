@@ -27,11 +27,13 @@ public class ControladorCombate {
     private final ModeloCombate modelo;
     private static final int PAUSA_FINAL_MS = 1500; // para alcanzar a leer el último mensaje
     private final ModeloMapa modeloMapa;
+    private final VistaVictoria vistaVictoria;
 
-    public ControladorCombate(VistaCombate vista, ModeloCombate modelo, ModeloMapa modeloMapa) {
-        if (vista == null || modelo == null || modeloMapa == null) {
-            throw new IllegalArgumentException("La vista, el modelo y el modelo del mapa son obligatorios");
+    public ControladorCombate(VistaCombate vista, ModeloCombate modelo, ModeloMapa modeloMapa, VistaVictoria vistaVictoria) {
+        if (vista == null || modelo == null || modeloMapa == null || vistaVictoria == null) {
+            throw new IllegalArgumentException("La vista, el modelo, el modelo del mapa y la vista de victoria son obligatorios");
         }
+        this.vistaVictoria = vistaVictoria;
         this.vista = vista;
         this.modelo = modelo;
         this.modeloMapa = modeloMapa;
@@ -169,12 +171,14 @@ public class ControladorCombate {
             Enemigo enemigo = this.modelo.getEnemigo();
             if (resultado == ResultadoCombate.VICTORIA) { // Lo que sucede si se gana
                 this.modeloMapa.eliminarEnemigo(enemigo);
-                if (this.modeloMapa.todosLosEnemigosDerrotados()) { // condicion de victoria
-                    ReproductorAudio.detenerMusica();
-                    Ventana.getInstancia().mostrarPanel(VistaVictoria.NOMBRE);
+                // Cada victoria muestra su pantalla; el texto cambia si ya no queda ningún enemigo.
+                if (this.modeloMapa.todosLosEnemigosDerrotados()) {
+                    this.vistaVictoria.setMensaje("Derrotaste a todos los enemigos. El reino está a salvo.");
                 } else {
-                    Ventana.getInstancia().mostrarPanel(VistaMapa.NOMBRE);
+                    this.vistaVictoria.setMensaje("Derrotaste a " + enemigo.getNombre() + ".");
                 }
+                ReproductorAudio.detenerMusica();
+                Ventana.getInstancia().mostrarPanel(VistaVictoria.NOMBRE);
             } else {
                 ReproductorAudio.detenerMusica();
                 Ventana.getInstancia().mostrarPanel(VistaMuerte.NOMBRE);            }
@@ -183,4 +187,6 @@ public class ControladorCombate {
         pausa.start();
     }
 }
+
+
 

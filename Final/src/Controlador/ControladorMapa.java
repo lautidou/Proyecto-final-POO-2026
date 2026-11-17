@@ -144,7 +144,7 @@ public class ControladorMapa {
     }
 
    private void mostrarPersonaje() {
-        Personaje pj = this.modelo.getPersonaje();
+        Heroe pj = this.modelo.getPersonaje();
         if (pj != null && pj.getPosicion() != null) {
             this.vista.setPersonaje(pj.getNombre(), pj.getPosicion().getX(), pj.getPosicion().getY(), CatalogoSprites.spriteMapa(pj.getClase()), pj.getOrientacion());
         } else {
@@ -212,3 +212,4 @@ public class ControladorMapa {
         Ventana.getInstancia().mostrarPanel(VistaMenuMain.NOMBRE);
     }
 }
+

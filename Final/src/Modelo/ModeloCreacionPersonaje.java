@@ -4,9 +4,9 @@ import Modelo.objetos.Objeto;
 import Modelo.pjs.Caracteristicas;
 import Modelo.pjs.Clases;
 import Modelo.pjs.Dados;
-import Modelo.pjs.Habilidad;
 import Modelo.pjs.Heroe;
 import Modelo.pjs.Raza;
+import Modelo.pjs.heroes.FactoryHeroes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +30,9 @@ public class ModeloCreacionPersonaje {
         }
 
         Caracteristicas caracteristicasBase = generarCaracteristicasBase(raza);
-        List<Habilidad> habilidades = new ArrayList<>();
         List<Objeto> inventario = new ArrayList<>();
-
-        this.heroeCreado = new Heroe(nombre.trim(), 1, raza, clase, habilidades,
-                caracteristicasBase, 0, inventario);
-        inventario.addAll(clase.crearEquipoInicial(heroeCreado));
+        this.heroeCreado = FactoryHeroes.crear(clase, nombre.trim(), 1, raza, caracteristicasBase, 0, inventario);
+        inventario.addAll(this.heroeCreado.crearEquipoInicial());
         return this.heroeCreado;
     }
 
@@ -73,3 +70,4 @@ public class ModeloCreacionPersonaje {
         return List.of(Clases.values());
     }
 }
+
