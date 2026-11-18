@@ -12,6 +12,7 @@ public class TajoBrutal extends Habilidad {
     @Override
     public void aplicar(ContextoCombate contexto) {
         int modFuerza = Reglas.modificador(contexto.getActor().getCaracteristicas().getFuerza());
-        contexto.infligirDanio(Dados.d6.rolleo() + Reglas.tirada(Dados.d6, modFuerza));
+        int danio = Reglas.tiradaMultiple(2, Dados.d6, modFuerza);
+        contexto.infligirDanio(danio);
     }
 }

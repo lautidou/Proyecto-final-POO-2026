@@ -1,6 +1,5 @@
 package Controlador;
 
-import Audio.ReproductorAudio;
 import Modelo.ModeloInventario;
 import Modelo.ModeloPausa;
 import Modelo.objetos.Objeto;
@@ -63,10 +62,11 @@ public class ControladorInventario {
                 return;
             }
             Objeto objeto = objetosMostrados.get(indice);
-            if (modeloInventario.usarObjeto(objeto) && objeto.esConsumible()) {
-                ReproductorAudio.efectoDeConsumible(objeto.getNombre());
+            if (modeloInventario.usarObjeto(objeto)) {
+                objeto.reproducirSonidoUso();
             }
         });
+
         panel.getCerrar().addActionListener(e -> {
             modeloInventario.removePropertyChangeListener(oyente);
             panel.dispose();
@@ -92,7 +92,7 @@ public class ControladorInventario {
                 .map(o -> new FilaInventario(
                         o.getNombre(),
                         o.getDetalle(),
-                        modeloInventario.esEquipable(o),
+                        modeloInventario.getTextoAccion(o),
                         modeloInventario.estaEquipado(o)))
                 .collect(Collectors.toList());
         panel.setFilas(filas);

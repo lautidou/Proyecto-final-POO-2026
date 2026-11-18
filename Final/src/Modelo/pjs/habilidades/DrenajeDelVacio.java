@@ -13,8 +13,9 @@ public class DrenajeDelVacio extends Habilidad {
     @Override
     public void aplicar(ContextoCombate contexto) {
         int modIntel = Reglas.modificador(contexto.getActor().getCaracteristicas().getInteligencia());
-        contexto.infligirDanio(Dados.d6.rolleo() + Reglas.tirada(Dados.d6, modIntel)); // Primero el daño...
+        int danio = Reglas.tiradaMultiple(2, Dados.d6, modIntel);
+        contexto.infligirDanio(danio); 
         int modSab = Reglas.modificador(contexto.getActor().getCaracteristicas().getSabiduria());
-        contexto.curarse(Reglas.tirada(Dados.d6, modSab)); // ...y después la curación
+        contexto.curarse(Reglas.tirada(Dados.d6, modSab)); 
     }
 }

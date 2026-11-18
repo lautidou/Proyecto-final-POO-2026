@@ -18,7 +18,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class VistaMapa extends JPanel {
 
@@ -47,6 +49,9 @@ public class VistaMapa extends JPanel {
     private java.awt.Point posicionPersonaje;
     private Map<java.awt.Point, DatosEnemigo> enemigos = new HashMap<>();
     private final Map<String, BufferedImage> cacheSprites = new HashMap<>();
+    private final Set<String> spritesFallidos = new HashSet<>(); // para no reintentar leer del disco en cada repintado
+
+    // Las únicas hojas con formato propio; el resto sigue el formato de su grupo (héroe o enemigo)
     private float visualX = -1f;
     private float visualY = -1f;
     private javax.swing.Timer timerAnimacion;
@@ -185,12 +190,12 @@ public class VistaMapa extends JPanel {
             DatosEnemigo enemigo = entrada.getValue();
             dibujarFicha(g2, mapaX, mapaY, celdaAncho, celdaAlto, 
                     entrada.getKey().x, entrada.getKey().y, enemigo.nombre,
-                    new Color(130, 60, 170), enemigo.rutaSprite, enemigo.orientacion, enemigo.frame);
+                    new Color(130, 60, 170), enemigo.rutaSprite, true, enemigo.orientacion, enemigo.frame);
         }
         if (posicionPersonaje != null && nombrePersonaje != null) {
             dibujarFicha(g2, mapaX, mapaY, celdaAncho, celdaAlto, 
                     visualX, visualY, nombrePersonaje,
-                    new Color(200, 40, 40), rutaSpritePersonaje, orientacionPersonaje, frameAnimacionPersonaje);
+                    new Color(200, 40, 40), rutaSpritePersonaje, false, orientacionPersonaje, frameAnimacionPersonaje);
         }
 
         //muestra el nombre del escenario
@@ -209,7 +214,7 @@ public class VistaMapa extends JPanel {
 
     private void dibujarFicha(Graphics2D g2, int mapaX, int mapaY, double celdaAncho, double celdaAlto,
                               float posX, float posY, String nombre, Color color, String rutaSprite, 
-                              Modelo.mapa.Direccion orientacion, int frameAnimacion) {
+                              boolean esEnemigo, Modelo.mapa.Direccion orientacion, int frameAnimacion) {
         
         int px = mapaX + (int) Math.round(posX * celdaAncho);
         int py = mapaY + (int) Math.round(posY * celdaAlto);
@@ -219,10 +224,12 @@ public class VistaMapa extends JPanel {
         if (rutaSprite != null && !rutaSprite.isEmpty()) {
 
             BufferedImage hojaSprites = cacheSprites.get(rutaSprite);
-            if (hojaSprites == null) {
+            if (hojaSprites == null && !spritesFallidos.contains(rutaSprite)) {
                 hojaSprites = CargadorImagen.cargarSinRecorte(rutaSprite);
                 if (hojaSprites != null) {
                     cacheSprites.put(rutaSprite, hojaSprites);
+                } else {
+                    spritesFallidos.add(rutaSprite);
                 }
             }
 
@@ -231,13 +238,7 @@ public class VistaMapa extends JPanel {
                 int filasSprite = 4;
                 int filaCaminata = 0;
                 
-                if (rutaSprite.contains("boss")) {
-                    columnasSprite = 1;
-                    filasSprite = 1;
-                } else if (rutaSprite.contains("Wizard")) {
-                    filasSprite = 18; 
-                    filaCaminata = 4; 
-                } else if (rutaSprite.contains("Enemy")) {
+                if (esEnemigo) {
                     columnasSprite = 3;
                 }
 
@@ -247,10 +248,7 @@ public class VistaMapa extends JPanel {
                 int col = 0;
                 int fila = 0;
                 
-                if (rutaSprite.contains("boss")) {
-                    col = 0;
-                    fila = 0;
-                } else if (rutaSprite.contains("Enemy")) {
+                if (esEnemigo) {
                     col = frameAnimacion % columnasSprite; 
                     if (orientacion != null) {
                         switch (orientacion) {

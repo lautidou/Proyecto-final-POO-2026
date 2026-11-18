@@ -10,6 +10,7 @@ import Modelo.mapa.Posicion;
 import Modelo.pjs.Enemigo;
 import Modelo.pjs.Heroe;
 import Modelo.pjs.Personaje;
+import Recursos.Rutas;
 import Modelo.ModeloPausa;
 import Vista.Ventana;
 import Vista.VistaMapa;
@@ -29,6 +30,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class ControladorMapa {
+
+    private static final int CUADROS_DE_CAMINATA = 4;
 
     private final VistaMapa vista;
     private final ModeloMapa modelo;
@@ -133,9 +136,9 @@ public class ControladorMapa {
                 new Point(enemigo.getPosicion().getX(), enemigo.getPosicion().getY()), 
                 new VistaMapa.DatosEnemigo(
                     enemigo.getNombre(), 
-                    enemigo.getRutaSprite(), 
+                    Rutas.spriteMapa(enemigo.getClass().getSimpleName()), 
                     enemigo.getOrientacion(), 
-                    enemigo.getFrameAnimacion()
+                    frameDe(enemigo.getPosicion())
                 )
             );
         }
@@ -145,10 +148,16 @@ public class ControladorMapa {
    private void mostrarPersonaje() {
         Personaje pj = this.modelo.getPersonaje();
         if (pj != null && pj.getPosicion() != null) {
-            this.vista.setPersonaje(pj.getNombre(), pj.getPosicion().getX(), pj.getPosicion().getY(), pj.getRutaSprite(), pj.getOrientacion(), pj.getFrameAnimacion());
+            this.vista.setPersonaje(pj.getNombre(), pj.getPosicion().getX(), pj.getPosicion().getY(), Rutas.spriteMapa(pj.getClass().getSimpleName()), pj.getOrientacion(), frameDe(pj.getPosicion()));
         } else {
             this.vista.quitarPersonaje();
         }
+    }
+
+    // El cuadro de la caminata depende solo de la posición: cada paso cambia x + y en uno,
+    // así que avanza al moverse y no hace falta guardar ningún contador.
+    private int frameDe(Posicion posicion) {
+        return (posicion.getX() + posicion.getY()) % CUADROS_DE_CAMINATA;
     }
 
     private boolean[][] extraerObstaculos(Mapa mapa) {

@@ -1,5 +1,6 @@
 package Modelo.objetos;
 
+import Audio.ReproductorAudio;
 import Modelo.partida.ObjetoGuardado;
 import Modelo.pjs.Personaje;
 
@@ -31,19 +32,29 @@ public class Consumible extends Objeto {
     }
 
     @Override
-        public boolean esConsumible() { 
-            return true; 
-        }
+    public boolean debeDesecharse() { 
+        return this.getCantidad() <= 0; 
+    }
 
     @Override
-        public boolean debeDesecharse() { 
-            return this.getCantidad() <= 0; 
+    public boolean esUtilizableEnCombate() {
+        return !debeDesecharse();
+    }
+
+    @Override
+    public void reproducirSonidoUso() {
+        ReproductorAudio.efectoDeConsumible(getNombre());
     }
 
     @Override
     public void usar(Personaje objetivo) {
-            objetivo.curar(this.puntosRestauracion);
-            eliminarObjeto();
+        objetivo.curar(this.puntosRestauracion);
+        eliminarObjeto();
+    }
+
+    @Override
+    public String getTextoAccion(Personaje p) {
+        return "Usar";
     }
 
     @Override

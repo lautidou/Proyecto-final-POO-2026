@@ -1,6 +1,9 @@
 package Modelo.mapa;
 
-import Modelo.pjs.enemigos.FactoryEnemigos;
+import Modelo.pjs.enemigos.GeneradorEsqueletos;
+import Modelo.pjs.enemigos.GeneradorGoblins;
+import Modelo.pjs.enemigos.GeneradorJefeFinal;
+import Modelo.pjs.enemigos.GeneradorOgros;
 import Recursos.Rutas;
 
 import java.util.Arrays;
@@ -10,6 +13,10 @@ import java.util.Set;
 public final class MundoDePrueba {
 
     private static final Posicion POSICION_GOBLIN = new Posicion(4, 30);
+    private static final Posicion POSICION_GOBLIN2 = new Posicion(46, 9);
+    private static final Posicion POSICION_ESQUELETO = new Posicion(15, 14); // pasillo de la entrada de la cueva
+    private static final Posicion POSICION_OGRO = new Posicion(31, 22);      // cueva, camino al jefe
+    private static final Posicion POSICION_JEFE = new Posicion(20, 4);       // cueva, zona más alejada de la entrada
 
     public static final String ID_PUEBLO = "Pueblo";
     public static final String ID_VILLA_VERDE = "VillaVerde";
@@ -68,7 +75,11 @@ public final class MundoDePrueba {
         abrirSalida(cueva, 9, 29, 30, 29, ID_ENTRADA_CUEVA, new Posicion(14, 10));
 
         // ---- Enemigos (despues de los portales, para no taparlos) ----
-        villa.agregarEnemigo(FactoryEnemigos.crear("Goblin"), POSICION_GOBLIN);
+        new GeneradorGoblins().colocarEn(villa, POSICION_GOBLIN);
+        new GeneradorGoblins().colocarEn(villa, POSICION_GOBLIN2);
+        new GeneradorEsqueletos().colocarEn(entrada, POSICION_ESQUELETO);
+        new GeneradorOgros().colocarEn(cueva, POSICION_OGRO);
+        new GeneradorJefeFinal().colocarEn(cueva, POSICION_JEFE);
 
         Mundo mundo = new Mundo();
         mundo.agregarMapa(pueblo);

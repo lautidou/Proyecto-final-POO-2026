@@ -11,8 +11,8 @@ public class BolaDeFuego extends Habilidad {
 
     @Override
     public void aplicar(ContextoCombate contexto) {
-        int danioBase = Dados.d8.rolleo() + Dados.d8.rolleo();
         int modIntel = Reglas.modificador(contexto.getActor().getCaracteristicas().getInteligencia());
-        contexto.infligirDanio(danioBase + modIntel);
+        int danioBase = Reglas.tiradaMultiple(2, Dados.d8, modIntel);
+        contexto.infligirDanio(danioBase);
     }
 }

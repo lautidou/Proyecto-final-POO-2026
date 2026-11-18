@@ -12,6 +12,7 @@ public class FuriaDesatada extends Habilidad {
     @Override
     public void aplicar(ContextoCombate contexto) {
         int modFuerza = Reglas.modificador(contexto.getActor().getCaracteristicas().getFuerza());
-        contexto.infligirDanio(Dados.d10.rolleo() + Reglas.tirada(Dados.d10, modFuerza));
+        int danio = Reglas.tiradaMultiple(2, Dados.d10, modFuerza);
+        contexto.infligirDanio(danio);
     }
 }

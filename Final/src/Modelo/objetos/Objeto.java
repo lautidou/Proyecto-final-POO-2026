@@ -44,14 +44,6 @@ public abstract class Objeto {
     public String getDetalle() {
         return descripcion;
     }
-
-    public boolean esConsumible() { 
-        return false; 
-    }
-    
-    public boolean esEquipable() { 
-        return false; 
-    }
     
     public boolean estaEquipadoPor(Personaje p) { 
         return false; 
@@ -77,7 +69,13 @@ public abstract class Objeto {
         return precio;
     }
 
+    public abstract void reproducirSonidoUso();
+
+    public abstract boolean esUtilizableEnCombate();
+
     public abstract void usar(Personaje objetivo);
 
     public abstract ObjetoGuardado aGuardado(boolean equipado);
+
+    public abstract String getTextoAccion(Personaje p);
 }

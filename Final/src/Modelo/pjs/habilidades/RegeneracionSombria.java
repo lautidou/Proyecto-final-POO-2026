@@ -13,6 +13,7 @@ public class RegeneracionSombria extends Habilidad {
     @Override
     public void aplicar(ContextoCombate contexto) {
         int mod = Reglas.modificador(contexto.getActor().getCaracteristicas().getConstitucion());
-        contexto.curarse(Dados.d8.rolleo() + Reglas.tirada(Dados.d8, mod));
+        int danio = Reglas.tiradaMultiple(2, Dados.d8, mod);
+        contexto.curarse(danio);
     }
 }

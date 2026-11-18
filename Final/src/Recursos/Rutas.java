@@ -1,5 +1,7 @@
 package Recursos;
 
+import java.io.File;
+
 public final class Rutas {
 
     private Rutas() {
@@ -52,18 +54,13 @@ public final class Rutas {
     public static final String BOTONES_PELEA = PELEA + "botones/";
     public static final String SPRITES = RAIZ + "Sprites/";
 
-    public static final String BARBARO = SPRITES + "SpriteSheetcaveman.png";
-    public static final String MONJE = SPRITES + "SpriteSheetmonk.png";
-    public static final String MAGO = SPRITES + "Wizard sheet.png";
+    // Los sprites se nombran por la clase del personaje (en minúsculas):
+    public static String spriteMapa(String nombreClase) {
+        return SPRITES + nombreClase.toLowerCase() + ".png";
+    }
 
-    public static final String BARBARO_PELEA = SPRITES_PELEA + "barbaroPelea.png";
-    public static final String MAGO_PELEA = SPRITES_PELEA + "magoPelea.png";
-    public static final String MONJE_PELEA = SPRITES_PELEA + "monjePelea.png";
-
-    public static final String GOBLIN_PELEA = SPRITES_PELEA + "goblinPelea.png";
-
-    public static final String ESQUELETO = SPRITES + "Enemy 04-1.png";
-    public static final String GOBLIN = SPRITES + "Enemy 18.png";
-    public static final String OGRO = SPRITES + "Enemy 20.png";
-    public static final String BOSS = SPRITES + "pipo-boss002.jpg";
+    public static String spritePelea(String nombreClase) {
+        String ruta = SPRITES_PELEA + nombreClase.toLowerCase() + "Pelea.png";
+        return new File(ruta).isFile() ? ruta : null;
+    }
 }

@@ -2,7 +2,6 @@ package Modelo.pjs.clases;
 
 import Modelo.objetos.*;
 import Modelo.pjs.*;
-import Recursos.Rutas;
 import Modelo.pjs.habilidades.*;
 
 import java.util.List;
@@ -10,8 +9,7 @@ import java.util.List;
 public class Mago extends Heroe {
 
     public Mago(String nombre, int nivel, Raza raza, Caracteristicas caracteristicas, int experiencia) {
-        super(nombre, nivel, raza, Dados.d6, caracteristicas, experiencia,
-                Rutas.MAGO, Rutas.MAGO_PELEA);
+        super(nombre, nivel, raza, Dados.d6, caracteristicas, experiencia);
     }
 
     @Override

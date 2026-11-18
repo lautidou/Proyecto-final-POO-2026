@@ -13,6 +13,7 @@ public class LlamaradaDelVacio extends Habilidad {
     @Override
     public void aplicar(ContextoCombate contexto) {
         int mod = Reglas.modificador(contexto.getActor().getCaracteristicas().getInteligencia());
-        contexto.infligirDanio(Dados.d10.rolleo() + Reglas.tirada(Dados.d10, mod));
+        int danio = Reglas.tiradaMultiple(2, Dados.d10, mod);
+        contexto.infligirDanio(danio);
     }
 }

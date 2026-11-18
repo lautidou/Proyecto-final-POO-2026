@@ -9,7 +9,6 @@ import Modelo.pjs.Enemigo;
 import Modelo.pjs.Heroe;
 import Modelo.pjs.Personaje;
 import Modelo.pjs.habilidades.Habilidad;
-import Modelo.objetos.Consumible;
 import Modelo.objetos.Objeto;
 import java.util.ArrayList;
 
@@ -84,14 +83,24 @@ public class ModeloCombate {
         cerrarTurno();
     }
 
-    public void procesarConsumible(Consumible consumible) {
-        if (consumible == null) {
-            throw new IllegalArgumentException("El consumible no puede ser nulo.");
+    public void procesarObjeto(Objeto objeto) {
+        if (objeto == null) {
+            throw new IllegalArgumentException("El objeto no puede ser nulo.");
         }
-        if (!getConsumiblesDelHeroe().contains(consumible)) {
-            throw new IllegalArgumentException("El héroe no tiene " + consumible.getNombre() + " disponible.");
+        if (!getObjetosCombateDelHeroe().contains(objeto)) {
+            throw new IllegalArgumentException("El héroe no tiene " + objeto.getNombre() + " disponible.");
         }
-        ejecutarAccionDelHeroe(contexto -> contexto.usarConsumible(consumible));
+        if (this.heroe.getVida() >= this.heroe.getVidaMaxima()) {
+            registrarMensaje(this.heroe.getNombre() + " ya tiene la vida al máximo.");
+            notificarCambio();
+            return;
+        }
+        ejecutarAccionDelHeroe(contexto -> {
+            contexto.usarObjeto(objeto);
+            if (objeto.debeDesecharse()) {
+                this.heroe.getInventario().remove(objeto);
+            }
+        });
     }
 
     public void procesarEsconderse() {
@@ -156,17 +165,17 @@ public class ModeloCombate {
         this.soporte.firePropertyChange(PROP_MENSAJE, null, mensaje);
     }
 
-    public List<Consumible> getConsumiblesDelHeroe() {
-        List<Consumible> consumibles = new ArrayList<>();
+    public List<Objeto> getObjetosCombateDelHeroe() {
+        List<Objeto> utilizables = new ArrayList<>();
         if (this.heroe == null) {
-            return consumibles;
+            return utilizables;
         }
-        for (Objeto objeto : this.heroe.getInventario()) {   // <- ajustar si se llama distinto
-            if (objeto.esConsumible() && !objeto.debeDesecharse()) {
-                consumibles.add((Consumible) objeto);
+        for (Objeto objeto : this.heroe.getInventario()) {
+            if (objeto.esUtilizableEnCombate()) {
+                utilizables.add(objeto);
             }
         }
-        return consumibles;
+        return utilizables;
     }
 
     public List<Habilidad> getHabilidadesDelHeroe() {

@@ -16,9 +16,8 @@ public abstract class Enemigo extends Personaje {
     private ArrayList<Objeto> recompensa;
 
     public Enemigo(String nombre, int nivel, Dados dadoGolpe, Caracteristicas caracteristicas,
-                      int experienciaDada, ArrayList<Objeto> recompensa,
-                      String rutaSprite, String rutaSpritePelea) {
-        super(nombre, nivel, dadoGolpe, caracteristicas, rutaSprite, rutaSpritePelea);
+                      int experienciaDada, ArrayList<Objeto> recompensa) {
+        super(nombre, nivel, dadoGolpe, caracteristicas);
         this.experienciaDada = experienciaDada;
         this.recompensa = (recompensa != null) ? new ArrayList<>(recompensa) : new ArrayList<>();
     }
@@ -32,7 +31,12 @@ public abstract class Enemigo extends Personaje {
         if (this.recompensa != null && !this.recompensa.isEmpty()) {
             heroe.getInventario().addAll(this.recompensa);
         }
-        combate.finalizar(ResultadoCombate.VICTORIA, getNombre() + " ha sido derrotado.");
+        combate.finalizar(resultadoAlMorir(), getNombre() + " ha sido derrotado.");
+    }
+
+    // Qué resultado tiene el combate cuando este enemigo muere. Por defecto, una victoria común;
+    protected ResultadoCombate resultadoAlMorir() {
+        return ResultadoCombate.VICTORIA;
     }
 
     // ---- Comportamientos reutilizables para las subclases ----

@@ -31,8 +31,8 @@ public class ModeloInventario {
         return heroe().map(h -> new ArrayList<>(h.getInventario())).orElseGet(ArrayList::new);
     }
 
-    public boolean esEquipable(Objeto objeto) {
-        return objeto.esEquipable();
+    public String getTextoAccion(Objeto objeto) {
+        return heroe().map(objeto::getTextoAccion).orElse("Usar");
     }
 
     public boolean estaEquipado(Objeto objeto) {

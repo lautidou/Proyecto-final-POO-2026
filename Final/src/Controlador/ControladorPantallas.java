@@ -13,6 +13,10 @@ import Vista.VistaCreacionPersonaje;
 import Vista.VistaMapa;
 import Vista.VistaMenuMain;
 import Vista.VistaMuerte;
+import Vista.VistaVictoria;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class ControladorPantallas {
 
@@ -31,6 +35,14 @@ public class ControladorPantallas {
         ModeloMapa modeloMapa = new ModeloMapa();
         ModeloPartida modeloPartida = new ModeloPartida(this.partidas, modeloMapa);
         ModeloPausa modeloPausa =  new ModeloPausa();
+
+        // Cerrar la ventana también es una salida: antes hay que vaciar la cola del guardador
+        this.ventana.getFrame().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                modeloPartida.apagarGuardador();
+            }
+        });
         
         ControladorCombate combate = registrarCombate(modeloMapa, modeloPartida);
         
@@ -69,10 +81,13 @@ public class ControladorPantallas {
         ModeloCombate modelo = new ModeloCombate();
         VistaCombate vista = new VistaCombate();
         VistaMuerte vistaMuerte = new VistaMuerte();
+        VistaVictoria vistaVictoria = new VistaVictoria();
 
         this.ventana.registrarPanel(VistaCombate.NOMBRE, vista);
         this.ventana.registrarPanel(VistaMuerte.NOMBRE, vistaMuerte);
+        this.ventana.registrarPanel(VistaVictoria.NOMBRE, vistaVictoria);
         new ControladorMuerte(vistaMuerte, modeloPartida);
+        new ControladorVictoria(vistaVictoria);
 
         return new ControladorCombate(vista, modelo, modeloMapa);
     }

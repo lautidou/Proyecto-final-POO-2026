@@ -19,10 +19,7 @@ public abstract class Personaje {
     // Atributos
     private String nombre;
     
-    protected String rutaSprite;
-    protected String rutaSpritePelea;
     private Direccion orientacion = Direccion.ABAJO; 
-    private int frameAnimacion = 0;
 
     private int vida;
     private int vidaMaxima;
@@ -33,8 +30,7 @@ public abstract class Personaje {
     private final Map<RanuraEquipo, Equipable> equipo = new EnumMap<>(RanuraEquipo.class);
     private final Map<Integer, Integer> usosGastados = new HashMap<>();
 
-    public Personaje(String nombre, int nivel, Dados dadoGolpe, Caracteristicas caracteristicas,
-                        String rutaSprite, String rutaSpritePelea) {
+    public Personaje(String nombre, int nivel, Dados dadoGolpe, Caracteristicas caracteristicas) {
         if (nombre == null || nombre.isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede ser nulo o vacío.");
         }
@@ -52,8 +48,6 @@ public abstract class Personaje {
         this.vida = this.vidaMaxima;
         this.nivel = nivel;
         this.caracteristicas = caracteristicas;
-        this.rutaSprite = rutaSprite;
-        this.rutaSpritePelea = rutaSpritePelea;
         this.habilidades = new ArrayList<>();
     }
 
@@ -122,36 +116,12 @@ public abstract class Personaje {
         return nombre;
     }
 
-    public String getRutaSprite() {
-        return rutaSprite;
-    }
-
-    protected void setRutaSprite(String rutaSprite) {
-        this.rutaSprite = rutaSprite;
-    }
-
-    public String getRutaSpritePelea() { 
-        return rutaSpritePelea; 
-    }
-
-    protected void setRutaSpritePelea(String ruta) { 
-        this.rutaSpritePelea = ruta; 
-    }
-
     public Direccion getOrientacion() {
         return orientacion;
     }
 
     public void setOrientacion(Direccion orientacion) {
         this.orientacion = orientacion;
-    }
-
-    public int getFrameAnimacion() {
-        return frameAnimacion;
-    }
-
-    public void avanzarAnimacion() {
-        this.frameAnimacion = (this.frameAnimacion + 1) % 4; 
     }
 
     public void setVida(int Valor){

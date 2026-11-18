@@ -12,6 +12,7 @@ public class RafagaDeGolpes extends Habilidad {
     @Override
     public void aplicar(ContextoCombate contexto) {
         int modDestreza = Reglas.modificador(contexto.getActor().getCaracteristicas().getDestreza());
-        contexto.infligirDanio(Dados.d6.rolleo() + Reglas.tirada(Dados.d6, modDestreza));
+        int danio = Reglas.tiradaMultiple(2, Dados.d6, modDestreza);
+        contexto.infligirDanio(danio);
     }
 }

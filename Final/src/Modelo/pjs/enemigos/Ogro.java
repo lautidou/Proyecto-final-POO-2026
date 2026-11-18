@@ -7,7 +7,6 @@ import Modelo.pjs.Caracteristicas;
 import Modelo.pjs.Dados;
 import Modelo.pjs.Enemigo;
 import Modelo.pjs.habilidades.*;
-import Recursos.Rutas;
 
 import java.util.ArrayList;
 
@@ -18,7 +17,7 @@ public class Ogro extends Enemigo {
 
     public Ogro() {
         super("Ogro", 3, Dados.d12, new Caracteristicas(16, 11, 12, 7, 16, 10),
-                150, new ArrayList<>(), Rutas.OGRO, null);
+                150, new ArrayList<>());
         equipar(new Arma(6, "Hacha de guerra", 3.5, 30, "Un hacha pesada que parte escudos.", Dados.d10));
         equipar(new Armadura(9, "Armadura de pieles", 10.0, 25, "Pieles curtidas de bestias: resistentes y abrigadas.", 3));
         aprenderHabilidad(new Aplastar());

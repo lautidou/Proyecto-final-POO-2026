@@ -27,18 +27,28 @@ public final class Reglas {
         return tirada(dadoDeArma(p), modificador(p.getCaracteristicas().getFuerza()));
     }
 
-    // La armadura resta daño
+    // La armadura absorbe la mitad de su valor
     public static int danioTrasDefensa(int danio, int defensa) {
-        return Math.max(1, danio - defensa);
+        if (defensa <= 0) {
+            return Math.max(1, danio);
+        }
+        int reduccion = (defensa + 1) / 2; 
+        return Math.max(1, danio - reduccion);
     }
 
-    //Modificador de una característica (puntuación - 10) / 2, redondeando hacia abajo.
     public static int modificador(int puntuacion) {
         return Math.floorDiv(puntuacion - 10, 2);
     }
 
-    //Tirada de un dado más un bonificador. Nunca baja de 1.
     public static int tirada(Dados dado, int bonificador) {
         return Math.max(1, dado.rolleo() + bonificador);
+    }
+
+    public static int tiradaMultiple(int cantidadDados, Dados dado, int bonificador) {
+        int suma = 0;
+        for (int i = 0; i < cantidadDados; i++) {
+            suma += dado.rolleo();
+        }
+        return Math.max(1, suma + bonificador);
     }
 }

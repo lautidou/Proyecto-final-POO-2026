@@ -12,6 +12,7 @@ public class RayoArcano extends Habilidad {
     @Override
     public void aplicar(ContextoCombate contexto) {
         int modIntel = Reglas.modificador(contexto.getActor().getCaracteristicas().getInteligencia());
-        contexto.infligirDanio(Dados.d10.rolleo() + Reglas.tirada(Dados.d10, modIntel));
+        int danioBase = Reglas.tiradaMultiple(2, Dados.d10, modIntel);
+        contexto.infligirDanio(danioBase);
     }
 }

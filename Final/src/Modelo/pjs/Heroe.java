@@ -16,8 +16,8 @@ public abstract class Heroe extends Personaje {
     private Raza raza;
 
     public Heroe(String nombre, int nivel, Raza raza, Dados dadoGolpe, Caracteristicas caracteristicas,
-                    int experiencia, String rutaSprite, String rutaSpritePelea) {
-        super(nombre, nivel, dadoGolpe, caracteristicas, rutaSprite, rutaSpritePelea);
+                    int experiencia) {
+        super(nombre, nivel, dadoGolpe, caracteristicas);
         if (raza == null) {
             throw new IllegalArgumentException("La raza no puede ser nula.");
         }

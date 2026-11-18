@@ -2,9 +2,10 @@ package Controlador;
 
 import Audio.ReproductorAudio;
 import Modelo.ModeloCombate;
-import Modelo.objetos.Consumible;
+import Modelo.objetos.Objeto;
 import Modelo.pjs.Enemigo;
 import Modelo.pjs.Heroe;
+import Recursos.Rutas;
 import Modelo.pjs.habilidades.Habilidad;
 import Modelo.combate.ResultadoCombate;
 import Modelo.ModeloMapa;
@@ -12,6 +13,7 @@ import Vista.Ventana;
 import Vista.VistaCombate;
 import Vista.VistaMapa;
 import Vista.VistaMuerte;
+import Vista.VistaVictoria;
 
 import javax.swing.Timer;
 import javax.swing.JButton;
@@ -112,25 +114,26 @@ public class ControladorCombate {
 
     // ---------- Submenú de inventario ----------
     private void abrirMenuInventario() {
-        List<Consumible> consumibles = this.modelo.getConsumiblesDelHeroe();
+        List<Objeto> objetos = this.modelo.getObjetosCombateDelHeroe();
 
         List<String> nombres = new ArrayList<>();
         List<String> descripciones = new ArrayList<>();
-        for (Consumible consumible : consumibles) {
-            nombres.add(consumible.getNombre() + " x" + consumible.getCantidad());
-            descripciones.add(consumible.getDetalle());
+        for (Objeto objeto : objetos) {
+            String sufijo = objeto.getCantidad() > 1 ? " x" + objeto.getCantidad() : "";
+            nombres.add(objeto.getNombre() + sufijo);
+            descripciones.add(objeto.getDetalle());
         }
 
         List<JButton> botones = this.vista.setConsumibles(nombres, descripciones);
         for (int i = 0; i < botones.size(); i++) {
-            Consumible consumible = consumibles.get(i);
-            botones.get(i).addActionListener(evento -> this.ejecutarConsumible(consumible));
+            Objeto objeto = objetos.get(i);
+            botones.get(i).addActionListener(evento -> this.ejecutarObjeto(objeto));
         }
         this.vista.mostrarMenuInventario();
     }
 
-    private void ejecutarConsumible(Consumible consumible) {
-        this.modelo.procesarConsumible(consumible);
+    private void ejecutarObjeto(Objeto objeto) {
+        this.modelo.procesarObjeto(objeto);
         this.vista.mostrarMenuPrincipal(); // gasta el turno, como las demás acciones
     }
 
@@ -158,8 +161,8 @@ public class ControladorCombate {
         if (heroe == null || enemigo == null) {
             return;
         }
-        this.vista.setHeroe(heroe.getNombre(), heroe.getRutaSpritePelea(), heroe.getVida(), heroe.getVidaMaxima());
-        this.vista.setEnemigo(enemigo.getNombre(), enemigo.getRutaSpritePelea(), enemigo.getVida(), enemigo.getVidaMaxima());
+        this.vista.setHeroe(heroe.getNombre(), Rutas.spritePelea(heroe.getClass().getSimpleName()), heroe.getVida(), heroe.getVidaMaxima());
+        this.vista.setEnemigo(enemigo.getNombre(), Rutas.spritePelea(enemigo.getClass().getSimpleName()), enemigo.getVida(), enemigo.getVidaMaxima());
     }
 
     // ---------- Fin del combate ----------
@@ -167,13 +170,22 @@ public class ControladorCombate {
         this.vista.mostrarMenuPrincipal();
         Timer pausa = new Timer(PAUSA_FINAL_MS, evento -> {
             Enemigo enemigo = this.modelo.getEnemigo();
-            if (resultado == ResultadoCombate.VICTORIA) { // Lo que sucede si se gana
-                this.modeloMapa.eliminarEnemigo(enemigo);
-                Ventana.getInstancia().mostrarPanel(VistaMapa.NOMBRE);
-            } else {
-                ReproductorAudio.detenerMusica();
-                Ventana.getInstancia().mostrarPanel(VistaMuerte.NOMBRE);            }
-            });
+            switch (resultado) {
+                case VICTORIA:
+                    this.modeloMapa.eliminarEnemigo(enemigo);
+                    Ventana.getInstancia().mostrarPanel(VistaMapa.NOMBRE);
+                    break;
+                case VICTORIA_FINAL:
+                    this.modeloMapa.eliminarEnemigo(enemigo);
+                    ReproductorAudio.detenerMusica();
+                    Ventana.getInstancia().mostrarPanel(VistaVictoria.NOMBRE);
+                    break;
+                default: // DERROTA
+                    ReproductorAudio.detenerMusica();
+                    Ventana.getInstancia().mostrarPanel(VistaMuerte.NOMBRE);
+                    break;
+            }
+        });
         pausa.setRepeats(false);
         pausa.start();
     }

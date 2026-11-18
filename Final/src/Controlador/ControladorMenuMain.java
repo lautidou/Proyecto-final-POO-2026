@@ -62,6 +62,7 @@ public class ControladorMenuMain {
 
     private void ejecutarBotonTres() {
         ReproductorAudio.efectoBotonMenu();
+        this.modeloPartida.apagarGuardador(); 
         System.exit(0);
     }
 

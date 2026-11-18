@@ -4,7 +4,7 @@ import Modelo.pjs.Personaje;
 import Modelo.pjs.escondite.EstadoVisibilidad;
 import Modelo.pjs.escondite.Visible;
 import Modelo.pjs.habilidades.Habilidad;
-import Modelo.objetos.Consumible;
+import Modelo.objetos.Objeto;
 
 import java.util.function.Consumer;
 
@@ -54,7 +54,7 @@ public final class ContextoCombate {
         int danio = Reglas.danioTrasDefensa(puntos, Reglas.defensa(this.oponente));
         this.oponente.recibirDanio(danio);
 
-        int absorbido = puntos - danio;
+        int absorbido = Math.max(0, puntos - danio);
         String texto = this.oponente.getNombre() + " recibe " + danio + " de daño";
         mensaje(absorbido > 0 ? texto + " (la armadura absorbe " + absorbido + ")." : texto + ".");
 
@@ -69,11 +69,15 @@ public final class ContextoCombate {
     }
 
     // ---- Objetos ----
-    public void usarConsumible(Consumible consumible) {
+    public void usarObjeto(Objeto objeto) {
         int vidaAntes = this.actor.getVida();
-        consumible.usar(this.actor); // el propio objeto sabe qué efecto tiene
-        mensaje(this.actor.getNombre() + " usa " + consumible.getNombre() 
-        + " y recupera " + (this.actor.getVida() - vidaAntes) + " PV.");
+        objeto.usar(this.actor);
+        int curado = this.actor.getVida() - vidaAntes;
+        if (curado > 0) {
+            mensaje(this.actor.getNombre() + " usa " + objeto.getNombre() + " y recupera " + curado + " PV.");
+        } else {
+            mensaje(this.actor.getNombre() + " usa " + objeto.getNombre() + ".");
+        }
     }
 
     // ---- Usos de habilidades (son del personaje y persisten entre peleas) ----

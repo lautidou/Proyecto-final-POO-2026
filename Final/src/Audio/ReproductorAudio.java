@@ -20,6 +20,7 @@ public final class ReproductorAudio {
     public static final String COMBATE = "Combate/";
     public static final String HABILIDADES = "Habilidades/";
     public static final String CONSUMIBLES = "Consumibles/";
+    public static final String INVENTARIO = "Equipables/";
     public static final String ATAQUE_BASICO = "ataque_basico";
     
 
@@ -62,6 +63,10 @@ public final class ReproductorAudio {
     // Sfx de un consumible Assets/Audio/Consumibles/{nombre}.wav
     public static void efectoDeConsumible(String nombre) {
         efecto(CONSUMIBLES + aArchivo(nombre));
+    }
+
+    public static void efectoEquipar() {
+        efecto(INVENTARIO + "equipar");
     }
 
     public static synchronized void detenerMusica() {
